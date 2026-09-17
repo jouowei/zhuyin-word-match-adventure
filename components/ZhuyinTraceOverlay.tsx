@@ -6,7 +6,7 @@ import { playSound } from '../utils/sound';
 import { playChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { addInkPoint, distance, evaluateStroke, Point, samplePolyline, StrokeTolerance } from '../utils/strokeTracing';
 import { WRITING_STAGE_NAMES, zhuyinTraceInstruction } from '../services/instructions';
-import { InstructionButton, withInstruction } from './VoiceGuide';
+import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
 
 interface ZhuyinTraceOverlayProps {
   item: WordItem | null;   // item.character is the zhuyin symbol
@@ -177,12 +177,12 @@ export const ZhuyinTraceOverlay: React.FC<ZhuyinTraceOverlayProps> = ({ item, st
         stepBack(shownStage - 1);
       }
       const where = shownStage <= 1 ? `從綠色 ${strokeNumber} 號點開始` : '想想這一筆從哪裡開始';
-      setFeedback(
-        stuck ? '沒關係，提示回來幫你了！'
+      const message = stuck ? '沒關係，提示回來幫你了！'
         : result === 'wrong-place' ? `先寫第 ${strokeNumber} 筆：${where}喔！`
         : result === 'reversed' ? `方向反了！${where}喔`
-        : `再寫一次第 ${strokeNumber} 筆！`
-      );
+        : `再寫一次第 ${strokeNumber} 筆！`;
+      setFeedback(message);
+      speakHelp([{ text: message }]); // Five-year-olds can't read the message
       clearInk();
       return;
     }
@@ -342,7 +342,7 @@ export const ZhuyinTraceOverlay: React.FC<ZhuyinTraceOverlayProps> = ({ item, st
         </div>
 
         <InstructionButton text={zhuyinTraceInstruction(shownStage)} className="mt-3" />
-        <button onClick={onCancel} className="mt-3 text-gray-400 text-sm underline hover:text-gray-600">先不寫了</button>
+        <button onClick={onCancel} className="mt-3 text-gray-400 text-sm underline hover:text-gray-600">先跳過，下次再寫</button>
         <p className="text-[10px] text-gray-300 mt-2">筆順：教育部《國語注音符號手冊》開放部件（CC BY 4.0）</p>
       </div>
       </div>

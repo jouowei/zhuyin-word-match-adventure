@@ -4,7 +4,8 @@ import { EnglishTopBar, FeedbackToast, HighlightedKeyword, useFeedback } from '.
 import { Mic, AlertCircle, Volume2, ThumbsUp } from 'lucide-react';
 import { playSound } from '../../utils/sound';
 import { isSpeechMatch, speakEnglish, speakPraise, stopEnglishSpeech } from '../../utils/englishSpeech';
-import { correctMessage, HELP_SHOW, nextHelp, POINTS_WITH_HELP } from '../../services/scaffolding';
+import { HELP_SHOW, nextHelp, POINTS_WITH_HELP } from '../../services/scaffolding';
+import { praise } from '../Praise';
 import { LETTER_LEVELS, WORD_LEVELS } from '../../english/curriculum';
 import { InstructionButton, speakHelp, useInstruction } from '../VoiceGuide';
 
@@ -57,7 +58,7 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
         playSound('success');
         speakPraise();
         onMatch(item.id, level);
-        showFeedback(correctMessage(level, 'say'));
+        showFeedback(praise(level, 'say', { speak: false }));
       } else {
         playSound('error');
         const level = nextHelp(help[item.id] || 0);

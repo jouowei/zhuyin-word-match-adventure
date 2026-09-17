@@ -11,11 +11,12 @@ interface DailyPathViewProps {
   currentUser: UserProfile;
   onStart: (level?: number) => void;
   onHome: () => void;
+  onShop?: () => void;
   /** What a game level is called and how it is played (English paths use the English games) */
   optionInfo?: (level: number, station: Station) => { emoji: string; title: string; desc: string; instruction: string };
 }
 
-export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser, onStart, onHome, optionInfo }) => {
+export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser, onStart, onHome, onShop, optionInfo }) => {
   const infoFor = optionInfo || ((level: number) => ({ ...levelInfo(level, path.gameMode), instruction: gameInstruction(level, path.gameMode) }));
   const station = path.stations[path.current];
   const finished = station?.kind === 'summary';
@@ -26,7 +27,7 @@ export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser,
   useEffect(() => {
     if (!station) return;
     const text = finished
-      ? `今天的冒險完成了！你自己答對了${totals.onOwn}題${path.newItems.length ? `，認識了${path.newItems.length}個新朋友` : ''}。休息一下，明天再來冒險吧！`
+      ? `今天的冒險完成了！你自己答對了${totals.onOwn}題${path.newItems.length ? `，認識了${path.newItems.length}個新朋友` : ''}。${path.gift ? '送你一次免費轉蛋！去商店轉轉看吧！' : '休息一下，明天再來冒險吧！'}`
       : stationIntro(station, path.current, path.language === 'en');
     const timer = setTimeout(() => {
       if (finished) playSound('cheer');
@@ -136,13 +137,31 @@ export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser,
             <p className="text-lg font-bold text-amber-700">🌟 學會了：{path.masteredToday.join('、')}</p>
           )}
           <p className="text-lg font-bold text-yellow-700">這次得到 {earned} 分</p>
-          <p className="text-gray-500">休息一下，明天再來冒險吧！</p>
-          <button
-            onClick={onHome}
-            className="mt-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-bold px-10 py-3 rounded-2xl shadow-lg transition active:scale-95"
-          >
-            回首頁
-          </button>
+          {path.gift && onShop ? (
+            <>
+              <div className="w-full bg-gradient-to-r from-pink-100 to-purple-100 border-4 border-purple-200 rounded-2xl p-4 flex flex-col items-center gap-2">
+                <span className="text-6xl animate-bounce">🎁</span>
+                <p className="text-xl font-black text-purple-700">送你一次免費轉蛋！</p>
+              </div>
+              <button
+                onClick={onShop}
+                className="mt-1 bg-purple-500 hover:bg-purple-600 text-white text-2xl font-black px-10 py-4 rounded-2xl shadow-lg transition active:scale-95 animate-pulse"
+              >
+                🎰 去轉蛋
+              </button>
+              <button onClick={onHome} className="text-gray-400 font-bold underline">回首頁</button>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-500">休息一下，明天再來冒險吧！</p>
+              <button
+                onClick={onHome}
+                className="mt-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-bold px-10 py-3 rounded-2xl shadow-lg transition active:scale-95"
+              >
+                回首頁
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

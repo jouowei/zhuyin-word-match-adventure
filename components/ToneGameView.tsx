@@ -5,7 +5,8 @@ import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio } from '../utils/chineseAudio';
 import { hasPicture } from '../utils/wordPicture';
 import { getToneReferences, parseSyllable, Tone, TONE_OPTIONS, toneHelpSteps } from '../services/zhuyinPractice';
-import { choicesToHide, correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
 import { ToneCurve } from './ToneCurve';
@@ -92,7 +93,7 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
     setSolved(true);
     playSound('success');
     playChineseWord(current.character, current.audioUrl);
-    setFeedback(`${TONE_OPTIONS[tone - 1].name}！ ${correctMessage(help, 'listen')}`);
+    setFeedback(`${TONE_OPTIONS[tone - 1].name}！ ${praise(help, 'listen')}`);
     later(() => onMatch(current.id, help), 1800);
   };
 

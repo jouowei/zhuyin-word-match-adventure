@@ -6,7 +6,7 @@ import { playSound } from '../utils/sound';
 import { playChineseAudio } from '../utils/chineseAudio';
 import { addInkPoint, evaluateShape, Point, samplePolyline, StrokeTolerance } from '../utils/strokeTracing';
 import { WRITING_STAGE_NAMES, writingInstruction } from '../services/instructions';
-import { InstructionButton, withInstruction } from './VoiceGuide';
+import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
 
 interface WritingOverlayProps {
   character: WordItem | null;
@@ -175,6 +175,7 @@ export const WritingOverlay: React.FC<WritingOverlayProps> = ({ character, stage
   const handleSubmit = () => {
     if (inkRef.current.length === 0) {
       setFeedback({ text: '請先寫寫看喔！', good: false });
+      speakHelp([{ text: '請先寫寫看喔！' }]);
       playSound('error');
       return;
     }
@@ -199,16 +200,16 @@ export const WritingOverlay: React.FC<WritingOverlayProps> = ({ character, stage
       setShownStage(shownStage - 1);
       setAnimateTrigger(prev => prev + 1);
       setFeedback({ text: '沒關係，提示回來幫你了！', good: false });
+      speakHelp([{ text: '沒關係，提示回來幫你了！' }]);
       return;
     }
     if (shownStage === 0 && failsRef.current >= TRIES_BEFORE_ACCEPTING) {
       finish(true, '寫得很努力！');
       return;
     }
-    setFeedback({
-      text: result.missingStrokes > 0 ? '還有筆畫沒寫到，再寫寫看！' : result.overdrawn ? '寫太多囉，一筆一筆慢慢寫！' : '有些地方寫到外面了，再寫一次！',
-      good: false,
-    });
+    const message = result.missingStrokes > 0 ? '還有筆畫沒寫到，再寫寫看！' : result.overdrawn ? '寫太多囉，一筆一筆慢慢寫！' : '有些地方寫到外面了，再寫一次！';
+    setFeedback({ text: message, good: false });
+    speakHelp([{ text: message }]);
   };
 
   // Helper to convert median points [[x,y], [x,y]] to SVG Path "M x y L x y"
@@ -376,7 +377,7 @@ export const WritingOverlay: React.FC<WritingOverlayProps> = ({ character, stage
 
         <InstructionButton text={writingInstruction(shownStage)} className="mt-3" />
         <button onClick={onCancel} className="mt-3 text-gray-400 text-sm underline hover:text-gray-600">
-            放棄不寫了
+            先跳過，下次再寫
         </button>
       </div>
       </div>

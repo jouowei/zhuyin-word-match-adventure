@@ -8,7 +8,7 @@ import { speakEnglish, speakLetterName, speakPraise } from '../../utils/englishS
 import { playChineseAudio } from '../../utils/chineseAudio';
 import { addInkPoint, evaluateStroke, Point, sampleSvgPath, StrokeTolerance } from '../../utils/strokeTracing';
 import { WRITING_STAGE_NAMES } from '../../services/instructions';
-import { InstructionButton, withInstruction } from '../VoiceGuide';
+import { InstructionButton, speakHelp, withInstruction } from '../VoiceGuide';
 
 interface LetterTraceOverlayProps {
   item: EnglishRoundItem | null;
@@ -184,12 +184,12 @@ export const LetterTraceOverlay: React.FC<LetterTraceOverlayProps> = ({ item, st
         stepBack(shownStage - 1);
       }
       const where = shownStage <= 1 ? `從綠色 ${strokeNumber} 號點開始` : '想想這一筆從哪裡開始';
-      setFeedback(
-        stuck ? '沒關係，提示回來幫你了！'
+      const message = stuck ? '沒關係，提示回來幫你了！'
         : result === 'wrong-place' ? `先寫第 ${strokeNumber} 筆：${where}喔！`
         : result === 'reversed' ? `方向反了！${where}喔`
-        : `再寫一次第 ${strokeNumber} 筆！`
-      );
+        : `再寫一次第 ${strokeNumber} 筆！`;
+      setFeedback(message);
+      speakHelp([{ text: message }]); // Five-year-olds can't read the message
       clearInk();
       return;
     }
@@ -304,7 +304,7 @@ export const LetterTraceOverlay: React.FC<LetterTraceOverlayProps> = ({ item, st
 
         <InstructionButton text={letterTraceInstruction(shownStage)} className="mt-3" />
         <button onClick={onCancel} className="mt-3 text-gray-400 text-sm underline hover:text-gray-600">
-          先不寫了
+          先跳過，下次再寫
         </button>
       </div>
       </div>

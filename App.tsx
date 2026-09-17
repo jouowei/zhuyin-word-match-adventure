@@ -29,6 +29,7 @@ import { RadicalGameView } from './components/RadicalGameView';
 import { LessonLoopView } from './components/LessonLoopView';
 import { ParentReportView } from './components/ParentReportView';
 import { BrowserNotice } from './components/BrowserNotice';
+import { PraiseBurst } from './components/Praise';
 import { buildFamilyRound, FamilyQuestion } from './services/wordFamilies';
 import { buildRadicalRound, RadicalQuestion } from './services/radicals';
 import { wordsInText } from './services/lessonText';
@@ -64,6 +65,9 @@ const MILESTONE_SIZE = 10;
 
 /** 今日冒險 rounds: planned words (most important first), which ones must be in, and how many items. */
 interface RoundPlan { words: string[]; focus: string[]; count: number; }
+
+// After the last answer of a round: time to hear the word and the praise and see the stars before moving on
+const ROUND_END_PAUSE = 2000;
 
 export default function App() {
   // --- USER SYSTEM STATE ---
@@ -393,7 +397,7 @@ export default function App() {
         }
         setVictorySource('chinese');
         setGameState(GameState.VICTORY);
-      }, 500);
+      }, ROUND_END_PAUSE);
     }
   };
 
@@ -512,11 +516,17 @@ export default function App() {
     if (!path) return;
     pathRoundRef.current = false;
     const stations = path.stations.map((s, i) => (i === path.current ? { ...s, result } : s));
-    const next = { ...path, stations, current: path.current + 1 };
-    setPathState(next);
+    const next: DailyPath = { ...path, stations, current: path.current + 1 };
     if (next.stations[next.current]?.kind === 'summary' && currentUser) {
-      updateUserProfile(currentUser.id, next.language === 'en' ? { lastEnglishPath: next.date } : { lastDailyPath: next.date });
+      // A reward the child sees today: the first adventure finished each day gives a free gacha spin
+      const gift = currentUser.lastFreeSpinDate !== next.date;
+      if (gift) next.gift = true;
+      updateUserProfile(currentUser.id, {
+        ...(next.language === 'en' ? { lastEnglishPath: next.date } : { lastDailyPath: next.date }),
+        ...(gift ? { freeSpins: (currentUser.freeSpins || 0) + 1, lastFreeSpinDate: next.date } : {}),
+      });
     }
+    setPathState(next);
     setGameState(GameState.DAILY_PATH);
   }
 
@@ -711,7 +721,7 @@ export default function App() {
         }
         setVictorySource('english');
         setGameState(GameState.VICTORY);
-      }, 1200);
+      }, ROUND_END_PAUSE);
     }
   };
 
@@ -897,6 +907,7 @@ export default function App() {
     <>
       {renderScreen()}
       <BrowserNotice />
+      <PraiseBurst />
       {celebration && (
         <div key={celebration.id} className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] pointer-events-none animate-pop">
           <div className="bg-gradient-to-r from-yellow-300 to-amber-400 text-amber-900 px-8 py-4 rounded-3xl shadow-2xl border-4 border-white flex items-center gap-3 whitespace-nowrap">
@@ -1048,6 +1059,7 @@ export default function App() {
           currentUser={currentUser}
           onStart={launchStation}
           onHome={() => setGameState(dailyPath.language === 'en' ? GameState.ENGLISH_HUB : GameState.MENU)}
+          onShop={() => setGameState(GameState.SHOP)}
           optionInfo={dailyPath.language === 'en' ? englishOptionInfo : undefined}
         />
       );

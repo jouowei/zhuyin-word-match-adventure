@@ -8,7 +8,8 @@ import { getZhuyinSymbol } from '../zhuyin/symbols';
 import {
   buildSymbolTiles, formatSyllable, getToneReferences, parseSyllable, Tone, TONE_OPTIONS, toneHelpSteps,
 } from '../services/zhuyinPractice';
-import { choicesToHide, correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
 import { ToneCurve } from './ToneCurve';
@@ -210,7 +211,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
     setPhase('done');
     playSound('success');
     playChineseWord(current.character, current.audioUrl);
-    setFeedback(correctMessage(itemHelp, 'spell'));
+    setFeedback(praise(itemHelp, 'spell'));
     later(() => onMatch(current.id, itemHelp), 1800);
   };
 

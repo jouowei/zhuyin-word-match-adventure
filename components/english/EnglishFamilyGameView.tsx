@@ -3,7 +3,8 @@ import { Volume2, X, Home as HomeIcon } from 'lucide-react';
 import { EnglishRoundItem, UserProfile } from '../../types';
 import { RhymeCard, RhymeQuestion } from '../../english/families';
 import { RHYME_LEVEL } from '../../english/curriculum';
-import { correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
+import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
+import { praise } from '../Praise';
 import { AudioStep, playChineseAudio, stopChineseAudio } from '../../utils/chineseAudio';
 import { playSound } from '../../utils/sound';
 import { InstructionButton, speakHelp, withInstruction } from '../VoiceGuide';
@@ -78,7 +79,7 @@ export const EnglishFamilyGameView: React.FC<EnglishFamilyGameViewProps> = ({ cu
       }
       // The whole family, said together so the shared ending stands out
       setDone(true);
-      showFeedback(correctMessage(help, 'listen'), 2500);
+      showFeedback(praise(help, 'listen', { lang: 'en' }), 2500);
       playChineseAudio([{ ...en(head), pause: 350 }, ...members.map(m => ({ ...en(m.word), pause: 350 })), zh('結尾的聲音都一樣！')]);
       later(() => onMatch(current.id, help), 3400);
       return;

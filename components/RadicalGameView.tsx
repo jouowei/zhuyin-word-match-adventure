@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Home, Star, RefreshCw, Search, Volume2, X } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { GuessChoice, RadicalCard, RadicalQuestion } from '../services/radicals';
-import { correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
@@ -115,7 +116,7 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
       setPhase('done');
       playSound('success');
       const help = Math.max(findHelp, guessHelp);
-      setFeedback(correctMessage(help, 'look'));
+      setFeedback(praise(help, 'look'));
       playChineseAudio([charSound(choice), zh(`${choice.gloss}。你看，它也有「${group.name}」！`)]);
       later(() => onMatch(current.id, help), 4200);
       return;

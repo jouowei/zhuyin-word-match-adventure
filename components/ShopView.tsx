@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserProfile, RewardCard } from '../types';
 import { REWARD_CARDS } from '../constants';
 import { Home, Gift, Star, Palette, Sparkles, Trophy, Camera, CheckCircle, Upload, Lock, Layers } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { GachaOverlay } from './GachaOverlay';
 import { CardDetailOverlay } from './CardDetailOverlay';
+import { SpeakButton, useInstruction } from './VoiceGuide';
+import { playChineseAudio } from '../utils/chineseAudio';
 
 interface ShopViewProps {
   currentUser: UserProfile;
@@ -24,7 +26,7 @@ interface ShopViewProps {
 
 // Configuration Constants
 const GACHA_COST = 200; // Cost remains 200
-const SELL_RATIO = 0.3; 
+const SELL_RATIO = 0.3;
 const CONSOLATION_POINTS = 50;
 
 // Definition of the Miss Card (Consolation Prize)
@@ -37,14 +39,14 @@ const MISS_CARD: RewardCard = {
   cost: 0
 };
 
-export const ShopView: React.FC<ShopViewProps> = ({ 
-  currentUser, rewardImages, imageRefreshVersion, imageLoadErrors, 
-  onBack, onPurchase, masteredCount, milestonesAvailable, onClaimMilestone, onUpdateUser, onFileUpload, onImageError 
+export const ShopView: React.FC<ShopViewProps> = ({
+  currentUser, rewardImages, imageRefreshVersion, imageLoadErrors,
+  onBack, onPurchase, masteredCount, milestonesAvailable, onClaimMilestone, onUpdateUser, onFileUpload, onImageError
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [choosingFree, setChoosingFree] = useState(false);
   const [viewingCard, setViewingCard] = useState<RewardCard | null>(null);
-  
+
   // Gacha State
   const [showGacha, setShowGacha] = useState(false);
   const [gachaStage, setGachaStage] = useState<'idle' | 'spinning' | 'revealed'>('idle');
@@ -59,7 +61,7 @@ export const ShopView: React.FC<ShopViewProps> = ({
   // Unique cards owned (for display in grid)
   const uniqueOwnedIds = Object.keys(cardCounts);
   const ownedCardsDisplay = REWARD_CARDS.filter(c => uniqueOwnedIds.includes(c.id));
-  
+
   // Check if collection is complete (User has at least 1 of every card type)
   const allCardIds = REWARD_CARDS.map(c => c.id);
   const isCollectionComplete = allCardIds.length > 0 && allCardIds.every(id => uniqueOwnedIds.includes(id));
@@ -72,16 +74,16 @@ export const ShopView: React.FC<ShopViewProps> = ({
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         const voices = window.speechSynthesis.getVoices();
-        
+
         let bestVoice = null;
         bestVoice = voices.find(v => v.lang === 'zh-TW' && (v.name.includes('Enhanced') || v.name.includes('Premium')));
         if (!bestVoice) bestVoice = voices.find(v => v.name === 'Google 國語（臺灣）');
         if (!bestVoice) bestVoice = voices.find(v => v.lang === 'zh-TW');
         if (!bestVoice) bestVoice = voices.find(v => v.lang.includes('zh') && (v.name.includes('Enhanced') || v.name.includes('Premium')));
         if (!bestVoice) bestVoice = voices.find(v => v.lang.includes('zh'));
-        
+
         if (bestVoice) utterance.voice = bestVoice;
-        
+
         utterance.lang = 'zh-TW';
         utterance.rate = 0.8;
         utterance.pitch = 1.0;
@@ -95,13 +97,25 @@ export const ShopView: React.FC<ShopViewProps> = ({
     speakText(card.title);
   };
 
+  const freeSpins = currentUser.freeSpins || 0;
+
+  // Children can't read the shop: say what it is, or that a free spin is waiting
+  useInstruction('shop', '這是禮物商店。用星星可以換卡片，也可以轉轉蛋。點喇叭，可以聽聽卡片在說什麼。', freeSpins === 0);
+  useEffect(() => {
+    if (freeSpins === 0) return;
+    const timer = setTimeout(() => playChineseAudio([{ text: '你有免費轉蛋！按轉轉看！', rate: 0.95 }]), 500);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleGachaDraw = () => {
-    if (currentUser.points < GACHA_COST) return;
-    
-    // Deduct points immediately
-    const pointsAfterCost = currentUser.points - GACHA_COST;
-    onUpdateUser(currentUser.id, { points: pointsAfterCost });
-    
+    const free = freeSpins > 0;
+    if (!free && currentUser.points < GACHA_COST) return;
+
+    // A free spin (from finishing an adventure) costs no points
+    const pointsAfterCost = free ? currentUser.points : currentUser.points - GACHA_COST;
+    onUpdateUser(currentUser.id, free ? { freeSpins: freeSpins - 1 } : { points: pointsAfterCost });
+
     setShowGacha(true);
     setGachaStage('spinning');
     playSound('magic');
@@ -109,43 +123,43 @@ export const ShopView: React.FC<ShopViewProps> = ({
     setTimeout(() => {
       // --- WEIGHTED RANDOM LOGIC START ---
       // Scale: 10000 units total
-      
+
       const weightedPool = REWARD_CARDS.map(card => {
         let weight = 0;
 
         if (card.cost <= 400) {
-           // Common: 49% total (4900 units). 
+           // Common: 49% total (4900 units).
            // 7 cards available. 4900 / 7 = 700 each.
-           weight = 700; 
+           weight = 700;
         } else if (card.cost <= 600) {
            // Rare: 18% total (1800 units).
            // Currently 4 cards in this range (500x2, 600x2).
            // 1800 / 4 = 450 each.
-           weight = 450; 
+           weight = 450;
         } else if (card.cost === 800) {
-           // Epic: 20% total (2000 units). 
+           // Epic: 20% total (2000 units).
            // 5 cards available. 2000 / 5 = 400 each.
-           weight = 400; 
+           weight = 400;
         } else if (card.cost === 1000) {
            // Epic L2: 1.5% total (150 units). 1 card.
-           weight = 150; 
+           weight = 150;
         } else if (card.cost === 1200) {
            // Epic L3: 1.0% total (100 units). 1 card.
-           weight = 100;  
+           weight = 100;
         } else if (card.cost === 1500) {
            // Legendary: 0.42% total (42 units). 1 card.
-           weight = 42;  
+           weight = 42;
         } else if (card.cost >= 2000) {
            // Mythic: 0.08% total (8 units). 1 card.
-           weight = 8;   
+           weight = 8;
         }
-        
+
         return { card, weight };
       });
 
       // Miss Probability: 10% -> 1000 units
-      const missWeight = 1000; 
-      
+      const missWeight = 1000;
+
       // Combine pool
       const fullPool = [
         ...weightedPool,
@@ -154,7 +168,7 @@ export const ShopView: React.FC<ShopViewProps> = ({
 
       // Calculate final total weight (Should be 10000)
       const finalTotalWeight = fullPool.reduce((sum, item) => sum + item.weight, 0);
-      
+
       // Pick random
       let randomNum = Math.random() * finalTotalWeight;
       let selected = MISS_CARD;
@@ -174,7 +188,7 @@ export const ShopView: React.FC<ShopViewProps> = ({
       if (selected.id === 'miss') {
          // Miss: Consolation prize
          // Use 'pop' instead of 'error' for a more positive feeling
-         playSound('pop'); 
+         playSound('pop');
          speakText('獲得安慰獎，五十點');
          onUpdateUser(currentUser.id, {
             points: pointsAfterCost + CONSOLATION_POINTS
@@ -185,14 +199,14 @@ export const ShopView: React.FC<ShopViewProps> = ({
          onUpdateUser(currentUser.id, {
             ownedCardIds: [...currentUser.ownedCardIds, selected.id]
          });
-         
+
          if (selected.cost >= 1500) {
             speakText(`哇！太幸運了！你抽中了傳說級的 ${selected.title}`);
          } else {
             speakText(`恭喜獲得 ${selected.title}`);
          }
       }
-      
+
     }, 2000);
   };
 
@@ -200,11 +214,11 @@ export const ShopView: React.FC<ShopViewProps> = ({
   const handleRedeem = (card: RewardCard) => {
     const currentIds = [...currentUser.ownedCardIds];
     const index = currentIds.indexOf(card.id);
-    
+
     if (index > -1) {
       currentIds.splice(index, 1); // Remove only 1 instance
       onUpdateUser(currentUser.id, { ownedCardIds: currentIds });
-      
+
       playSound('success');
       speakText(`已使用${card.title}`);
 
@@ -224,12 +238,12 @@ export const ShopView: React.FC<ShopViewProps> = ({
 
     if (index > -1) {
       currentIds.splice(index, 1); // Remove only 1 instance
-      onUpdateUser(currentUser.id, { 
+      onUpdateUser(currentUser.id, {
         ownedCardIds: currentIds,
         points: currentUser.points + refundAmount
       });
-      
-      playSound('magic'); 
+
+      playSound('magic');
       speakText(`賣出成功，獲得${refundAmount}點`);
 
       // Only close if count reaches 0
@@ -242,25 +256,25 @@ export const ShopView: React.FC<ShopViewProps> = ({
 
   return (
     <div className="min-h-screen bg-purple-50 p-4 pb-20">
-       <GachaOverlay 
-         show={showGacha} 
-         stage={gachaStage} 
-         wonCard={wonCard} 
-         rewardImages={rewardImages} 
-         imageRefreshVersion={imageRefreshVersion} 
-         imageLoadErrors={imageLoadErrors} 
+       <GachaOverlay
+         show={showGacha}
+         stage={gachaStage}
+         wonCard={wonCard}
+         rewardImages={rewardImages}
+         imageRefreshVersion={imageRefreshVersion}
+         imageLoadErrors={imageLoadErrors}
          currentUser={currentUser}
          onClose={() => { setShowGacha(false); setGachaStage('idle'); setWonCard(null); }}
          onImageError={onImageError}
        />
 
-       <CardDetailOverlay 
-         card={viewingCard} 
+       <CardDetailOverlay
+         card={viewingCard}
          count={viewingCard ? (cardCounts[viewingCard.id] || 0) : 0}
-         rewardImages={rewardImages} 
-         imageRefreshVersion={imageRefreshVersion} 
-         imageLoadErrors={imageLoadErrors} 
-         onClose={() => setViewingCard(null)} 
+         rewardImages={rewardImages}
+         imageRefreshVersion={imageRefreshVersion}
+         imageLoadErrors={imageLoadErrors}
+         onClose={() => setViewingCard(null)}
          onImageError={onImageError}
          onRedeem={() => viewingCard && handleRedeem(viewingCard)}
          onSell={() => viewingCard && handleSell(viewingCard)}
@@ -271,8 +285,8 @@ export const ShopView: React.FC<ShopViewProps> = ({
          {/* Shop Header */}
          <div className="sticky top-0 bg-purple-50/95 backdrop-blur-sm z-10 py-4 mb-4 border-b border-purple-200">
            <div className="flex items-center justify-between">
-              <button 
-                onClick={onBack} 
+              <button
+                onClick={onBack}
                 className="px-4 py-2 bg-white rounded-full shadow-sm text-gray-500 font-bold flex items-center gap-2 border border-purple-100 hover:bg-gray-50 transition"
               >
                  <Home size={20} /> <span className="text-sm">回首頁</span>
@@ -285,7 +299,20 @@ export const ShopView: React.FC<ShopViewProps> = ({
               </div>
            </div>
          </div>
-         
+
+         {freeSpins > 0 && (
+           <div className="mb-6 bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500 rounded-3xl p-5 text-white text-center shadow-xl animate-pop">
+             <div className="text-6xl mb-1 animate-bounce">🎰</div>
+             <p className="text-2xl font-black mb-3">你有 {freeSpins} 次免費轉蛋！</p>
+             <button
+               onClick={handleGachaDraw}
+               className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 text-2xl font-black py-3 px-10 rounded-full shadow-xl border-b-4 border-yellow-600 transition active:scale-95 animate-pulse"
+             >
+               轉轉看
+             </button>
+           </div>
+         )}
+
          <div className="flex justify-between items-center mb-4">
            {/* Edit Mode Toggle */}
            <button
@@ -313,6 +340,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
          {/* Milestone cards: learning, not luck, earns a card of the child's choice */}
          <div className="mb-8 bg-gradient-to-r from-emerald-100 to-teal-100 border-4 border-emerald-200 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4">
            <span className="text-5xl">🌱</span>
+           <SpeakButton
+             text={milestonesAvailable > 0 ? `每學會十個字，就能免費選一張卡。現在可以選 ${milestonesAvailable} 張！` : `每學會十個字，就能免費選一張卡。再學會 ${10 - (masteredCount % 10)} 個就可以選了。`}
+             className="bg-emerald-50"
+           />
            <div className="flex-1 text-center md:text-left">
              <div className="text-xl font-black text-emerald-800">已經學會 {masteredCount} 個字、注音和英文</div>
              {milestonesAvailable > 0 ? (
@@ -347,12 +378,12 @@ export const ShopView: React.FC<ShopViewProps> = ({
                  {ownedCardsDisplay.map(card => {
                     const count = cardCounts[card.id] || 0;
                     return (
-                      <div 
-                        key={card.id} 
+                      <div
+                        key={card.id}
                         onClick={() => !isEditMode && handleViewCard(card)}
                         className={`${card.color} p-4 rounded-xl border-4 border-white shadow-md relative group flex flex-col transition-all overflow-hidden ${!isEditMode ? 'cursor-pointer hover:scale-105' : ''}`}
                       >
-                         
+
                          {/* Count Badge */}
                          {count > 1 && (
                             <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-black px-2 py-1 rounded-full shadow-md border-2 border-white flex items-center gap-1 animate-pop">
@@ -364,10 +395,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
                            <div className="absolute top-2 right-2 z-20">
                               <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg flex items-center gap-1 text-xs font-bold transition-transform hover:scale-110">
                                 <Camera size={16} /> 上傳
-                                <input 
-                                  type="file" 
-                                  accept="image/*" 
-                                  className="hidden" 
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
                                   onChange={(e) => onFileUpload(card.id, e)}
                                 />
                               </label>
@@ -380,10 +411,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
 
                          {(rewardImages[card.id] || card.imageUrl) && !imageLoadErrors[card.id] ? (
                            <div className="flex-1 min-h-[120px] mb-2 bg-white rounded-lg overflow-hidden flex items-center justify-center">
-                              <img 
-                                src={rewardImages[card.id] || `${card.imageUrl}?v=${imageRefreshVersion}`} 
-                                alt={card.title} 
-                                className="w-full h-full object-contain" 
+                              <img
+                                src={rewardImages[card.id] || `${card.imageUrl}?v=${imageRefreshVersion}`}
+                                alt={card.title}
+                                className="w-full h-full object-contain"
                                 onError={() => onImageError(card.id)}
                               />
                            </div>
@@ -407,10 +438,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
              {availableCards.map(card => {
                 const canAfford = currentUser.points >= card.cost;
                 const count = cardCounts[card.id] || 0;
-                
+
                 return (
                  <div key={card.id} className="bg-white p-4 rounded-2xl shadow-md flex flex-col gap-3 border-2 border-gray-100 hover:border-purple-200 transition-colors relative">
-                    
+
                     {/* Owned Badge in Store */}
                     {count > 0 && (
                       <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm z-10">
@@ -422,10 +453,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
                        <div className="absolute top-2 right-2 z-20">
                           <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg flex items-center gap-1 text-xs font-bold transition-transform hover:scale-110">
                             <Upload size={14} /> 照片
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              className="hidden" 
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
                               onChange={(e) => onFileUpload(card.id, e)}
                             />
                           </label>
@@ -435,10 +466,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
                     <div className="flex items-center gap-4">
                       <div className={`w-24 h-14 ${card.color} rounded-xl flex items-center justify-center text-3xl shadow-inner overflow-hidden shrink-0`}>
                          {(rewardImages[card.id] || card.imageUrl) && !imageLoadErrors[card.id] ? (
-                           <img 
-                             src={rewardImages[card.id] || `${card.imageUrl}?v=${imageRefreshVersion}`} 
-                             alt={card.title} 
-                             className="w-full h-full object-contain bg-white" 
+                           <img
+                             src={rewardImages[card.id] || `${card.imageUrl}?v=${imageRefreshVersion}`}
+                             alt={card.title}
+                             className="w-full h-full object-contain bg-white"
                              onError={() => onImageError(card.id)}
                            />
                          ) : (
@@ -449,8 +480,9 @@ export const ShopView: React.FC<ShopViewProps> = ({
                          <h3 className="font-bold text-gray-800">{card.title}</h3>
                          <p className="text-xs text-gray-500 line-clamp-2">{card.description}</p>
                       </div>
+                      <SpeakButton text={`${card.title}。${card.description}。要 ${card.cost} 顆星星。`} className="w-10 h-10 bg-purple-50" size={20} />
                     </div>
-                    
+
                     {choosingFree && milestonesAvailable > 0 && (
                       <button
                         onClick={() => { onClaimMilestone(card); setChoosingFree(false); }}
@@ -459,13 +491,13 @@ export const ShopView: React.FC<ShopViewProps> = ({
                         🎁 免費選這張
                       </button>
                     )}
-                    <button 
+                    <button
                       onClick={() => onPurchase(card)}
                       disabled={!canAfford}
                       className={`
                          w-full py-2 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2
-                         ${canAfford 
-                           ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md transform active:scale-95' 
+                         ${canAfford
+                           ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md transform active:scale-95'
                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'}
                       `}
                     >
@@ -483,17 +515,19 @@ export const ShopView: React.FC<ShopViewProps> = ({
               <h3 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
                  <Sparkles className="animate-spin-slow" /> 幸運轉蛋機 <Sparkles className="animate-spin-slow" />
               </h3>
-              <p className="mb-4 opacity-90">{GACHA_COST} 點抽一次！有機會獲得安慰獎！</p>
-              <button 
+              <p className="mb-2 opacity-90">{GACHA_COST} 點抽一次！有機會獲得安慰獎！</p>
+              <SpeakButton text={`幸運轉蛋機。${GACHA_COST} 顆星星可以轉一次，會轉到一張卡片，或是五十顆星星。`} className="mb-3" />
+              <br />
+              <button
                 onClick={handleGachaDraw}
-                disabled={currentUser.points < GACHA_COST}
+                disabled={freeSpins === 0 && currentUser.points < GACHA_COST}
                 className={`
-                  bg-yellow-400 text-yellow-900 font-bold py-3 px-8 rounded-full shadow-xl 
+                  bg-yellow-400 text-yellow-900 font-bold py-3 px-8 rounded-full shadow-xl
                   border-b-4 border-yellow-600 transform transition active:scale-95 active:border-b-0 active:translate-y-1
-                  ${currentUser.points < GACHA_COST ? 'opacity-50 cursor-not-allowed' : 'hover:bg-yellow-300 animate-pulse'}
+                  ${freeSpins === 0 && currentUser.points < GACHA_COST ? 'opacity-50 cursor-not-allowed' : 'hover:bg-yellow-300 animate-pulse'}
                 `}
               >
-                {currentUser.points < GACHA_COST ? '點數不足' : `馬上抽獎 (${GACHA_COST}⭐️)`}
+                {freeSpins > 0 ? `🎁 免費轉一次（還有 ${freeSpins} 次）` : currentUser.points < GACHA_COST ? '點數不足' : `馬上抽獎 (${GACHA_COST}⭐️)`}
               </button>
             </div>
             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>

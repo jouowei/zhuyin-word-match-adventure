@@ -7,7 +7,8 @@ import { Ear, MousePointerClick, Volume2 } from 'lucide-react';
 import { playSound } from '../../utils/sound';
 import { speakEnglish, speakLetterName } from '../../utils/englishSpeech';
 import { AudioStep } from '../../utils/chineseAudio';
-import { choicesToHide, correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
+import { praise } from '../Praise';
 import { InstructionButton, speakHelp, useInstruction } from '../VoiceGuide';
 
 interface EnglishMatchGameViewProps {
@@ -85,7 +86,7 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
       speakEnglish(isLetters && info ? `${info.name}. ${info.keyword}.` : target.keyword);
       const helpLevel = help[target.id] || 0;
       onMatch(target.id, helpLevel);
-      showFeedback(correctMessage(helpLevel, isListening ? 'listen' : 'look'));
+      showFeedback(praise(helpLevel, isListening ? 'listen' : 'look', { lang: 'en' }));
       setSelectedId(null);
       return;
     }

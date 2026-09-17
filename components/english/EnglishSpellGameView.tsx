@@ -7,7 +7,8 @@ import { playSound } from '../../utils/sound';
 import { speakEnglish, speakLetterName, speakPraise } from '../../utils/englishSpeech';
 import { getLetter } from '../../english/letters';
 import { AudioStep, playChineseAudio } from '../../utils/chineseAudio';
-import { choicesToHide, correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
+import { praise } from '../Praise';
 import { WORD_LEVELS } from '../../english/curriculum';
 import { InstructionButton, speakHelp, withInstruction } from '../VoiceGuide';
 
@@ -180,7 +181,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
       later(() => {
         playSound('success');
         speakEnglish(current.text, { onEnd: speakPraise });
-        showFeedback(correctMessage(itemHelp, 'spell'));
+        showFeedback(praise(itemHelp, 'spell', { speak: false }));
       }, 500);
       later(() => onMatch(current.id, itemHelp), 2200);
     }

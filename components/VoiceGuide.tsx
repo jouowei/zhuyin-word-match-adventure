@@ -38,5 +38,20 @@ export const InstructionButton: React.FC<{ text: string; className?: string; lab
   </button>
 );
 
+/** A round speaker button that reads out what's next to it: menus and shops for children who can't read yet. */
+export const SpeakButton: React.FC<{ text: string; className?: string; size?: number }> = ({ text, className = '', size = 22 }) => (
+  <button
+    type="button"
+    onClick={e => {
+      e.stopPropagation();
+      playChineseAudio([instructionStep(text)]);
+    }}
+    aria-label={`聽聽看：${text}`}
+    className={`shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/90 text-sky-700 hover:bg-white shadow-md transition active:scale-90 ${className}`}
+  >
+    <Volume2 size={size} />
+  </button>
+);
+
 /** Help that appears on a hint level: speaks, and the caller highlights or hides choices. */
 export const speakHelp = (steps: AudioStep[]) => playChineseAudio(steps.map(step => (step.url || step.lang ? step : { ...step, rate: step.rate ?? 0.95 })));

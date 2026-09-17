@@ -9,7 +9,8 @@ import { Home, Star, RefreshCw, ArrowRight, Ear, PenTool } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { canPlayPictureRound } from '../utils/wordPicture';
-import { choicesToHide, correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { InstructionButton, speakHelp, useInstruction } from './VoiceGuide';
 
@@ -150,7 +151,15 @@ export const GameView: React.FC<GameViewProps> = ({
     const level = Math.max(help[id] || 0, extraHelp);
     onMatch(id, level);
     setSelectedCardId(null);
-    showFeedback(correctMessage(level, currentDifficulty === 2 ? 'listen' : currentDifficulty === 3 ? 'write' : 'look'), 1500);
+    showFeedback(praise(level, currentDifficulty === 2 ? 'listen' : currentDifficulty === 3 ? 'write' : 'look'), 1500);
+  };
+
+  const handleWritingSkip = () => {
+    if (!writingCharacter) return;
+    onMatch(writingCharacter.id, HELP_SHOW);
+    setSelectedCardId(null);
+    setWritingCharacter(null);
+    showFeedback('下次再寫寫看！', 1500);
   };
 
   const handleWritingComplete = (helped: boolean) => {
@@ -172,14 +181,14 @@ export const GameView: React.FC<GameViewProps> = ({
           item={writingCharacter}
           stage={writingCharacter ? writeStage?.(writingCharacter.character) ?? 0 : 0}
           onComplete={handleWritingComplete}
-          onCancel={() => setWritingCharacter(null)}
+          onCancel={handleWritingSkip}
         />
       ) : (
         <WritingOverlay
           character={writingCharacter}
           stage={writingCharacter ? writeStage?.(writingCharacter.character) ?? 0 : 0}
           onComplete={handleWritingComplete}
-          onCancel={() => setWritingCharacter(null)}
+          onCancel={handleWritingSkip}
         />
       )}
 

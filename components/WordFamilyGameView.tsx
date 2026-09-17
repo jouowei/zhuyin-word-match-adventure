@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Home, Star, RefreshCw, Users, Volume2, X } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { FamilyQuestion, FamilyWord } from '../services/wordFamilies';
-import { correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
@@ -91,7 +92,7 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
       }
       // The whole family: say the words together so the shared part stands out
       setDone(true);
-      setFeedback(correctMessage(help, 'listen'));
+      setFeedback(praise(help, 'listen'));
       playChineseAudio([...members.map(m => ({ ...wordSound(m), pause: 350 })), { text: '裡面都有' }, headSound()]);
       later(() => onMatch(current.id, help), 3200);
       return;

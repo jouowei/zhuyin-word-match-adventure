@@ -5,7 +5,8 @@ import { EnglishTopBar, FeedbackToast, useFeedback } from './shared';
 import { FourLineLetter } from './FourLineLetter';
 import { LetterTraceOverlay } from './LetterTraceOverlay';
 import { PenTool, CheckCircle2 } from 'lucide-react';
-import { correctMessage } from '../../services/scaffolding';
+import { praise } from '../Praise';
+import { HELP_SHOW } from '../../services/scaffolding';
 import { LETTER_LEVELS } from '../../english/curriculum';
 import { InstructionButton, useInstruction } from '../VoiceGuide';
 
@@ -30,7 +31,15 @@ export const EnglishTraceGameView: React.FC<EnglishTraceGameViewProps> = ({
     if (!tracingItem) return;
     const helpLevel = helped ? 1 : 0;
     onMatch(tracingItem.id, helpLevel);
-    showFeedback(correctMessage(helpLevel, 'write'));
+    showFeedback(praise(helpLevel, 'write', { speak: false }));
+    setTracingItem(null);
+  };
+
+  // Skipping still finishes the letter (done with help), so the round can go on
+  const handleSkip = () => {
+    if (!tracingItem) return;
+    onMatch(tracingItem.id, HELP_SHOW);
+    showFeedback('下次再寫寫看！');
     setTracingItem(null);
   };
 
@@ -40,7 +49,7 @@ export const EnglishTraceGameView: React.FC<EnglishTraceGameViewProps> = ({
         item={tracingItem}
         stage={tracingItem ? writeStage?.(tracingItem) ?? 0 : 0}
         onComplete={handleComplete}
-        onCancel={() => setTracingItem(null)}
+        onCancel={handleSkip}
       />
 
       <EnglishTopBar currentUser={currentUser} onHome={onHome} onRefresh={onRefresh} />

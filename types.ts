@@ -59,6 +59,8 @@ export interface UserProfile {
   lastEnglishPath?: string;                   // ...and of the last finished 今日英文冒險
   activity?: Record<string, DayActivity>;     // Per day (YYYY-MM-DD), for the parent report
   milestoneClaims?: number;                   // Free cards already chosen for every 10 items learned
+  freeSpins?: number;                         // Free gacha spins waiting to be used
+  lastFreeSpinDate?: string;                  // Date a finished adventure last gave a free spin (one a day)
 }
 
 /** What happened on one day, for the parent report. */

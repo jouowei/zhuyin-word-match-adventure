@@ -173,6 +173,7 @@ const loadClip = (url: string, text: string): Promise<AudioBuffer | null> => {
 
 export const stopChineseAudio = () => {
   playToken++;
+  currentSteps = null;
   try {
     currentSource?.stop();
   } catch (e) {}
@@ -200,14 +201,29 @@ const speakText = (step: AudioStep, onEnd: () => void) => {
  * Plays recordings one after another, falling back to speech synthesis for missing or broken ones.
  * `onStep` is called as each step starts, e.g. to light up what is being said.
  */
-export const playChineseAudio = (steps: AudioStep[], onEnd?: () => void, onStep?: (index: number) => void) => {
+// The sequence playing now, so a praise can be added to its end (see sayAfterAnswer)
+let currentSteps: AudioStep[] | null = null;
+let currentStartedAt = 0;
+let pendingAfterAnswer: { steps: AudioStep[]; timer: ReturnType<typeof setTimeout> } | null = null;
+
+export const playChineseAudio = (inputSteps: AudioStep[], onEnd?: () => void, onStep?: (index: number) => void) => {
+  const steps = [...inputSteps];
+  // A praise asked for just before this sequence (the game showed "答對了" first, then played the word) goes at its end
+  if (pendingAfterAnswer) {
+    clearTimeout(pendingAfterAnswer.timer);
+    steps.push(...pendingAfterAnswer.steps);
+    pendingAfterAnswer = null;
+  }
   stopChineseAudio();
   const token = playToken;
+  currentSteps = steps;
+  currentStartedAt = Date.now();
   if (typeof window !== 'undefined') getContext().resume().catch(() => {}); // Unlock audio inside the tap
 
   const playStep = async (index: number) => {
     if (token !== playToken) return;
     if (index >= steps.length) {
+      if (currentSteps === steps) currentSteps = null;
       onEnd?.();
       return;
     }
@@ -246,6 +262,26 @@ export const playChineseAudio = (steps: AudioStep[], onEnd?: () => void, onStep?
   };
 
   playStep(0);
+};
+
+/**
+ * Says something right after an answer without talking over the game: at the end of the word the game has just
+ * started playing, or of the one it is about to play; otherwise on its own.
+ */
+export const sayAfterAnswer = (steps: AudioStep[]) => {
+  const justStarted = currentSteps && Date.now() - currentStartedAt < 400;
+  if (justStarted) {
+    currentSteps!.push(...steps);
+    return;
+  }
+  if (pendingAfterAnswer) clearTimeout(pendingAfterAnswer.timer);
+  pendingAfterAnswer = {
+    steps,
+    timer: setTimeout(() => {
+      pendingAfterAnswer = null;
+      playChineseAudio(steps);
+    }, 250),
+  };
 };
 
 /** Warm the cache so the first tap plays without delay. */

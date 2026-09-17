@@ -2,6 +2,7 @@ import React from 'react';
 import { EnglishUnit, UserProfile } from '../../types';
 import { ENGLISH_STAGES, ENGLISH_UNITS, REVIEW_UNITS, getRecommendedUnitId, unitStars } from '../../english/curriculum';
 import { Home, Star, Plus, Settings2 } from 'lucide-react';
+import { SpeakButton, useInstruction } from '../VoiceGuide';
 
 interface EnglishHubViewProps {
   currentUser: UserProfile;
@@ -19,13 +20,18 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
 }) => {
   const progress = currentUser.englishProgress || {};
   const recommendedId = getRecommendedUnitId(progress);
+  useInstruction('english-hub', '這是英文大冒險。按綠色的今日英文冒險，一站一站學英文。點喇叭，可以聽聽每個按鈕是什麼。');
+
+  // "字母 Aa – Ee" is said as "字母 A 到 E"
+  const spokenTitle = (title: string) => title.replace(/([A-Z])[a-z]\s*–\s*([A-Z])[a-z]/g, '$1 到 $2');
 
   const renderUnitCard = (unit: EnglishUnit) => {
     const done = progress[unit.id] || [];
     const isRecommended = unit.id === recommendedId;
     return (
+      <div key={unit.id} className="relative">
+      <SpeakButton text={isRecommended ? `下一站：${spokenTitle(unit.title)}` : spokenTitle(unit.title)} className="absolute top-1 left-1 z-10 w-9 h-9 bg-sky-50" size={18} />
       <button
-        key={unit.id}
         onClick={() => onOpenUnit(unit)}
         className={`relative bg-white rounded-2xl p-4 shadow-md border-b-4 flex flex-col items-center text-center transition-transform hover:scale-105 active:scale-95
           ${isRecommended ? 'border-yellow-400 ring-4 ring-yellow-300' : unitStars(done) === 4 ? 'border-green-300' : 'border-gray-200'}`}
@@ -44,6 +50,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
           ))}
         </div>
       </button>
+      </div>
     );
   };
 
@@ -71,9 +78,10 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
           <p className="font-english text-2xl font-bold text-sky-500 -mt-1">English Adventure</p>
           <p className="text-gray-500 mt-2">從 ABC 開始，一站一站學會發音、字母和單字！</p>
 
+          <div className="relative mt-5">
           <button
             onClick={onDailyPath}
-            className="w-full mt-5 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white rounded-2xl shadow-lg p-4 flex items-center gap-4 text-left transition active:scale-95"
+            className="w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white rounded-2xl shadow-lg p-4 pr-16 flex items-center gap-4 text-left transition active:scale-95"
           >
             <span className="text-6xl">🗺️</span>
             <span className="flex-1">
@@ -82,15 +90,20 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
             </span>
             {dailyDone && <span className="bg-white text-emerald-600 font-black px-3 py-1 rounded-full text-sm">✓ 今天完成了</span>}
           </button>
+          <SpeakButton text="今日英文冒險：複習、認識新朋友、練習和挑戰，大約十分鐘。" className="absolute right-3 top-1/2 -translate-y-1/2" />
+          </div>
 
           <div className="grid grid-cols-2 gap-3 mt-3">
-            <button
-              onClick={onAlphabet}
-              className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 rounded-2xl shadow-lg flex flex-col items-center gap-1 transition active:scale-95"
-            >
-              <span className="font-english text-3xl leading-none">ABC</span>
-              <span>字母表・聽發音</span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={onAlphabet}
+                className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 rounded-2xl shadow-lg flex flex-col items-center gap-1 transition active:scale-95"
+              >
+                <span className="font-english text-3xl leading-none">ABC</span>
+                <span>字母表・聽發音</span>
+              </button>
+              <SpeakButton text="字母表：點每個字母，聽它怎麼唸。" className="absolute top-1 left-1 w-9 h-9" size={18} />
+            </div>
             <button
               onClick={onManageCustom}
               className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg flex flex-col items-center gap-1 transition active:scale-95"

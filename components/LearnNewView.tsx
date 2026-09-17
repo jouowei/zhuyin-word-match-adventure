@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { praise } from './Praise';
 import { ArrowLeft, ArrowRight, Volume2, Sparkles } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
@@ -82,6 +83,7 @@ export const LearnNewView: React.FC<LearnNewViewProps> = ({ currentUser, cards, 
     if (choice.id === card.item.id) {
       setSolved(true);
       playSound('success');
+      praise(help, 'look', { speak: false });
       playChineseAudio([{ text: help === 0 ? '對了！' : '找到了！' }, ...introSteps(card.item).slice(0, 1)]);
       results.current.push({ character: card.item.character, helped: help > 0 });
       later(() => {

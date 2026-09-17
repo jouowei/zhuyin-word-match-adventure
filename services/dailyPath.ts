@@ -41,6 +41,7 @@ export interface DailyPath {
   newItems: string[];
   masteredToday: string[];
   startPoints: number;
+  gift?: boolean;       // Finishing this path gave today's free gacha spin
 }
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);

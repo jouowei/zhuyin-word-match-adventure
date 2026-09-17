@@ -5,7 +5,8 @@ import { Home, Star, RefreshCw, Mic, AlertCircle, Volume2, ThumbsUp } from 'luci
 import { hasPicture } from '../utils/wordPicture';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
-import { correctMessage, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { InstructionButton, speakHelp, useInstruction } from './VoiceGuide';
 import { ZhuyinText } from './ZhuyinText';
@@ -135,7 +136,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
         const level = help[item.id] || 0;
         playSound('success');
         onMatch(item.id, level);
-        showFeedback(correctMessage(level, 'say'));
+        showFeedback(praise(level, 'say'));
       } else {
         handleFailedTry(item, transcript);
       }
@@ -169,7 +170,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   const handleParentPass = (item: WordItem) => {
     playSound('success');
     onMatch(item.id, HELP_SHOW);
-    showFeedback(correctMessage(HELP_SHOW, 'say'));
+    showFeedback(praise(HELP_SHOW, 'say'));
   };
 
   const isListening = listeningForId !== null;
