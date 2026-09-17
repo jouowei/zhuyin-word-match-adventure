@@ -1,0 +1,2842 @@
+[
+ {
+  "key": "ay",
+  "file": "letter-a",
+  "kind": "name",
+  "text": "A.",
+  "expect": [
+   "a",
+   "ay",
+   "eh",
+   "hey"
+  ],
+  "aliases": [
+   "a"
+  ]
+ },
+ {
+  "key": "bee",
+  "file": "letter-b",
+  "kind": "name",
+  "text": "B.",
+  "expect": [
+   "b",
+   "be",
+   "bee"
+  ],
+  "aliases": [
+   "b"
+  ]
+ },
+ {
+  "key": "see",
+  "file": "letter-c",
+  "kind": "name",
+  "text": "C.",
+  "expect": [
+   "c",
+   "see",
+   "sea"
+  ],
+  "aliases": [
+   "c"
+  ]
+ },
+ {
+  "key": "dee",
+  "file": "letter-d",
+  "kind": "name",
+  "text": "D.",
+  "expect": [
+   "d",
+   "dee"
+  ],
+  "aliases": [
+   "d"
+  ]
+ },
+ {
+  "key": "ee",
+  "file": "letter-e",
+  "kind": "name",
+  "text": "E.",
+  "expect": [
+   "e",
+   "ee"
+  ],
+  "aliases": [
+   "e"
+  ]
+ },
+ {
+  "key": "eff",
+  "file": "letter-f",
+  "kind": "name",
+  "text": "F.",
+  "expect": [
+   "f",
+   "ef",
+   "eff"
+  ],
+  "aliases": [
+   "f"
+  ]
+ },
+ {
+  "key": "jee",
+  "file": "letter-g",
+  "kind": "name",
+  "text": "G.",
+  "expect": [
+   "g",
+   "gee",
+   "jee"
+  ],
+  "aliases": [
+   "g"
+  ]
+ },
+ {
+  "key": "aitch",
+  "file": "letter-h",
+  "kind": "name",
+  "text": "H.",
+  "expect": [
+   "h",
+   "age",
+   "aitch",
+   "eight",
+   "8"
+  ],
+  "aliases": [
+   "h"
+  ]
+ },
+ {
+  "key": "eye",
+  "file": "letter-i",
+  "kind": "name",
+  "text": "I.",
+  "expect": [
+   "i",
+   "eye",
+   "aye",
+   "ai"
+  ],
+  "aliases": [
+   "i"
+  ]
+ },
+ {
+  "key": "jay",
+  "file": "letter-j",
+  "kind": "name",
+  "text": "J.",
+  "expect": [
+   "j",
+   "jay"
+  ],
+  "aliases": [
+   "j"
+  ]
+ },
+ {
+  "key": "kay",
+  "file": "letter-k",
+  "kind": "name",
+  "text": "K.",
+  "expect": [
+   "k",
+   "kay",
+   "okay",
+   "ok"
+  ],
+  "aliases": [
+   "k"
+  ]
+ },
+ {
+  "key": "el",
+  "file": "letter-l",
+  "kind": "name",
+  "text": "L.",
+  "expect": [
+   "l",
+   "el",
+   "elle"
+  ],
+  "aliases": [
+   "l"
+  ]
+ },
+ {
+  "key": "em",
+  "file": "letter-m",
+  "kind": "name",
+  "text": "M.",
+  "expect": [
+   "m",
+   "em"
+  ],
+  "aliases": [
+   "m"
+  ]
+ },
+ {
+  "key": "en",
+  "file": "letter-n",
+  "kind": "name",
+  "text": "N.",
+  "expect": [
+   "n",
+   "en",
+   "and"
+  ],
+  "aliases": [
+   "n"
+  ]
+ },
+ {
+  "key": "oh",
+  "file": "letter-o",
+  "kind": "name",
+  "text": "O.",
+  "expect": [
+   "o",
+   "oh",
+   "owe"
+  ],
+  "aliases": [
+   "o"
+  ]
+ },
+ {
+  "key": "pee",
+  "file": "letter-p",
+  "kind": "name",
+  "text": "P.",
+  "expect": [
+   "p",
+   "pee",
+   "pea"
+  ],
+  "aliases": [
+   "p"
+  ]
+ },
+ {
+  "key": "cue",
+  "file": "letter-q",
+  "kind": "name",
+  "text": "Q.",
+  "expect": [
+   "q",
+   "cue",
+   "queue"
+  ],
+  "aliases": [
+   "q"
+  ]
+ },
+ {
+  "key": "are",
+  "file": "letter-r",
+  "kind": "name",
+  "text": "R.",
+  "expect": [
+   "r",
+   "are",
+   "our"
+  ],
+  "aliases": [
+   "r"
+  ]
+ },
+ {
+  "key": "ess",
+  "file": "letter-s",
+  "kind": "name",
+  "text": "S.",
+  "expect": [
+   "s",
+   "es",
+   "ess",
+   "yes"
+  ],
+  "aliases": [
+   "s"
+  ]
+ },
+ {
+  "key": "tee",
+  "file": "letter-t",
+  "kind": "name",
+  "text": "T.",
+  "expect": [
+   "t",
+   "tea",
+   "tee"
+  ],
+  "aliases": [
+   "t"
+  ]
+ },
+ {
+  "key": "you",
+  "file": "letter-u",
+  "kind": "name",
+  "text": "U.",
+  "expect": [
+   "u",
+   "you",
+   "yu"
+  ],
+  "aliases": [
+   "u"
+  ]
+ },
+ {
+  "key": "vee",
+  "file": "letter-v",
+  "kind": "name",
+  "text": "V.",
+  "expect": [
+   "v",
+   "vee"
+  ],
+  "aliases": [
+   "v"
+  ]
+ },
+ {
+  "key": "double you",
+  "file": "letter-w",
+  "kind": "name",
+  "text": "W.",
+  "expect": [
+   "w",
+   "double you",
+   "double u"
+  ],
+  "aliases": [
+   "w"
+  ]
+ },
+ {
+  "key": "ex",
+  "file": "letter-x",
+  "kind": "name",
+  "text": "X.",
+  "expect": [
+   "x",
+   "ex",
+   "ax"
+  ],
+  "aliases": [
+   "x"
+  ]
+ },
+ {
+  "key": "why",
+  "file": "letter-y",
+  "kind": "name",
+  "text": "Y.",
+  "expect": [
+   "y",
+   "why"
+  ],
+  "aliases": [
+   "y"
+  ]
+ },
+ {
+  "key": "zee",
+  "file": "letter-z",
+  "kind": "name",
+  "text": "Z.",
+  "expect": [
+   "z",
+   "zee",
+   "zed"
+  ],
+  "aliases": [
+   "z"
+  ]
+ },
+ {
+  "key": "buh",
+  "file": "sound-buh",
+  "kind": "sound",
+  "phonemes": "bʌ.",
+  "expect": []
+ },
+ {
+  "key": "kuh",
+  "file": "sound-kuh",
+  "kind": "sound",
+  "phonemes": "kʌ.",
+  "expect": []
+ },
+ {
+  "key": "duh",
+  "file": "sound-duh",
+  "kind": "sound",
+  "phonemes": "dʌ.",
+  "expect": []
+ },
+ {
+  "key": "eh",
+  "file": "sound-eh",
+  "kind": "sound",
+  "phonemes": "ˈɛ.",
+  "expect": []
+ },
+ {
+  "key": "fuh",
+  "file": "sound-fuh",
+  "kind": "sound",
+  "phonemes": "fʌ.",
+  "expect": []
+ },
+ {
+  "key": "guh",
+  "file": "sound-guh",
+  "kind": "sound",
+  "phonemes": "ɡʌ.",
+  "expect": []
+ },
+ {
+  "key": "huh",
+  "file": "sound-huh",
+  "kind": "sound",
+  "phonemes": "hʌ.",
+  "expect": []
+ },
+ {
+  "key": "juh",
+  "file": "sound-juh",
+  "kind": "sound",
+  "phonemes": "dʒʌ.",
+  "expect": []
+ },
+ {
+  "key": "luh",
+  "file": "sound-luh",
+  "kind": "sound",
+  "phonemes": "lʌ.",
+  "expect": []
+ },
+ {
+  "key": "mmm",
+  "file": "sound-mmm",
+  "kind": "sound",
+  "phonemes": "mʌ.",
+  "expect": []
+ },
+ {
+  "key": "nuh",
+  "file": "sound-nuh",
+  "kind": "sound",
+  "phonemes": "nʌ.",
+  "expect": []
+ },
+ {
+  "key": "ah",
+  "file": "sound-ah",
+  "kind": "sound",
+  "phonemes": "ˈɑː.",
+  "expect": []
+ },
+ {
+  "key": "puh",
+  "file": "sound-puh",
+  "kind": "sound",
+  "phonemes": "pʌ.",
+  "expect": []
+ },
+ {
+  "key": "kwuh",
+  "file": "sound-kwuh",
+  "kind": "sound",
+  "phonemes": "kwʌ.",
+  "expect": []
+ },
+ {
+  "key": "ruh",
+  "file": "sound-ruh",
+  "kind": "sound",
+  "phonemes": "ɹʌ.",
+  "expect": []
+ },
+ {
+  "key": "suh",
+  "file": "sound-suh",
+  "kind": "sound",
+  "phonemes": "sʌ.",
+  "expect": []
+ },
+ {
+  "key": "tuh",
+  "file": "sound-tuh",
+  "kind": "sound",
+  "phonemes": "tʌ.",
+  "expect": []
+ },
+ {
+  "key": "uh",
+  "file": "sound-uh",
+  "kind": "sound",
+  "phonemes": "ˈʌ.",
+  "expect": []
+ },
+ {
+  "key": "vuh",
+  "file": "sound-vuh",
+  "kind": "sound",
+  "phonemes": "vʌ.",
+  "expect": []
+ },
+ {
+  "key": "wuh",
+  "file": "sound-wuh",
+  "kind": "sound",
+  "phonemes": "wʌ.",
+  "expect": []
+ },
+ {
+  "key": "yuh",
+  "file": "sound-yuh",
+  "kind": "sound",
+  "phonemes": "jʌ.",
+  "expect": []
+ },
+ {
+  "key": "zuh",
+  "file": "sound-zuh",
+  "kind": "sound",
+  "phonemes": "zʌ.",
+  "expect": []
+ },
+ {
+  "key": "apple",
+  "file": "word-apple",
+  "kind": "word",
+  "text": "apple",
+  "expect": [
+   "apple"
+  ]
+ },
+ {
+  "key": "ant",
+  "file": "word-ant",
+  "kind": "word",
+  "text": "ant",
+  "expect": [
+   "ant"
+  ]
+ },
+ {
+  "key": "alligator",
+  "file": "word-alligator",
+  "kind": "word",
+  "text": "alligator",
+  "expect": [
+   "alligator"
+  ]
+ },
+ {
+  "key": "bear",
+  "file": "word-bear",
+  "kind": "word",
+  "text": "bear",
+  "expect": [
+   "bear"
+  ]
+ },
+ {
+  "key": "bus",
+  "file": "word-bus",
+  "kind": "word",
+  "text": "bus",
+  "expect": [
+   "bus"
+  ]
+ },
+ {
+  "key": "banana",
+  "file": "word-banana",
+  "kind": "word",
+  "text": "banana",
+  "expect": [
+   "banana"
+  ]
+ },
+ {
+  "key": "cat",
+  "file": "word-cat",
+  "kind": "word",
+  "text": "cat",
+  "expect": [
+   "cat"
+  ]
+ },
+ {
+  "key": "car",
+  "file": "word-car",
+  "kind": "word",
+  "text": "car",
+  "expect": [
+   "car"
+  ]
+ },
+ {
+  "key": "cake",
+  "file": "word-cake",
+  "kind": "word",
+  "text": "cake",
+  "expect": [
+   "cake"
+  ]
+ },
+ {
+  "key": "dog",
+  "file": "word-dog",
+  "kind": "word",
+  "text": "dog",
+  "expect": [
+   "dog"
+  ]
+ },
+ {
+  "key": "duck",
+  "file": "word-duck",
+  "kind": "word",
+  "text": "duck",
+  "expect": [
+   "duck"
+  ]
+ },
+ {
+  "key": "drum",
+  "file": "word-drum",
+  "kind": "word",
+  "text": "drum",
+  "expect": [
+   "drum"
+  ]
+ },
+ {
+  "key": "egg",
+  "file": "word-egg",
+  "kind": "word",
+  "text": "egg",
+  "expect": [
+   "egg"
+  ]
+ },
+ {
+  "key": "elephant",
+  "file": "word-elephant",
+  "kind": "word",
+  "text": "elephant",
+  "expect": [
+   "elephant"
+  ]
+ },
+ {
+  "key": "elf",
+  "file": "word-elf",
+  "kind": "word",
+  "text": "elf",
+  "expect": [
+   "elf"
+  ]
+ },
+ {
+  "key": "fish",
+  "file": "word-fish",
+  "kind": "word",
+  "text": "fish",
+  "expect": [
+   "fish"
+  ]
+ },
+ {
+  "key": "frog",
+  "file": "word-frog",
+  "kind": "word",
+  "text": "frog",
+  "expect": [
+   "frog"
+  ]
+ },
+ {
+  "key": "fox",
+  "file": "word-fox",
+  "kind": "word",
+  "text": "fox",
+  "expect": [
+   "fox"
+  ]
+ },
+ {
+  "key": "goat",
+  "file": "word-goat",
+  "kind": "word",
+  "text": "goat",
+  "expect": [
+   "goat"
+  ]
+ },
+ {
+  "key": "gift",
+  "file": "word-gift",
+  "kind": "word",
+  "text": "gift",
+  "expect": [
+   "gift"
+  ]
+ },
+ {
+  "key": "grapes",
+  "file": "word-grapes",
+  "kind": "word",
+  "text": "grapes",
+  "expect": [
+   "grapes"
+  ]
+ },
+ {
+  "key": "horse",
+  "file": "word-horse",
+  "kind": "word",
+  "text": "horse",
+  "expect": [
+   "horse"
+  ]
+ },
+ {
+  "key": "hat",
+  "file": "word-hat",
+  "kind": "word",
+  "text": "hat",
+  "expect": [
+   "hat"
+  ]
+ },
+ {
+  "key": "house",
+  "file": "word-house",
+  "kind": "word",
+  "text": "house",
+  "expect": [
+   "house"
+  ]
+ },
+ {
+  "key": "insect",
+  "file": "word-insect",
+  "kind": "word",
+  "text": "insect",
+  "expect": [
+   "insect"
+  ]
+ },
+ {
+  "key": "in",
+  "file": "word-in",
+  "kind": "word",
+  "text": "in",
+  "expect": [
+   "in"
+  ]
+ },
+ {
+  "key": "igloo",
+  "file": "word-igloo",
+  "kind": "word",
+  "text": "igloo",
+  "expect": [
+   "igloo"
+  ]
+ },
+ {
+  "key": "juice",
+  "file": "word-juice",
+  "kind": "word",
+  "text": "juice",
+  "expect": [
+   "juice"
+  ]
+ },
+ {
+  "key": "jam",
+  "file": "word-jam",
+  "kind": "word",
+  "text": "jam",
+  "expect": [
+   "jam"
+  ]
+ },
+ {
+  "key": "jet",
+  "file": "word-jet",
+  "kind": "word",
+  "text": "jet",
+  "expect": [
+   "jet"
+  ]
+ },
+ {
+  "key": "kite",
+  "file": "word-kite",
+  "kind": "word",
+  "text": "kite",
+  "expect": [
+   "kite"
+  ]
+ },
+ {
+  "key": "key",
+  "file": "word-key",
+  "kind": "word",
+  "text": "key",
+  "expect": [
+   "key"
+  ]
+ },
+ {
+  "key": "king",
+  "file": "word-king",
+  "kind": "word",
+  "text": "king",
+  "expect": [
+   "king"
+  ]
+ },
+ {
+  "key": "lion",
+  "file": "word-lion",
+  "kind": "word",
+  "text": "lion",
+  "expect": [
+   "lion"
+  ]
+ },
+ {
+  "key": "leaf",
+  "file": "word-leaf",
+  "kind": "word",
+  "text": "leaf",
+  "expect": [
+   "leaf"
+  ]
+ },
+ {
+  "key": "lemon",
+  "file": "word-lemon",
+  "kind": "word",
+  "text": "lemon",
+  "expect": [
+   "lemon"
+  ]
+ },
+ {
+  "key": "monkey",
+  "file": "word-monkey",
+  "kind": "word",
+  "text": "monkey",
+  "expect": [
+   "monkey"
+  ]
+ },
+ {
+  "key": "moon",
+  "file": "word-moon",
+  "kind": "word",
+  "text": "moon",
+  "expect": [
+   "moon"
+  ]
+ },
+ {
+  "key": "milk",
+  "file": "word-milk",
+  "kind": "word",
+  "text": "milk",
+  "expect": [
+   "milk"
+  ]
+ },
+ {
+  "key": "nose",
+  "file": "word-nose",
+  "kind": "word",
+  "text": "nose",
+  "expect": [
+   "nose"
+  ]
+ },
+ {
+  "key": "nut",
+  "file": "word-nut",
+  "kind": "word",
+  "text": "nut",
+  "expect": [
+   "nut"
+  ]
+ },
+ {
+  "key": "net",
+  "file": "word-net",
+  "kind": "word",
+  "text": "net",
+  "expect": [
+   "net"
+  ]
+ },
+ {
+  "key": "octopus",
+  "file": "word-octopus",
+  "kind": "word",
+  "text": "octopus",
+  "expect": [
+   "octopus"
+  ]
+ },
+ {
+  "key": "ox",
+  "file": "word-ox",
+  "kind": "word",
+  "text": "ox",
+  "expect": [
+   "ox"
+  ]
+ },
+ {
+  "key": "olive",
+  "file": "word-olive",
+  "kind": "word",
+  "text": "olive",
+  "expect": [
+   "olive"
+  ]
+ },
+ {
+  "key": "pig",
+  "file": "word-pig",
+  "kind": "word",
+  "text": "pig",
+  "expect": [
+   "pig"
+  ]
+ },
+ {
+  "key": "pen",
+  "file": "word-pen",
+  "kind": "word",
+  "text": "pen",
+  "expect": [
+   "pen"
+  ]
+ },
+ {
+  "key": "panda",
+  "file": "word-panda",
+  "kind": "word",
+  "text": "panda",
+  "expect": [
+   "panda"
+  ]
+ },
+ {
+  "key": "queen",
+  "file": "word-queen",
+  "kind": "word",
+  "text": "queen",
+  "expect": [
+   "queen"
+  ]
+ },
+ {
+  "key": "quiet",
+  "file": "word-quiet",
+  "kind": "word",
+  "text": "quiet",
+  "expect": [
+   "quiet"
+  ]
+ },
+ {
+  "key": "quick",
+  "file": "word-quick",
+  "kind": "word",
+  "text": "quick",
+  "expect": [
+   "quick"
+  ]
+ },
+ {
+  "key": "rabbit",
+  "file": "word-rabbit",
+  "kind": "word",
+  "text": "rabbit",
+  "expect": [
+   "rabbit"
+  ]
+ },
+ {
+  "key": "robot",
+  "file": "word-robot",
+  "kind": "word",
+  "text": "robot",
+  "expect": [
+   "robot"
+  ]
+ },
+ {
+  "key": "rain",
+  "file": "word-rain",
+  "kind": "word",
+  "text": "rain",
+  "expect": [
+   "rain"
+  ]
+ },
+ {
+  "key": "sun",
+  "file": "word-sun",
+  "kind": "word",
+  "text": "sun",
+  "expect": [
+   "sun"
+  ]
+ },
+ {
+  "key": "sock",
+  "file": "word-sock",
+  "kind": "word",
+  "text": "sock",
+  "expect": [
+   "sock"
+  ]
+ },
+ {
+  "key": "snake",
+  "file": "word-snake",
+  "kind": "word",
+  "text": "snake",
+  "expect": [
+   "snake"
+  ]
+ },
+ {
+  "key": "tiger",
+  "file": "word-tiger",
+  "kind": "word",
+  "text": "tiger",
+  "expect": [
+   "tiger"
+  ]
+ },
+ {
+  "key": "tree",
+  "file": "word-tree",
+  "kind": "word",
+  "text": "tree",
+  "expect": [
+   "tree"
+  ]
+ },
+ {
+  "key": "tent",
+  "file": "word-tent",
+  "kind": "word",
+  "text": "tent",
+  "expect": [
+   "tent"
+  ]
+ },
+ {
+  "key": "umbrella",
+  "file": "word-umbrella",
+  "kind": "word",
+  "text": "umbrella",
+  "expect": [
+   "umbrella"
+  ]
+ },
+ {
+  "key": "up",
+  "file": "word-up",
+  "kind": "word",
+  "text": "up",
+  "expect": [
+   "up"
+  ]
+ },
+ {
+  "key": "under",
+  "file": "word-under",
+  "kind": "word",
+  "text": "under",
+  "expect": [
+   "under"
+  ]
+ },
+ {
+  "key": "van",
+  "file": "word-van",
+  "kind": "word",
+  "text": "van",
+  "expect": [
+   "van"
+  ]
+ },
+ {
+  "key": "violin",
+  "file": "word-violin",
+  "kind": "word",
+  "text": "violin",
+  "expect": [
+   "violin"
+  ]
+ },
+ {
+  "key": "volcano",
+  "file": "word-volcano",
+  "kind": "word",
+  "text": "volcano",
+  "expect": [
+   "volcano"
+  ]
+ },
+ {
+  "key": "watermelon",
+  "file": "word-watermelon",
+  "kind": "word",
+  "text": "watermelon",
+  "expect": [
+   "watermelon"
+  ]
+ },
+ {
+  "key": "web",
+  "file": "word-web",
+  "kind": "word",
+  "text": "web",
+  "expect": [
+   "web"
+  ]
+ },
+ {
+  "key": "window",
+  "file": "word-window",
+  "kind": "word",
+  "text": "window",
+  "expect": [
+   "window"
+  ]
+ },
+ {
+  "key": "box",
+  "file": "word-box",
+  "kind": "word",
+  "text": "box",
+  "expect": [
+   "box"
+  ]
+ },
+ {
+  "key": "six",
+  "file": "word-six",
+  "kind": "word",
+  "text": "six",
+  "expect": [
+   "six"
+  ]
+ },
+ {
+  "key": "yo-yo",
+  "file": "word-yo-yo",
+  "kind": "word",
+  "text": "yo-yo",
+  "expect": [
+   "yo yo"
+  ]
+ },
+ {
+  "key": "yellow",
+  "file": "word-yellow",
+  "kind": "word",
+  "text": "yellow",
+  "expect": [
+   "yellow"
+  ]
+ },
+ {
+  "key": "yes",
+  "file": "word-yes",
+  "kind": "word",
+  "text": "yes",
+  "expect": [
+   "yes"
+  ]
+ },
+ {
+  "key": "zebra",
+  "file": "word-zebra",
+  "kind": "word",
+  "text": "zebra",
+  "expect": [
+   "zebra"
+  ]
+ },
+ {
+  "key": "zoo",
+  "file": "word-zoo",
+  "kind": "word",
+  "text": "zoo",
+  "expect": [
+   "zoo"
+  ]
+ },
+ {
+  "key": "zero",
+  "file": "word-zero",
+  "kind": "word",
+  "text": "zero",
+  "expect": [
+   "zero"
+  ]
+ },
+ {
+  "key": "bat",
+  "file": "word-bat",
+  "kind": "word",
+  "text": "bat",
+  "expect": [
+   "bat"
+  ]
+ },
+ {
+  "key": "rat",
+  "file": "word-rat",
+  "kind": "word",
+  "text": "rat",
+  "expect": [
+   "rat"
+  ]
+ },
+ {
+  "key": "map",
+  "file": "word-map",
+  "kind": "word",
+  "text": "map",
+  "expect": [
+   "map"
+  ]
+ },
+ {
+  "key": "cap",
+  "file": "word-cap",
+  "kind": "word",
+  "text": "cap",
+  "expect": [
+   "cap"
+  ]
+ },
+ {
+  "key": "pan",
+  "file": "word-pan",
+  "kind": "word",
+  "text": "pan",
+  "expect": [
+   "pan"
+  ]
+ },
+ {
+  "key": "can",
+  "file": "word-can",
+  "kind": "word",
+  "text": "can",
+  "expect": [
+   "can"
+  ]
+ },
+ {
+  "key": "bag",
+  "file": "word-bag",
+  "kind": "word",
+  "text": "bag",
+  "expect": [
+   "bag"
+  ]
+ },
+ {
+  "key": "bed",
+  "file": "word-bed",
+  "kind": "word",
+  "text": "bed",
+  "expect": [
+   "bed"
+  ]
+ },
+ {
+  "key": "hen",
+  "file": "word-hen",
+  "kind": "word",
+  "text": "hen",
+  "expect": [
+   "hen"
+  ]
+ },
+ {
+  "key": "ten",
+  "file": "word-ten",
+  "kind": "word",
+  "text": "ten",
+  "expect": [
+   "ten"
+  ]
+ },
+ {
+  "key": "leg",
+  "file": "word-leg",
+  "kind": "word",
+  "text": "leg",
+  "expect": [
+   "leg"
+  ]
+ },
+ {
+  "key": "red",
+  "file": "word-red",
+  "kind": "word",
+  "text": "red",
+  "expect": [
+   "red"
+  ]
+ },
+ {
+  "key": "wet",
+  "file": "word-wet",
+  "kind": "word",
+  "text": "wet",
+  "expect": [
+   "wet"
+  ]
+ },
+ {
+  "key": "pin",
+  "file": "word-pin",
+  "kind": "word",
+  "text": "pin",
+  "expect": [
+   "pin"
+  ]
+ },
+ {
+  "key": "lip",
+  "file": "word-lip",
+  "kind": "word",
+  "text": "lip",
+  "expect": [
+   "lip"
+  ]
+ },
+ {
+  "key": "kid",
+  "file": "word-kid",
+  "kind": "word",
+  "text": "kid",
+  "expect": [
+   "kid"
+  ]
+ },
+ {
+  "key": "dig",
+  "file": "word-dig",
+  "kind": "word",
+  "text": "dig",
+  "expect": [
+   "dig"
+  ]
+ },
+ {
+  "key": "win",
+  "file": "word-win",
+  "kind": "word",
+  "text": "win",
+  "expect": [
+   "win"
+  ]
+ },
+ {
+  "key": "bin",
+  "file": "word-bin",
+  "kind": "word",
+  "text": "bin",
+  "expect": [
+   "bin"
+  ]
+ },
+ {
+  "key": "pot",
+  "file": "word-pot",
+  "kind": "word",
+  "text": "pot",
+  "expect": [
+   "pot"
+  ]
+ },
+ {
+  "key": "log",
+  "file": "word-log",
+  "kind": "word",
+  "text": "log",
+  "expect": [
+   "log"
+  ]
+ },
+ {
+  "key": "hot",
+  "file": "word-hot",
+  "kind": "word",
+  "text": "hot",
+  "expect": [
+   "hot"
+  ]
+ },
+ {
+  "key": "hop",
+  "file": "word-hop",
+  "kind": "word",
+  "text": "hop",
+  "expect": [
+   "hop"
+  ]
+ },
+ {
+  "key": "dot",
+  "file": "word-dot",
+  "kind": "word",
+  "text": "dot",
+  "expect": [
+   "dot"
+  ]
+ },
+ {
+  "key": "cup",
+  "file": "word-cup",
+  "kind": "word",
+  "text": "cup",
+  "expect": [
+   "cup"
+  ]
+ },
+ {
+  "key": "bug",
+  "file": "word-bug",
+  "kind": "word",
+  "text": "bug",
+  "expect": [
+   "bug"
+  ]
+ },
+ {
+  "key": "hug",
+  "file": "word-hug",
+  "kind": "word",
+  "text": "hug",
+  "expect": [
+   "hug"
+  ]
+ },
+ {
+  "key": "run",
+  "file": "word-run",
+  "kind": "word",
+  "text": "run",
+  "expect": [
+   "run"
+  ]
+ },
+ {
+  "key": "tub",
+  "file": "word-tub",
+  "kind": "word",
+  "text": "tub",
+  "expect": [
+   "tub"
+  ]
+ },
+ {
+  "key": "cut",
+  "file": "word-cut",
+  "kind": "word",
+  "text": "cut",
+  "expect": [
+   "cut"
+  ]
+ },
+ {
+  "key": "blue",
+  "file": "word-blue",
+  "kind": "word",
+  "text": "blue",
+  "expect": [
+   "blue"
+  ]
+ },
+ {
+  "key": "green",
+  "file": "word-green",
+  "kind": "word",
+  "text": "green",
+  "expect": [
+   "green"
+  ]
+ },
+ {
+  "key": "orange",
+  "file": "word-orange",
+  "kind": "word",
+  "text": "orange",
+  "expect": [
+   "orange"
+  ]
+ },
+ {
+  "key": "purple",
+  "file": "word-purple",
+  "kind": "word",
+  "text": "purple",
+  "expect": [
+   "purple"
+  ]
+ },
+ {
+  "key": "black",
+  "file": "word-black",
+  "kind": "word",
+  "text": "black",
+  "expect": [
+   "black"
+  ]
+ },
+ {
+  "key": "white",
+  "file": "word-white",
+  "kind": "word",
+  "text": "white",
+  "expect": [
+   "white"
+  ]
+ },
+ {
+  "key": "brown",
+  "file": "word-brown",
+  "kind": "word",
+  "text": "brown",
+  "expect": [
+   "brown"
+  ]
+ },
+ {
+  "key": "one",
+  "file": "word-one",
+  "kind": "word",
+  "text": "one",
+  "expect": [
+   "one"
+  ]
+ },
+ {
+  "key": "two",
+  "file": "word-two",
+  "kind": "word",
+  "text": "two",
+  "expect": [
+   "two"
+  ]
+ },
+ {
+  "key": "three",
+  "file": "word-three",
+  "kind": "word",
+  "text": "three",
+  "expect": [
+   "three"
+  ]
+ },
+ {
+  "key": "four",
+  "file": "word-four",
+  "kind": "word",
+  "text": "four",
+  "expect": [
+   "four"
+  ]
+ },
+ {
+  "key": "five",
+  "file": "word-five",
+  "kind": "word",
+  "text": "five",
+  "expect": [
+   "five"
+  ]
+ },
+ {
+  "key": "seven",
+  "file": "word-seven",
+  "kind": "word",
+  "text": "seven",
+  "expect": [
+   "seven"
+  ]
+ },
+ {
+  "key": "eight",
+  "file": "word-eight",
+  "kind": "word",
+  "text": "eight",
+  "expect": [
+   "eight"
+  ]
+ },
+ {
+  "key": "nine",
+  "file": "word-nine",
+  "kind": "word",
+  "text": "nine",
+  "expect": [
+   "nine"
+  ]
+ },
+ {
+  "key": "bird",
+  "file": "word-bird",
+  "kind": "word",
+  "text": "bird",
+  "expect": [
+   "bird"
+  ]
+ },
+ {
+  "key": "peach",
+  "file": "word-peach",
+  "kind": "word",
+  "text": "peach",
+  "expect": [
+   "peach"
+  ]
+ },
+ {
+  "key": "bread",
+  "file": "word-bread",
+  "kind": "word",
+  "text": "bread",
+  "expect": [
+   "bread"
+  ]
+ },
+ {
+  "key": "rice",
+  "file": "word-rice",
+  "kind": "word",
+  "text": "rice",
+  "expect": [
+   "rice"
+  ]
+ },
+ {
+  "key": "water",
+  "file": "word-water",
+  "kind": "word",
+  "text": "water",
+  "expect": [
+   "water"
+  ]
+ },
+ {
+  "key": "ear",
+  "file": "word-ear",
+  "kind": "word",
+  "text": "ear",
+  "expect": [
+   "ear"
+  ]
+ },
+ {
+  "key": "mouth",
+  "file": "word-mouth",
+  "kind": "word",
+  "text": "mouth",
+  "expect": [
+   "mouth"
+  ]
+ },
+ {
+  "key": "hand",
+  "file": "word-hand",
+  "kind": "word",
+  "text": "hand",
+  "expect": [
+   "hand"
+  ]
+ },
+ {
+  "key": "foot",
+  "file": "word-foot",
+  "kind": "word",
+  "text": "foot",
+  "expect": [
+   "foot"
+  ]
+ },
+ {
+  "key": "arm",
+  "file": "word-arm",
+  "kind": "word",
+  "text": "arm",
+  "expect": [
+   "arm"
+  ]
+ },
+ {
+  "key": "mom",
+  "file": "word-mom",
+  "kind": "word",
+  "text": "mom",
+  "expect": [
+   "mom"
+  ]
+ },
+ {
+  "key": "dad",
+  "file": "word-dad",
+  "kind": "word",
+  "text": "dad",
+  "expect": [
+   "dad"
+  ]
+ },
+ {
+  "key": "baby",
+  "file": "word-baby",
+  "kind": "word",
+  "text": "baby",
+  "expect": [
+   "baby"
+  ]
+ },
+ {
+  "key": "boy",
+  "file": "word-boy",
+  "kind": "word",
+  "text": "boy",
+  "expect": [
+   "boy"
+  ]
+ },
+ {
+  "key": "girl",
+  "file": "word-girl",
+  "kind": "word",
+  "text": "girl",
+  "expect": [
+   "girl"
+  ]
+ },
+ {
+  "key": "grandma",
+  "file": "word-grandma",
+  "kind": "word",
+  "text": "grandma",
+  "expect": [
+   "grandma"
+  ]
+ },
+ {
+  "key": "grandpa",
+  "file": "word-grandpa",
+  "kind": "word",
+  "text": "grandpa",
+  "expect": [
+   "grandpa"
+  ]
+ },
+ {
+  "key": "friend",
+  "file": "word-friend",
+  "kind": "word",
+  "text": "friend",
+  "expect": [
+   "friend"
+  ]
+ },
+ {
+  "key": "ship",
+  "file": "word-ship",
+  "kind": "word",
+  "text": "ship",
+  "expect": [
+   "ship"
+  ]
+ },
+ {
+  "key": "shell",
+  "file": "word-shell",
+  "kind": "word",
+  "text": "shell",
+  "expect": [
+   "shell"
+  ]
+ },
+ {
+  "key": "chick",
+  "file": "word-chick",
+  "kind": "word",
+  "text": "chick",
+  "expect": [
+   "chick"
+  ]
+ },
+ {
+  "key": "cheese",
+  "file": "word-cheese",
+  "kind": "word",
+  "text": "cheese",
+  "expect": [
+   "cheese"
+  ]
+ },
+ {
+  "key": "lunch",
+  "file": "word-lunch",
+  "kind": "word",
+  "text": "lunch",
+  "expect": [
+   "lunch"
+  ]
+ },
+ {
+  "key": "bath",
+  "file": "word-bath",
+  "kind": "word",
+  "text": "bath",
+  "expect": [
+   "bath"
+  ]
+ },
+ {
+  "key": "thumb",
+  "file": "word-thumb",
+  "kind": "word",
+  "text": "thumb",
+  "expect": [
+   "thumb"
+  ]
+ },
+ {
+  "key": "feet",
+  "file": "word-feet",
+  "kind": "word",
+  "text": "feet",
+  "expect": [
+   "feet"
+  ]
+ },
+ {
+  "key": "sheep",
+  "file": "word-sheep",
+  "kind": "word",
+  "text": "sheep",
+  "expect": [
+   "sheep"
+  ]
+ },
+ {
+  "key": "food",
+  "file": "word-food",
+  "kind": "word",
+  "text": "food",
+  "expect": [
+   "food"
+  ]
+ },
+ {
+  "key": "boot",
+  "file": "word-boot",
+  "kind": "word",
+  "text": "boot",
+  "expect": [
+   "boot"
+  ]
+ },
+ {
+  "key": "spoon",
+  "file": "word-spoon",
+  "kind": "word",
+  "text": "spoon",
+  "expect": [
+   "spoon"
+  ]
+ },
+ {
+  "key": "pool",
+  "file": "word-pool",
+  "kind": "word",
+  "text": "pool",
+  "expect": [
+   "pool"
+  ]
+ },
+ {
+  "key": "bike",
+  "file": "word-bike",
+  "kind": "word",
+  "text": "bike",
+  "expect": [
+   "bike"
+  ]
+ },
+ {
+  "key": "home",
+  "file": "word-home",
+  "kind": "word",
+  "text": "home",
+  "expect": [
+   "home"
+  ]
+ },
+ {
+  "key": "bone",
+  "file": "word-bone",
+  "kind": "word",
+  "text": "bone",
+  "expect": [
+   "bone"
+  ]
+ },
+ {
+  "key": "rose",
+  "file": "word-rose",
+  "kind": "word",
+  "text": "rose",
+  "expect": [
+   "rose"
+  ]
+ },
+ {
+  "key": "cute",
+  "file": "word-cute",
+  "kind": "word",
+  "text": "cute",
+  "expect": [
+   "cute"
+  ]
+ },
+ {
+  "key": "man",
+  "file": "word-man",
+  "kind": "word",
+  "text": "man",
+  "expect": [
+   "man"
+  ]
+ },
+ {
+  "key": "nap",
+  "file": "word-nap",
+  "kind": "word",
+  "text": "nap",
+  "expect": [
+   "nap"
+  ]
+ },
+ {
+  "key": "flag",
+  "file": "word-flag",
+  "kind": "word",
+  "text": "flag",
+  "expect": [
+   "flag"
+  ]
+ },
+ {
+  "key": "tag",
+  "file": "word-tag",
+  "kind": "word",
+  "text": "tag",
+  "expect": [
+   "tag"
+  ]
+ },
+ {
+  "key": "sled",
+  "file": "word-sled",
+  "kind": "word",
+  "text": "sled",
+  "expect": [
+   "sled"
+  ]
+ },
+ {
+  "key": "top",
+  "file": "word-top",
+  "kind": "word",
+  "text": "top",
+  "expect": [
+   "top"
+  ]
+ },
+ {
+  "key": "bun",
+  "file": "word-bun",
+  "kind": "word",
+  "text": "bun",
+  "expect": [
+   "bun"
+  ]
+ },
+ {
+  "key": "hut",
+  "file": "word-hut",
+  "kind": "word",
+  "text": "hut",
+  "expect": [
+   "hut"
+  ]
+ },
+ {
+  "key": "lake",
+  "file": "word-lake",
+  "kind": "word",
+  "text": "lake",
+  "expect": [
+   "lake"
+  ]
+ },
+ {
+  "key": "balloon",
+  "file": "word-balloon",
+  "kind": "word",
+  "text": "balloon",
+  "expect": [
+   "balloon"
+  ]
+ },
+ {
+  "key": "a",
+  "file": "word-a",
+  "kind": "word",
+  "text": "a",
+  "expect": [
+   "a"
+  ]
+ },
+ {
+  "key": "has",
+  "file": "word-has",
+  "kind": "word",
+  "text": "has",
+  "expect": [
+   "has"
+  ]
+ },
+ {
+  "key": "a cat has a hat",
+  "file": "sentence-a-cat-has-a-hat",
+  "kind": "sentence",
+  "text": "A cat has a hat.",
+  "expect": [
+   "a cat has a hat"
+  ]
+ },
+ {
+  "key": "the",
+  "file": "word-the",
+  "kind": "word",
+  "text": "the",
+  "expect": [
+   "the"
+  ]
+ },
+ {
+  "key": "is",
+  "file": "word-is",
+  "kind": "word",
+  "text": "is",
+  "expect": [
+   "is"
+  ]
+ },
+ {
+  "key": "the rat is in the van",
+  "file": "sentence-the-rat-is-in-the-van",
+  "kind": "sentence",
+  "text": "The rat is in the van.",
+  "expect": [
+   "the rat is in the van"
+  ]
+ },
+ {
+  "key": "i",
+  "file": "word-i",
+  "kind": "word",
+  "text": "i",
+  "expect": [
+   "i"
+  ]
+ },
+ {
+  "key": "have",
+  "file": "word-have",
+  "kind": "word",
+  "text": "have",
+  "expect": [
+   "have"
+  ]
+ },
+ {
+  "key": "and",
+  "file": "word-and",
+  "kind": "word",
+  "text": "and",
+  "expect": [
+   "and"
+  ]
+ },
+ {
+  "key": "i have a map and a bag",
+  "file": "sentence-i-have-a-map-and-a-bag",
+  "kind": "sentence",
+  "text": "I have a map and a bag.",
+  "expect": [
+   "i have a map and a bag"
+  ]
+ },
+ {
+  "key": "on",
+  "file": "word-on",
+  "kind": "word",
+  "text": "on",
+  "expect": [
+   "on"
+  ]
+ },
+ {
+  "key": "the hen is on the bed",
+  "file": "sentence-the-hen-is-on-the-bed",
+  "kind": "sentence",
+  "text": "The hen is on the bed.",
+  "expect": [
+   "the hen is on the bed"
+  ]
+ },
+ {
+  "key": "pens",
+  "file": "word-pens",
+  "kind": "word",
+  "text": "pens",
+  "expect": [
+   "pens"
+  ]
+ },
+ {
+  "key": "i see ten red pens",
+  "file": "sentence-i-see-ten-red-pens",
+  "kind": "sentence",
+  "text": "I see ten red pens.",
+  "expect": [
+   "i see ten red pens"
+  ]
+ },
+ {
+  "key": "my",
+  "file": "word-my",
+  "kind": "word",
+  "text": "my",
+  "expect": [
+   "my"
+  ]
+ },
+ {
+  "key": "my leg is wet",
+  "file": "sentence-my-leg-is-wet",
+  "kind": "sentence",
+  "text": "My leg is wet.",
+  "expect": [
+   "my leg is wet"
+  ]
+ },
+ {
+  "key": "the pig can dig",
+  "file": "sentence-the-pig-can-dig",
+  "kind": "sentence",
+  "text": "The pig can dig.",
+  "expect": [
+   "the pig can dig"
+  ]
+ },
+ {
+  "key": "kids",
+  "file": "word-kids",
+  "kind": "word",
+  "text": "kids",
+  "expect": [
+   "kids"
+  ]
+ },
+ {
+  "key": "six kids win",
+  "file": "sentence-six-kids-win",
+  "kind": "sentence",
+  "text": "Six kids win!",
+  "expect": [
+   "six kids win"
+  ]
+ },
+ {
+  "key": "put",
+  "file": "word-put",
+  "kind": "word",
+  "text": "put",
+  "expect": [
+   "put"
+  ]
+ },
+ {
+  "key": "it",
+  "file": "word-it",
+  "kind": "word",
+  "text": "it",
+  "expect": [
+   "it"
+  ]
+ },
+ {
+  "key": "put it in the bin",
+  "file": "sentence-put-it-in-the-bin",
+  "kind": "sentence",
+  "text": "Put it in the bin.",
+  "expect": [
+   "put it in the bin"
+  ]
+ },
+ {
+  "key": "the dog is on a log",
+  "file": "sentence-the-dog-is-on-a-log",
+  "kind": "sentence",
+  "text": "The dog is on a log.",
+  "expect": [
+   "the dog is on a log"
+  ]
+ },
+ {
+  "key": "a fox is in the box",
+  "file": "sentence-a-fox-is-in-the-box",
+  "kind": "sentence",
+  "text": "A fox is in the box.",
+  "expect": [
+   "a fox is in the box"
+  ]
+ },
+ {
+  "key": "the pot is hot",
+  "file": "sentence-the-pot-is-hot",
+  "kind": "sentence",
+  "text": "The pot is hot!",
+  "expect": [
+   "the pot is hot"
+  ]
+ },
+ {
+  "key": "the bug is in the cup",
+  "file": "sentence-the-bug-is-in-the-cup",
+  "kind": "sentence",
+  "text": "The bug is in the cup.",
+  "expect": [
+   "the bug is in the cup"
+  ]
+ },
+ {
+  "key": "i run in the sun",
+  "file": "sentence-i-run-in-the-sun",
+  "kind": "sentence",
+  "text": "I run in the sun.",
+  "expect": [
+   "i run in the sun"
+  ]
+ },
+ {
+  "key": "give",
+  "file": "word-give",
+  "kind": "word",
+  "text": "give",
+  "expect": [
+   "give"
+  ]
+ },
+ {
+  "key": "me",
+  "file": "word-me",
+  "kind": "word",
+  "text": "me",
+  "expect": [
+   "me"
+  ]
+ },
+ {
+  "key": "give me a hug",
+  "file": "sentence-give-me-a-hug",
+  "kind": "sentence",
+  "text": "Give me a hug!",
+  "expect": [
+   "give me a hug"
+  ]
+ },
+ {
+  "key": "like",
+  "file": "word-like",
+  "kind": "word",
+  "text": "like",
+  "expect": [
+   "like"
+  ]
+ },
+ {
+  "key": "i like red",
+  "file": "sentence-i-like-red",
+  "kind": "sentence",
+  "text": "I like red.",
+  "expect": [
+   "i like red"
+  ]
+ },
+ {
+  "key": "sky",
+  "file": "word-sky",
+  "kind": "word",
+  "text": "sky",
+  "expect": [
+   "sky"
+  ]
+ },
+ {
+  "key": "the sky is blue",
+  "file": "sentence-the-sky-is-blue",
+  "kind": "sentence",
+  "text": "The sky is blue.",
+  "expect": [
+   "the sky is blue"
+  ]
+ },
+ {
+  "key": "i see a green frog",
+  "file": "sentence-i-see-a-green-frog",
+  "kind": "sentence",
+  "text": "I see a green frog.",
+  "expect": [
+   "i see a green frog"
+  ]
+ },
+ {
+  "key": "one, two, three",
+  "file": "sentence-one-two-three",
+  "kind": "sentence",
+  "text": "One, two, three!",
+  "expect": [
+   "one, two, three"
+  ]
+ },
+ {
+  "key": "am",
+  "file": "word-am",
+  "kind": "word",
+  "text": "am",
+  "expect": [
+   "am"
+  ]
+ },
+ {
+  "key": "i am seven",
+  "file": "sentence-i-am-seven",
+  "kind": "sentence",
+  "text": "I am seven.",
+  "expect": [
+   "i am seven"
+  ]
+ },
+ {
+  "key": "fingers",
+  "file": "word-fingers",
+  "kind": "word",
+  "text": "fingers",
+  "expect": [
+   "fingers"
+  ]
+ },
+ {
+  "key": "i have ten fingers",
+  "file": "sentence-i-have-ten-fingers",
+  "kind": "sentence",
+  "text": "I have ten fingers.",
+  "expect": [
+   "i have ten fingers"
+  ]
+ },
+ {
+  "key": "i see a bird",
+  "file": "sentence-i-see-a-bird",
+  "kind": "sentence",
+  "text": "I see a bird.",
+  "expect": [
+   "i see a bird"
+  ]
+ },
+ {
+  "key": "big",
+  "file": "word-big",
+  "kind": "word",
+  "text": "big",
+  "expect": [
+   "big"
+  ]
+ },
+ {
+  "key": "the lion is big",
+  "file": "sentence-the-lion-is-big",
+  "kind": "sentence",
+  "text": "The lion is big.",
+  "expect": [
+   "the lion is big"
+  ]
+ },
+ {
+  "key": "jump",
+  "file": "word-jump",
+  "kind": "word",
+  "text": "jump",
+  "expect": [
+   "jump"
+  ]
+ },
+ {
+  "key": "a frog can jump",
+  "file": "sentence-a-frog-can-jump",
+  "kind": "sentence",
+  "text": "A frog can jump.",
+  "expect": [
+   "a frog can jump"
+  ]
+ },
+ {
+  "key": "apples",
+  "file": "word-apples",
+  "kind": "word",
+  "text": "apples",
+  "expect": [
+   "apples"
+  ]
+ },
+ {
+  "key": "i like apples",
+  "file": "sentence-i-like-apples",
+  "kind": "sentence",
+  "text": "I like apples.",
+  "expect": [
+   "i like apples"
+  ]
+ },
+ {
+  "key": "eat",
+  "file": "word-eat",
+  "kind": "word",
+  "text": "eat",
+  "expect": [
+   "eat"
+  ]
+ },
+ {
+  "key": "eggs",
+  "file": "word-eggs",
+  "kind": "word",
+  "text": "eggs",
+  "expect": [
+   "eggs"
+  ]
+ },
+ {
+  "key": "i eat bread and eggs",
+  "file": "sentence-i-eat-bread-and-eggs",
+  "kind": "sentence",
+  "text": "I eat bread and eggs.",
+  "expect": [
+   "i eat bread and eggs"
+  ]
+ },
+ {
+  "key": "some",
+  "file": "word-some",
+  "kind": "word",
+  "text": "some",
+  "expect": [
+   "some"
+  ]
+ },
+ {
+  "key": "can i have some milk",
+  "file": "sentence-can-i-have-some-milk",
+  "kind": "sentence",
+  "text": "Can I have some milk?",
+  "expect": [
+   "can i have some milk"
+  ]
+ },
+ {
+  "key": "touch",
+  "file": "word-touch",
+  "kind": "word",
+  "text": "touch",
+  "expect": [
+   "touch"
+  ]
+ },
+ {
+  "key": "your",
+  "file": "word-your",
+  "kind": "word",
+  "text": "your",
+  "expect": [
+   "your"
+  ]
+ },
+ {
+  "key": "touch your nose",
+  "file": "sentence-touch-your-nose",
+  "kind": "sentence",
+  "text": "Touch your nose.",
+  "expect": [
+   "touch your nose"
+  ]
+ },
+ {
+  "key": "eyes",
+  "file": "word-eyes",
+  "kind": "word",
+  "text": "eyes",
+  "expect": [
+   "eyes"
+  ]
+ },
+ {
+  "key": "i have two eyes",
+  "file": "sentence-i-have-two-eyes",
+  "kind": "sentence",
+  "text": "I have two eyes.",
+  "expect": [
+   "i have two eyes"
+  ]
+ },
+ {
+  "key": "clap",
+  "file": "word-clap",
+  "kind": "word",
+  "text": "clap",
+  "expect": [
+   "clap"
+  ]
+ },
+ {
+  "key": "hands",
+  "file": "word-hands",
+  "kind": "word",
+  "text": "hands",
+  "expect": [
+   "hands"
+  ]
+ },
+ {
+  "key": "clap your hands",
+  "file": "sentence-clap-your-hands",
+  "kind": "sentence",
+  "text": "Clap your hands!",
+  "expect": [
+   "clap your hands"
+  ]
+ },
+ {
+  "key": "love",
+  "file": "word-love",
+  "kind": "word",
+  "text": "love",
+  "expect": [
+   "love"
+  ]
+ },
+ {
+  "key": "i love my mom",
+  "file": "sentence-i-love-my-mom",
+  "kind": "sentence",
+  "text": "I love my mom.",
+  "expect": [
+   "i love my mom"
+  ]
+ },
+ {
+  "key": "this",
+  "file": "word-this",
+  "kind": "word",
+  "text": "this",
+  "expect": [
+   "this"
+  ]
+ },
+ {
+  "key": "this is my dad",
+  "file": "sentence-this-is-my-dad",
+  "kind": "sentence",
+  "text": "This is my dad.",
+  "expect": [
+   "this is my dad"
+  ]
+ },
+ {
+  "key": "you are my friend",
+  "file": "sentence-you-are-my-friend",
+  "kind": "sentence",
+  "text": "You are my friend.",
+  "expect": [
+   "you are my friend"
+  ]
+ },
+ {
+  "key": "by",
+  "file": "word-by",
+  "kind": "word",
+  "text": "by",
+  "expect": [
+   "by"
+  ]
+ },
+ {
+  "key": "the fish is by the ship",
+  "file": "sentence-the-fish-is-by-the-ship",
+  "kind": "sentence",
+  "text": "The fish is by the ship.",
+  "expect": [
+   "the fish is by the ship"
+  ]
+ },
+ {
+  "key": "eats",
+  "file": "word-eats",
+  "kind": "word",
+  "text": "eats",
+  "expect": [
+   "eats"
+  ]
+ },
+ {
+  "key": "the chick eats cheese",
+  "file": "sentence-the-chick-eats-cheese",
+  "kind": "sentence",
+  "text": "The chick eats cheese.",
+  "expect": [
+   "the chick eats cheese"
+  ]
+ },
+ {
+  "key": "ducks",
+  "file": "word-ducks",
+  "kind": "word",
+  "text": "ducks",
+  "expect": [
+   "ducks"
+  ]
+ },
+ {
+  "key": "take",
+  "file": "word-take",
+  "kind": "word",
+  "text": "take",
+  "expect": [
+   "take"
+  ]
+ },
+ {
+  "key": "three ducks take a bath",
+  "file": "sentence-three-ducks-take-a-bath",
+  "kind": "sentence",
+  "text": "Three ducks take a bath.",
+  "expect": [
+   "three ducks take a bath"
+  ]
+ },
+ {
+  "key": "i see a bee in the tree",
+  "file": "sentence-i-see-a-bee-in-the-tree",
+  "kind": "sentence",
+  "text": "I see a bee in the tree.",
+  "expect": [
+   "i see a bee in the tree"
+  ]
+ },
+ {
+  "key": "look",
+  "file": "word-look",
+  "kind": "word",
+  "text": "look",
+  "expect": [
+   "look"
+  ]
+ },
+ {
+  "key": "at",
+  "file": "word-at",
+  "kind": "word",
+  "text": "at",
+  "expect": [
+   "at"
+  ]
+ },
+ {
+  "key": "look at the moon",
+  "file": "sentence-look-at-the-moon",
+  "kind": "sentence",
+  "text": "Look at the moon!",
+  "expect": [
+   "look at the moon"
+  ]
+ },
+ {
+  "key": "wipe",
+  "file": "word-wipe",
+  "kind": "word",
+  "text": "wipe",
+  "expect": [
+   "wipe"
+  ]
+ },
+ {
+  "key": "wipe your feet",
+  "file": "sentence-wipe-your-feet",
+  "kind": "sentence",
+  "text": "Wipe your feet.",
+  "expect": [
+   "wipe your feet"
+  ]
+ },
+ {
+  "key": "ride",
+  "file": "word-ride",
+  "kind": "word",
+  "text": "ride",
+  "expect": [
+   "ride"
+  ]
+ },
+ {
+  "key": "i ride my bike home",
+  "file": "sentence-i-ride-my-bike-home",
+  "kind": "sentence",
+  "text": "I ride my bike home.",
+  "expect": [
+   "i ride my bike home"
+  ]
+ },
+ {
+  "key": "the dog has a bone",
+  "file": "sentence-the-dog-has-a-bone",
+  "kind": "sentence",
+  "text": "The dog has a bone.",
+  "expect": [
+   "the dog has a bone"
+  ]
+ },
+ {
+  "key": "kites",
+  "file": "word-kites",
+  "kind": "word",
+  "text": "kites",
+  "expect": [
+   "kites"
+  ]
+ },
+ {
+  "key": "fly",
+  "file": "word-fly",
+  "kind": "word",
+  "text": "fly",
+  "expect": [
+   "fly"
+  ]
+ },
+ {
+  "key": "high",
+  "file": "word-high",
+  "kind": "word",
+  "text": "high",
+  "expect": [
+   "high"
+  ]
+ },
+ {
+  "key": "five kites fly high",
+  "file": "sentence-five-kites-fly-high",
+  "kind": "sentence",
+  "text": "Five kites fly high.",
+  "expect": [
+   "five kites fly high"
+  ]
+ },
+ {
+  "key": "great job",
+  "file": "praise-great-job",
+  "kind": "praise",
+  "text": "Great job!",
+  "expect": [
+   "great job"
+  ]
+ },
+ {
+  "key": "awesome",
+  "file": "praise-awesome",
+  "kind": "praise",
+  "text": "Awesome!",
+  "expect": [
+   "awesome"
+  ]
+ },
+ {
+  "key": "well done",
+  "file": "praise-well-done",
+  "kind": "praise",
+  "text": "Well done!",
+  "expect": [
+   "well done"
+  ]
+ },
+ {
+  "key": "you did it",
+  "file": "praise-you-did-it",
+  "kind": "praise",
+  "text": "You did it!",
+  "expect": [
+   "you did it"
+  ]
+ },
+ {
+  "key": "super",
+  "file": "praise-super",
+  "kind": "praise",
+  "text": "Super!",
+  "expect": [
+   "super"
+  ]
+ }
+]

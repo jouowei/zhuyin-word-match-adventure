@@ -1,0 +1,4543 @@
+{
+ "ay": {
+  "file": "letter-a",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "A",
+  "seconds": 0.49,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈA."
+  },
+  "misaki": true
+ },
+ "bee": {
+  "file": "letter-b",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "B",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈi."
+  },
+  "misaki": true
+ },
+ "see": {
+  "file": "letter-c",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "See.",
+  "seconds": 0.53,
+  "tries": 2,
+  "input": {
+   "phonemes": "sˈi."
+  },
+  "misaki": true
+ },
+ "dee": {
+  "file": "letter-d",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "D",
+  "seconds": 0.51,
+  "tries": 1,
+  "input": {
+   "phonemes": "dˈi."
+  },
+  "misaki": true
+ },
+ "ee": {
+  "file": "letter-e",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "\"E\"",
+  "seconds": 0.6,
+  "tries": 2,
+  "input": {
+   "text": "E."
+  },
+  "misaki": false,
+  "misakiTries": [
+   "Lee.",
+   "Bye!",
+   "Lee"
+  ]
+ },
+ "eff": {
+  "file": "letter-f",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "F",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛf."
+  },
+  "misaki": true
+ },
+ "jee": {
+  "file": "letter-g",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "jee",
+  "seconds": 0.5,
+  "tries": 3,
+  "input": {
+   "phonemes": "ʤˈi."
+  },
+  "misaki": true
+ },
+ "aitch": {
+  "file": "letter-h",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "H.",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈAʧ."
+  },
+  "misaki": true
+ },
+ "eye": {
+  "file": "letter-i",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "I",
+  "seconds": 0.43,
+  "tries": 3,
+  "input": {
+   "phonemes": "ˈI."
+  },
+  "misaki": true
+ },
+ "jay": {
+  "file": "letter-j",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "J",
+  "seconds": 0.55,
+  "tries": 2,
+  "input": {
+   "phonemes": "ʤˈA."
+  },
+  "misaki": true
+ },
+ "kay": {
+  "file": "letter-k",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "K",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈA."
+  },
+  "misaki": true
+ },
+ "el": {
+  "file": "letter-l",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "L",
+  "seconds": 0.54,
+  "tries": 2,
+  "input": {
+   "phonemes": "ˈɛl."
+  },
+  "misaki": true
+ },
+ "em": {
+  "file": "letter-m",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "M",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛm."
+  },
+  "misaki": true
+ },
+ "en": {
+  "file": "letter-n",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "And",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛn."
+  },
+  "misaki": true
+ },
+ "oh": {
+  "file": "letter-o",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Oh",
+  "seconds": 0.41,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈO."
+  },
+  "misaki": true
+ },
+ "pee": {
+  "file": "letter-p",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "\"P\"",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈi."
+  },
+  "misaki": true
+ },
+ "cue": {
+  "file": "letter-q",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Q",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "kjˈu."
+  },
+  "misaki": true
+ },
+ "are": {
+  "file": "letter-r",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "R",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɑɹ."
+  },
+  "misaki": true
+ },
+ "ess": {
+  "file": "letter-s",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "S",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛs."
+  },
+  "misaki": true
+ },
+ "tee": {
+  "file": "letter-t",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "T",
+  "seconds": 0.59,
+  "tries": 3,
+  "misaki": false,
+  "misakiTries": [
+   "See you!",
+   "See you!",
+   "Asi!"
+  ]
+ },
+ "you": {
+  "file": "letter-u",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "You",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "jˈu."
+  },
+  "misaki": true
+ },
+ "vee": {
+  "file": "letter-v",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "V.",
+  "seconds": 0.53,
+  "tries": 1,
+  "input": {
+   "phonemes": "vˈi."
+  },
+  "misaki": true
+ },
+ "double you": {
+  "file": "letter-w",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "W",
+  "seconds": 0.74,
+  "tries": 1,
+  "input": {
+   "phonemes": "dˈʌbəljˌu."
+  },
+  "misaki": true
+ },
+ "ex": {
+  "file": "letter-x",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "X",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛks."
+  },
+  "misaki": true
+ },
+ "why": {
+  "file": "letter-y",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Why?",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈI."
+  },
+  "misaki": true
+ },
+ "zee": {
+  "file": "letter-z",
+  "kind": "name",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Z",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "zˈi."
+  },
+  "misaki": true
+ },
+ "buh": {
+  "file": "sound-buh",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "But...",
+  "seconds": 0.58,
+  "tries": [],
+  "input": {
+   "phonemes": "bʌʔ."
+  },
+  "misaki": true
+ },
+ "kuh": {
+  "file": "sound-kuh",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Cut",
+  "seconds": 0.57,
+  "tries": [],
+  "input": {
+   "phonemes": "kʌʔ."
+  },
+  "misaki": true
+ },
+ "duh": {
+  "file": "sound-duh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Da",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "dʌ."
+  },
+  "misaki": false
+ },
+ "eh": {
+  "file": "sound-eh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Eh.",
+  "seconds": 0.58,
+  "tries": 4,
+  "input": {
+   "phonemes": "ˈɛː."
+  },
+  "misaki": false
+ },
+ "fuh": {
+  "file": "sound-fuh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Fuh.",
+  "seconds": 0.57,
+  "tries": 2,
+  "input": {
+   "phonemes": "fʌ."
+  },
+  "misaki": false
+ },
+ "guh": {
+  "file": "sound-guh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Gah.",
+  "seconds": 0.56,
+  "tries": 2,
+  "input": {
+   "phonemes": "ɡʌ."
+  },
+  "misaki": false
+ },
+ "huh": {
+  "file": "sound-huh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Huh.",
+  "seconds": 0.54,
+  "tries": 4,
+  "input": {
+   "phonemes": "hːʌ."
+  },
+  "misaki": false
+ },
+ "juh": {
+  "file": "sound-juh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Ja.",
+  "seconds": 0.54,
+  "tries": 2,
+  "input": {
+   "phonemes": "dʒʌ."
+  },
+  "misaki": false
+ },
+ "luh": {
+  "file": "sound-luh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "\"La\"",
+  "seconds": 0.57,
+  "tries": 6,
+  "input": {
+   "phonemes": "lə."
+  },
+  "misaki": false
+ },
+ "mmm": {
+  "file": "sound-mmm",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Ma",
+  "seconds": 0.56,
+  "tries": 7,
+  "input": {
+   "phonemes": "mɐ."
+  },
+  "misaki": false
+ },
+ "nuh": {
+  "file": "sound-nuh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Nah.",
+  "seconds": 0.55,
+  "tries": 2,
+  "input": {
+   "phonemes": "nʌ."
+  },
+  "misaki": false
+ },
+ "ah": {
+  "file": "sound-ah",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Ah",
+  "seconds": 0.55,
+  "tries": [],
+  "input": {
+   "phonemes": "ˈɑ."
+  },
+  "misaki": true
+ },
+ "puh": {
+  "file": "sound-puh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "\"Puh\"",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "pʌ."
+  },
+  "misaki": false
+ },
+ "kwuh": {
+  "file": "sound-kwuh",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "\"Quat\"",
+  "seconds": 0.61,
+  "tries": [],
+  "input": {
+   "phonemes": "kwˈʌʔ."
+  },
+  "misaki": true
+ },
+ "ruh": {
+  "file": "sound-ruh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "rah",
+  "seconds": 0.53,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹʌ."
+  },
+  "misaki": false
+ },
+ "suh": {
+  "file": "sound-suh",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Sir.",
+  "seconds": 0.52,
+  "tries": [],
+  "input": {
+   "phonemes": "sə."
+  },
+  "misaki": true
+ },
+ "tuh": {
+  "file": "sound-tuh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Tuh",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "tʌ."
+  },
+  "misaki": false
+ },
+ "uh": {
+  "file": "sound-uh",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "\"UT\"",
+  "seconds": 0.53,
+  "tries": [],
+  "input": {
+   "phonemes": "ˈʌʔ."
+  },
+  "misaki": true
+ },
+ "vuh": {
+  "file": "sound-vuh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "\"va\"",
+  "seconds": 0.54,
+  "tries": 2,
+  "input": {
+   "phonemes": "vʌ."
+  },
+  "misaki": false
+ },
+ "wuh": {
+  "file": "sound-wuh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "\"wah\"",
+  "seconds": 0.54,
+  "tries": 3,
+  "input": {
+   "phonemes": "wːʌ."
+  },
+  "misaki": false
+ },
+ "yuh": {
+  "file": "sound-yuh",
+  "kind": "sound",
+  "status": "chosen",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "yet",
+  "seconds": 0.6,
+  "tries": [],
+  "input": {
+   "phonemes": "jˈʌʔ."
+  },
+  "misaki": true
+ },
+ "zuh": {
+  "file": "sound-zuh",
+  "kind": "sound",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "Zah.",
+  "seconds": 0.54,
+  "tries": 2,
+  "input": {
+   "phonemes": "zʌ."
+  },
+  "misaki": false
+ },
+ "apple": {
+  "file": "word-apple",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Apple",
+  "seconds": 0.64,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈæpəl"
+  },
+  "misaki": true
+ },
+ "ant": {
+  "file": "word-ant",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Ant",
+  "seconds": 0.56,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "and",
+   "and",
+   "and"
+  ]
+ },
+ "alligator": {
+  "file": "word-alligator",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Alligator",
+  "seconds": 0.75,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈælɪɡˌAɾɚ"
+  },
+  "misaki": true
+ },
+ "bear": {
+  "file": "word-bear",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Bear",
+  "seconds": 0.6,
+  "tries": 2,
+  "input": {
+   "phonemes": "bˈɛɹ"
+  },
+  "misaki": true
+ },
+ "bus": {
+  "file": "word-bus",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bus",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈʌs"
+  },
+  "misaki": true
+ },
+ "banana": {
+  "file": "word-banana",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "banana",
+  "seconds": 0.72,
+  "tries": 1,
+  "input": {
+   "phonemes": "bənˈænə"
+  },
+  "misaki": true
+ },
+ "cat": {
+  "file": "word-cat",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Cat",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈæt"
+  },
+  "misaki": true
+ },
+ "car": {
+  "file": "word-car",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Car.",
+  "seconds": 0.53,
+  "tries": 2,
+  "input": {
+   "phonemes": "kˈɑɹ"
+  },
+  "misaki": true
+ },
+ "cake": {
+  "file": "word-cake",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Cake",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈAk"
+  },
+  "misaki": true
+ },
+ "dog": {
+  "file": "word-dog",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Dog",
+  "seconds": 0.61,
+  "tries": 5,
+  "input": {
+   "phonemes": "dˈɑɡ"
+  },
+  "misaki": true
+ },
+ "duck": {
+  "file": "word-duck",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Duck",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "dˈʌk"
+  },
+  "misaki": true
+ },
+ "drum": {
+  "file": "word-drum",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "drum",
+  "seconds": 0.62,
+  "tries": 1,
+  "input": {
+   "phonemes": "dɹˈʌm"
+  },
+  "misaki": true
+ },
+ "egg": {
+  "file": "word-egg",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "egg",
+  "seconds": 0.52,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛɡ"
+  },
+  "misaki": true
+ },
+ "elephant": {
+  "file": "word-elephant",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "elephant",
+  "seconds": 0.73,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛlɪfənt"
+  },
+  "misaki": true
+ },
+ "elf": {
+  "file": "word-elf",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Elf",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛlf"
+  },
+  "misaki": true
+ },
+ "fish": {
+  "file": "word-fish",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Fish!",
+  "seconds": 0.53,
+  "tries": 2,
+  "input": {
+   "phonemes": "fˈɪʃ"
+  },
+  "misaki": true
+ },
+ "frog": {
+  "file": "word-frog",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "frog",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "fɹˈɑɡ"
+  },
+  "misaki": true
+ },
+ "fox": {
+  "file": "word-fox",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Fox.",
+  "seconds": 0.59,
+  "tries": 2,
+  "input": {
+   "phonemes": "fˈɑks"
+  },
+  "misaki": true
+ },
+ "goat": {
+  "file": "word-goat",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Goat",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡˈOt"
+  },
+  "misaki": true
+ },
+ "gift": {
+  "file": "word-gift",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Gift",
+  "seconds": 0.63,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡˈɪft"
+  },
+  "misaki": true
+ },
+ "grapes": {
+  "file": "word-grapes",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Grapes",
+  "seconds": 0.63,
+  "tries": 2,
+  "input": {
+   "phonemes": "ɡɹˈAps"
+  },
+  "misaki": true
+ },
+ "horse": {
+  "file": "word-horse",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Horse.",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈɔɹs"
+  },
+  "misaki": true
+ },
+ "hat": {
+  "file": "word-hat",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "hat",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈæt"
+  },
+  "misaki": true
+ },
+ "house": {
+  "file": "word-house",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "house",
+  "seconds": 0.62,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈWs"
+  },
+  "misaki": true
+ },
+ "insect": {
+  "file": "word-insect",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "insect",
+  "seconds": 0.71,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɪnsɛkt"
+  },
+  "misaki": true
+ },
+ "in": {
+  "file": "word-in",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "in",
+  "seconds": 0.5,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "ends",
+   "End",
+   "End"
+  ]
+ },
+ "igloo": {
+  "file": "word-igloo",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.85,
+  "heard": "igloo",
+  "seconds": 0.77,
+  "tries": 4,
+  "misaki": false,
+  "misakiTries": [
+   "Iglo",
+   "Iglo.",
+   "Iglo"
+  ]
+ },
+ "juice": {
+  "file": "word-juice",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "- Juice.",
+  "seconds": 0.56,
+  "tries": 2,
+  "input": {
+   "phonemes": "ʤˈus"
+  },
+  "misaki": true
+ },
+ "jam": {
+  "file": "word-jam",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Jam",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "ʤˈæm"
+  },
+  "misaki": true
+ },
+ "jet": {
+  "file": "word-jet",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Jet",
+  "seconds": 0.53,
+  "tries": 3,
+  "input": {
+   "phonemes": "ʤˈɛt"
+  },
+  "misaki": true
+ },
+ "kite": {
+  "file": "word-kite",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "kite",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈIt"
+  },
+  "misaki": true
+ },
+ "key": {
+  "file": "word-key",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "key",
+  "seconds": 0.56,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "A tea.",
+   "See?",
+   "A tea"
+  ]
+ },
+ "king": {
+  "file": "word-king",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "King",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈɪŋ"
+  },
+  "misaki": true
+ },
+ "lion": {
+  "file": "word-lion",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Lion",
+  "seconds": 0.63,
+  "tries": 3,
+  "input": {
+   "phonemes": "lˈIən"
+  },
+  "misaki": true
+ },
+ "leaf": {
+  "file": "word-leaf",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Leaf.",
+  "seconds": 0.61,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "A leaf.",
+   "Leafs",
+   "A leaf."
+  ]
+ },
+ "lemon": {
+  "file": "word-lemon",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Lemon",
+  "seconds": 0.64,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈɛmən"
+  },
+  "misaki": true
+ },
+ "monkey": {
+  "file": "word-monkey",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "monkey",
+  "seconds": 0.74,
+  "tries": 1,
+  "input": {
+   "phonemes": "mˈʌŋki"
+  },
+  "misaki": true
+ },
+ "moon": {
+  "file": "word-moon",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Moon",
+  "seconds": 0.6,
+  "tries": 2,
+  "input": {
+   "phonemes": "mˈun"
+  },
+  "misaki": true
+ },
+ "milk": {
+  "file": "word-milk",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "milk",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "mˈɪlk"
+  },
+  "misaki": true
+ },
+ "nose": {
+  "file": "word-nose",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "nose",
+  "seconds": 0.66,
+  "tries": 1,
+  "input": {
+   "phonemes": "nˈOz"
+  },
+  "misaki": true
+ },
+ "nut": {
+  "file": "word-nut",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_sarah",
+  "speed": 1,
+  "heard": "Nut!",
+  "seconds": 0.62,
+  "tries": 13,
+  "input": {
+   "text": "nut"
+  },
+  "misaki": false,
+  "misakiTries": [
+   "\"Not\"",
+   "Not",
+   "Not"
+  ]
+ },
+ "net": {
+  "file": "word-net",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Net",
+  "seconds": 0.51,
+  "tries": 1,
+  "input": {
+   "phonemes": "nˈɛt"
+  },
+  "misaki": true
+ },
+ "octopus": {
+  "file": "word-octopus",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Octopus",
+  "seconds": 0.79,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɑktəpəs"
+  },
+  "misaki": true
+ },
+ "ox": {
+  "file": "word-ox",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Ox.",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɑks"
+  },
+  "misaki": true
+ },
+ "olive": {
+  "file": "word-olive",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "\"Olive\"",
+  "seconds": 0.6,
+  "tries": 3,
+  "input": {
+   "phonemes": "ˈɑlɪv"
+  },
+  "misaki": true
+ },
+ "pig": {
+  "file": "word-pig",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "pig",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈɪɡ"
+  },
+  "misaki": true
+ },
+ "pen": {
+  "file": "word-pen",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "pen",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈɛn"
+  },
+  "misaki": true
+ },
+ "panda": {
+  "file": "word-panda",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Panda",
+  "seconds": 0.67,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈændə"
+  },
+  "misaki": true
+ },
+ "queen": {
+  "file": "word-queen",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Queen",
+  "seconds": 0.61,
+  "tries": 2,
+  "input": {
+   "phonemes": "kwˈin"
+  },
+  "misaki": true
+ },
+ "quiet": {
+  "file": "word-quiet",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Quiet.",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "kwˈIət"
+  },
+  "misaki": true
+ },
+ "quick": {
+  "file": "word-quick",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Quick.",
+  "seconds": 0.54,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "\"Quakie\"",
+   "\"Quakie\"",
+   "\"Quéqué\""
+  ]
+ },
+ "rabbit": {
+  "file": "word-rabbit",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Rabbit",
+  "seconds": 0.67,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈæbɪt"
+  },
+  "misaki": true
+ },
+ "robot": {
+  "file": "word-robot",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "robot",
+  "seconds": 0.72,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈObɑt"
+  },
+  "misaki": true
+ },
+ "rain": {
+  "file": "word-rain",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Rain.",
+  "seconds": 0.6,
+  "tries": 2,
+  "input": {
+   "phonemes": "ɹˈAn"
+  },
+  "misaki": true
+ },
+ "sun": {
+  "file": "word-sun",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "\"Sun\"",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "sˈʌn"
+  },
+  "misaki": true
+ },
+ "sock": {
+  "file": "word-sock",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Sock",
+  "seconds": 0.61,
+  "tries": 2,
+  "input": {
+   "phonemes": "sˈɑk"
+  },
+  "misaki": true
+ },
+ "snake": {
+  "file": "word-snake",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Snake.",
+  "seconds": 0.64,
+  "tries": 2,
+  "input": {
+   "phonemes": "snˈAk"
+  },
+  "misaki": true
+ },
+ "tiger": {
+  "file": "word-tiger",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Tiger",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈIɡɚ"
+  },
+  "misaki": true
+ },
+ "tree": {
+  "file": "word-tree",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "tree",
+  "seconds": 0.59,
+  "tries": 2,
+  "input": {
+   "phonemes": "tɹˈi"
+  },
+  "misaki": true
+ },
+ "tent": {
+  "file": "word-tent",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "tent",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈɛnt"
+  },
+  "misaki": true
+ },
+ "umbrella": {
+  "file": "word-umbrella",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "umbrella",
+  "seconds": 0.77,
+  "tries": 1,
+  "input": {
+   "phonemes": "ʌmbɹˈɛlə"
+  },
+  "misaki": true
+ },
+ "up": {
+  "file": "word-up",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Up.",
+  "seconds": 0.51,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "Happy.",
+   "Happy!",
+   "Happy!"
+  ]
+ },
+ "under": {
+  "file": "word-under",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "under",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈʌndɚ"
+  },
+  "misaki": true
+ },
+ "van": {
+  "file": "word-van",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Van",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "vˈæn"
+  },
+  "misaki": true
+ },
+ "violin": {
+  "file": "word-violin",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "violin",
+  "seconds": 0.74,
+  "tries": 2,
+  "misaki": false,
+  "misakiTries": [
+   "A veil in.",
+   "Vaylin.",
+   "A veil in."
+  ]
+ },
+ "volcano": {
+  "file": "word-volcano",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Volcano",
+  "seconds": 0.79,
+  "tries": 1,
+  "input": {
+   "phonemes": "vɑlkˈAnO"
+  },
+  "misaki": true
+ },
+ "watermelon": {
+  "file": "word-watermelon",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Watermelon.",
+  "seconds": 0.83,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɔɾɚmˌɛlən"
+  },
+  "misaki": true
+ },
+ "web": {
+  "file": "word-web",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "web",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɛb"
+  },
+  "misaki": true
+ },
+ "window": {
+  "file": "word-window",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "window",
+  "seconds": 0.74,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɪndO"
+  },
+  "misaki": true
+ },
+ "box": {
+  "file": "word-box",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "box",
+  "seconds": 0.63,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈɑks"
+  },
+  "misaki": true
+ },
+ "six": {
+  "file": "word-six",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1,
+  "heard": "6.",
+  "seconds": 0.61,
+  "tries": 3,
+  "misaki": false,
+  "misakiTries": [
+   "And six.",
+   "Sexa.",
+   "And six."
+  ]
+ },
+ "yo-yo": {
+  "file": "word-yo-yo",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "yo yo",
+  "seconds": 0.67,
+  "tries": 1,
+  "input": {
+   "phonemes": "jˈOjˈO"
+  },
+  "misaki": true
+ },
+ "yellow": {
+  "file": "word-yellow",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Yellow",
+  "seconds": 0.67,
+  "tries": 1,
+  "input": {
+   "phonemes": "jˈɛlO"
+  },
+  "misaki": true
+ },
+ "yes": {
+  "file": "word-yes",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Yes.",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "jˈɛs"
+  },
+  "misaki": true
+ },
+ "zebra": {
+  "file": "word-zebra",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Zebra",
+  "seconds": 0.7,
+  "tries": 1,
+  "input": {
+   "phonemes": "zˈibɹə"
+  },
+  "misaki": true
+ },
+ "zoo": {
+  "file": "word-zoo",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Zoo",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "zˈu"
+  },
+  "misaki": true
+ },
+ "zero": {
+  "file": "word-zero",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "0",
+  "seconds": 0.69,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "Is era.",
+   "Zira",
+   "Is era."
+  ]
+ },
+ "bat": {
+  "file": "word-bat",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bat",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈæt"
+  },
+  "misaki": true
+ },
+ "rat": {
+  "file": "word-rat",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "rat",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈæt"
+  },
+  "misaki": true
+ },
+ "map": {
+  "file": "word-map",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "map",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "mˈæp"
+  },
+  "misaki": true
+ },
+ "cap": {
+  "file": "word-cap",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "CAP",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈæp"
+  },
+  "misaki": true
+ },
+ "pan": {
+  "file": "word-pan",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "pan",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈæn"
+  },
+  "misaki": true
+ },
+ "can": {
+  "file": "word-can",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "can",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈæn"
+  },
+  "misaki": true
+ },
+ "bag": {
+  "file": "word-bag",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bag",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈæɡ"
+  },
+  "misaki": true
+ },
+ "bed": {
+  "file": "word-bed",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Bed",
+  "seconds": 0.55,
+  "tries": 5,
+  "input": {
+   "text": "bed!"
+  },
+  "misaki": false,
+  "misakiTries": [
+   "Betty",
+   "Betty",
+   "Batter"
+  ]
+ },
+ "hen": {
+  "file": "word-hen",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "hen",
+  "seconds": 0.58,
+  "tries": 2,
+  "input": {
+   "phonemes": "hˈɛn"
+  },
+  "misaki": true
+ },
+ "ten": {
+  "file": "word-ten",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "10",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈɛn"
+  },
+  "misaki": true
+ },
+ "leg": {
+  "file": "word-leg",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "leg",
+  "seconds": 0.57,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈɛɡ"
+  },
+  "misaki": true
+ },
+ "red": {
+  "file": "word-red",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Red",
+  "seconds": 0.51,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈɛd"
+  },
+  "misaki": true
+ },
+ "wet": {
+  "file": "word-wet",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Wet",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɛt"
+  },
+  "misaki": true
+ },
+ "pin": {
+  "file": "word-pin",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "pin",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈɪn"
+  },
+  "misaki": true
+ },
+ "lip": {
+  "file": "word-lip",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Lip",
+  "seconds": 0.54,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈɪp"
+  },
+  "misaki": true
+ },
+ "kid": {
+  "file": "word-kid",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Kid",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈɪd"
+  },
+  "misaki": true
+ },
+ "dig": {
+  "file": "word-dig",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Dig",
+  "seconds": 0.58,
+  "tries": 2,
+  "input": {
+   "phonemes": "dˈɪɡ"
+  },
+  "misaki": true
+ },
+ "win": {
+  "file": "word-win",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Win",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɪn"
+  },
+  "misaki": true
+ },
+ "bin": {
+  "file": "word-bin",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bin",
+  "seconds": 0.6,
+  "tries": 2,
+  "input": {
+   "phonemes": "bˈɪn"
+  },
+  "misaki": true
+ },
+ "pot": {
+  "file": "word-pot",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Pot",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈɑt"
+  },
+  "misaki": true
+ },
+ "log": {
+  "file": "word-log",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "log",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "lˈɔɡ"
+  },
+  "misaki": true
+ },
+ "hot": {
+  "file": "word-hot",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Hot.",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈɑt"
+  },
+  "misaki": true
+ },
+ "hop": {
+  "file": "word-hop",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "HOP!",
+  "seconds": 0.57,
+  "tries": 2,
+  "input": {
+   "phonemes": "hˈɑp"
+  },
+  "misaki": true
+ },
+ "dot": {
+  "file": "word-dot",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_nicole",
+  "speed": 0.9,
+  "heard": "dot",
+  "seconds": 0.61,
+  "tries": 10,
+  "input": {
+   "text": "dot"
+  },
+  "misaki": false,
+  "misakiTries": [
+   ".",
+   ".",
+   "."
+  ]
+ },
+ "cup": {
+  "file": "word-cup",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Cup",
+  "seconds": 0.53,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "Copy",
+   "copy",
+   "Cop it."
+  ]
+ },
+ "bug": {
+  "file": "word-bug",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Bug",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈʌɡ"
+  },
+  "misaki": true
+ },
+ "hug": {
+  "file": "word-hug",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Hug",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈʌɡ"
+  },
+  "misaki": true
+ },
+ "run": {
+  "file": "word-run",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Run",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈʌn"
+  },
+  "misaki": true
+ },
+ "tub": {
+  "file": "word-tub",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_sarah",
+  "speed": 1,
+  "heard": "Tub.",
+  "seconds": 0.61,
+  "tries": 13,
+  "input": {
+   "text": "tub"
+  },
+  "misaki": false,
+  "misakiTries": [
+   "Tabi",
+   "Tabi",
+   "tabi"
+  ]
+ },
+ "cut": {
+  "file": "word-cut",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Cut",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈʌt"
+  },
+  "misaki": true
+ },
+ "blue": {
+  "file": "word-blue",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Blue.",
+  "seconds": 0.58,
+  "tries": 2,
+  "input": {
+   "phonemes": "blˈu"
+  },
+  "misaki": true
+ },
+ "green": {
+  "file": "word-green",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "green",
+  "seconds": 0.58,
+  "tries": 3,
+  "input": {
+   "phonemes": "ɡɹˈin"
+  },
+  "misaki": true
+ },
+ "orange": {
+  "file": "word-orange",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Orange",
+  "seconds": 0.73,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "Orrent",
+   "Orrnde",
+   "Orrnde."
+  ]
+ },
+ "purple": {
+  "file": "word-purple",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Purple",
+  "seconds": 0.64,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈɜpəl"
+  },
+  "misaki": true
+ },
+ "black": {
+  "file": "word-black",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Black",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "blˈæk"
+  },
+  "misaki": true
+ },
+ "white": {
+  "file": "word-white",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "White",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈIt"
+  },
+  "misaki": true
+ },
+ "brown": {
+  "file": "word-brown",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Brown",
+  "seconds": 0.64,
+  "tries": 1,
+  "input": {
+   "phonemes": "bɹˈWn"
+  },
+  "misaki": true
+ },
+ "one": {
+  "file": "word-one",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "1",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈʌn"
+  },
+  "misaki": true
+ },
+ "two": {
+  "file": "word-two",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "2",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈu"
+  },
+  "misaki": true
+ },
+ "three": {
+  "file": "word-three",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "3",
+  "seconds": 0.59,
+  "tries": 5,
+  "input": {
+   "phonemes": "θɹˈi"
+  },
+  "misaki": true
+ },
+ "four": {
+  "file": "word-four",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "4.",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "fˈoɹ"
+  },
+  "misaki": true
+ },
+ "five": {
+  "file": "word-five",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "5",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "fˈIv"
+  },
+  "misaki": true
+ },
+ "seven": {
+  "file": "word-seven",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "7",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "sˈɛvən"
+  },
+  "misaki": true
+ },
+ "eight": {
+  "file": "word-eight",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "8.",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈAt"
+  },
+  "misaki": true
+ },
+ "nine": {
+  "file": "word-nine",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "9",
+  "seconds": 0.67,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "Nyan",
+   "Nyan.",
+   "Nyan."
+  ]
+ },
+ "bird": {
+  "file": "word-bird",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Bird",
+  "seconds": 0.62,
+  "tries": 2,
+  "input": {
+   "phonemes": "bˈɜd"
+  },
+  "misaki": true
+ },
+ "peach": {
+  "file": "word-peach",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 1,
+  "heard": "Peach",
+  "seconds": 0.58,
+  "tries": 6,
+  "misaki": false,
+  "misakiTries": [
+   "Pia",
+   "Pia",
+   "Pia."
+  ]
+ },
+ "bread": {
+  "file": "word-bread",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Bread",
+  "seconds": 0.54,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "Bready",
+   "Bready.",
+   "Abrady."
+  ]
+ },
+ "rice": {
+  "file": "word-rice",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Rice",
+  "seconds": 0.62,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈIs"
+  },
+  "misaki": true
+ },
+ "water": {
+  "file": "word-water",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "water",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɔɾɚ"
+  },
+  "misaki": true
+ },
+ "ear": {
+  "file": "word-ear",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Ear",
+  "seconds": 0.54,
+  "tries": 2,
+  "input": {
+   "phonemes": "ˈɪɹ"
+  },
+  "misaki": true
+ },
+ "mouth": {
+  "file": "word-mouth",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.85,
+  "heard": "mouth",
+  "seconds": 0.73,
+  "tries": 4,
+  "misaki": false,
+  "misakiTries": [
+   "mouse",
+   "mouse",
+   "mouse"
+  ]
+ },
+ "hand": {
+  "file": "word-hand",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Hand.",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈænd"
+  },
+  "misaki": true
+ },
+ "foot": {
+  "file": "word-foot",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Foot",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "fˈʊt"
+  },
+  "misaki": true
+ },
+ "arm": {
+  "file": "word-arm",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "arm",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɑɹm"
+  },
+  "misaki": true
+ },
+ "mom": {
+  "file": "word-mom",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Mom",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "mˈɑm"
+  },
+  "misaki": true
+ },
+ "dad": {
+  "file": "word-dad",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Dad",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "dˈæd"
+  },
+  "misaki": true
+ },
+ "baby": {
+  "file": "word-baby",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Baby",
+  "seconds": 0.67,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈAbi"
+  },
+  "misaki": true
+ },
+ "boy": {
+  "file": "word-boy",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Boy.",
+  "seconds": 0.59,
+  "tries": [
+   {
+    "voice": "af_heart",
+    "speed": 0.9,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.95,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 1,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.85,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_bella",
+    "speed": 0.9,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_bella",
+    "speed": 1,
+    "heard": "Bye."
+   }
+  ],
+  "input": {
+   "phonemes": "bˈY"
+  },
+  "misaki": true
+ },
+ "girl": {
+  "file": "word-girl",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Girl",
+  "seconds": 0.59,
+  "tries": 2,
+  "input": {
+   "phonemes": "ɡˈɜl"
+  },
+  "misaki": true
+ },
+ "grandma": {
+  "file": "word-grandma",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Grandma",
+  "seconds": 0.75,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡɹˈændmɑ"
+  },
+  "misaki": true
+ },
+ "grandpa": {
+  "file": "word-grandpa",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Grandpa",
+  "seconds": 0.83,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡɹˈændpɑ"
+  },
+  "misaki": true
+ },
+ "friend": {
+  "file": "word-friend",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "friend",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "fɹˈɛnd"
+  },
+  "misaki": true
+ },
+ "ship": {
+  "file": "word-ship",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Ship",
+  "seconds": 0.57,
+  "tries": 8,
+  "input": {
+   "text": "ship?"
+  },
+  "misaki": false,
+  "misakiTries": [
+   "Shippe.",
+   "Shippe.",
+   "Isheba."
+  ]
+ },
+ "shell": {
+  "file": "word-shell",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "shell",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "ʃˈɛl"
+  },
+  "misaki": true
+ },
+ "chick": {
+  "file": "word-chick",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 1,
+  "heard": "Chick.",
+  "seconds": 0.52,
+  "tries": 6,
+  "misaki": false,
+  "misakiTries": [
+   "Check",
+   "Check",
+   "Check."
+  ]
+ },
+ "cheese": {
+  "file": "word-cheese",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Cheese",
+  "seconds": 0.66,
+  "tries": 1,
+  "input": {
+   "phonemes": "ʧˈiz"
+  },
+  "misaki": true
+ },
+ "lunch": {
+  "file": "word-lunch",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Lunch",
+  "seconds": 0.66,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈʌnʧ"
+  },
+  "misaki": true
+ },
+ "bath": {
+  "file": "word-bath",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Bath",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈæθ"
+  },
+  "misaki": true
+ },
+ "thumb": {
+  "file": "word-thumb",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "thumb",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "θˈʌm"
+  },
+  "misaki": true
+ },
+ "feet": {
+  "file": "word-feet",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "feet",
+  "seconds": 0.63,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "Fiat",
+   "Fiat",
+   "A viet."
+  ]
+ },
+ "sheep": {
+  "file": "word-sheep",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "SHEEP!",
+  "seconds": 0.61,
+  "tries": 5,
+  "input": {
+   "text": "sheep!"
+  },
+  "misaki": false,
+  "misakiTries": [
+   "SEAP",
+   "SEPA",
+   "A SEAP"
+  ]
+ },
+ "food": {
+  "file": "word-food",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Food.",
+  "seconds": 0.62,
+  "tries": 1,
+  "input": {
+   "phonemes": "fˈud"
+  },
+  "misaki": true
+ },
+ "boot": {
+  "file": "word-boot",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Boot",
+  "seconds": 0.6,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "Bouit",
+   "Boop.",
+   "Boop"
+  ]
+ },
+ "spoon": {
+  "file": "word-spoon",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "spoon",
+  "seconds": 0.69,
+  "tries": 2,
+  "input": {
+   "phonemes": "spˈun"
+  },
+  "misaki": true
+ },
+ "pool": {
+  "file": "word-pool",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "pool",
+  "seconds": 0.61,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "Cool.",
+   "Puh-wah",
+   "Cool."
+  ]
+ },
+ "bike": {
+  "file": "word-bike",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bike",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈIk"
+  },
+  "misaki": true
+ },
+ "home": {
+  "file": "word-home",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Home",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈOm"
+  },
+  "misaki": true
+ },
+ "bone": {
+  "file": "word-bone",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bone",
+  "seconds": 0.63,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈOn"
+  },
+  "misaki": true
+ },
+ "rose": {
+  "file": "word-rose",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Rose",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɹˈOz"
+  },
+  "misaki": true
+ },
+ "cute": {
+  "file": "word-cute",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Cute.",
+  "seconds": 0.55,
+  "tries": 3,
+  "input": {
+   "phonemes": "kjˈut"
+  },
+  "misaki": true
+ },
+ "man": {
+  "file": "word-man",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Man",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "mˈæn"
+  },
+  "misaki": true
+ },
+ "nap": {
+  "file": "word-nap",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "nap",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "nˈæp"
+  },
+  "misaki": true
+ },
+ "flag": {
+  "file": "word-flag",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "flag",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "flˈæɡ"
+  },
+  "misaki": true
+ },
+ "tag": {
+  "file": "word-tag",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "tag",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈæɡ"
+  },
+  "misaki": true
+ },
+ "sled": {
+  "file": "word-sled",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "sled",
+  "seconds": 0.63,
+  "tries": 1,
+  "input": {
+   "phonemes": "slˈɛd"
+  },
+  "misaki": true
+ },
+ "top": {
+  "file": "word-top",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Top",
+  "seconds": 0.59,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈɑp"
+  },
+  "misaki": true
+ },
+ "bun": {
+  "file": "word-bun",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "bun",
+  "seconds": 0.56,
+  "tries": 2,
+  "input": {
+   "phonemes": "bˈʌn"
+  },
+  "misaki": true
+ },
+ "hut": {
+  "file": "word-hut",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Hut",
+  "seconds": 0.52,
+  "tries": 2,
+  "input": {
+   "phonemes": "hˈʌt"
+  },
+  "misaki": true
+ },
+ "lake": {
+  "file": "word-lake",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Lake",
+  "seconds": 0.57,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈAk"
+  },
+  "misaki": true
+ },
+ "balloon": {
+  "file": "word-balloon",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "balloon",
+  "seconds": 0.68,
+  "tries": 2,
+  "input": {
+   "phonemes": "bəlˈun"
+  },
+  "misaki": true
+ },
+ "a": {
+  "file": "word-a",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "A.",
+  "seconds": 0.35,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈA"
+  },
+  "misaki": true
+ },
+ "has": {
+  "file": "word-has",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "has",
+  "seconds": 0.64,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈæz"
+  },
+  "misaki": true
+ },
+ "a cat has a hat": {
+  "file": "sentence-a-cat-has-a-hat",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "A cat has a hat.",
+  "seconds": 1.15,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "A cat is a hat.",
+   "A cat is a hat.",
+   "A cat is a hat."
+  ]
+ },
+ "the": {
+  "file": "word-the",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 1,
+  "heard": "\"The\"",
+  "seconds": 0.56,
+  "tries": 21,
+  "input": {
+   "text": "the!"
+  },
+  "misaki": false,
+  "misakiTries": [
+   "Thai.",
+   "Die.",
+   "Thai"
+  ]
+ },
+ "is": {
+  "file": "word-is",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "is.",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɪz"
+  },
+  "misaki": true
+ },
+ "the rat is in the van": {
+  "file": "sentence-the-rat-is-in-the-van",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The rat is in the van.",
+  "seconds": 1.28,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə ɹˈæt ɪz ɪnðə vˈæn."
+  },
+  "misaki": true
+ },
+ "i": {
+  "file": "word-i",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I",
+  "seconds": 0.57,
+  "tries": 2,
+  "misaki": false,
+  "misakiTries": [
+   "Hi.",
+   "Hi.",
+   "And I."
+  ]
+ },
+ "have": {
+  "file": "word-have",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Have",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈæv"
+  },
+  "misaki": true
+ },
+ "and": {
+  "file": "word-and",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "And",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈænd"
+  },
+  "misaki": true
+ },
+ "i have a map and a bag": {
+  "file": "sentence-i-have-a-map-and-a-bag",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I have a map and a bag.",
+  "seconds": 1.46,
+  "tries": 1,
+  "input": {
+   "phonemes": "I hæv ə mˈæp ænd ə bˈæɡ."
+  },
+  "misaki": true
+ },
+ "on": {
+  "file": "word-on",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "on.",
+  "seconds": 0.54,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɔn"
+  },
+  "misaki": true
+ },
+ "the hen is on the bed": {
+  "file": "sentence-the-hen-is-on-the-bed",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The hen is on the bed.",
+  "seconds": 1.31,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə hˈɛn ɪz ɔnðə bˈɛd."
+  },
+  "misaki": true
+ },
+ "pens": {
+  "file": "word-pens",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "pens",
+  "seconds": 0.64,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈɛnz"
+  },
+  "misaki": true
+ },
+ "i see ten red pens": {
+  "file": "sentence-i-see-ten-red-pens",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I see 10 red pens.",
+  "seconds": 1.38,
+  "tries": 4,
+  "input": {
+   "phonemes": "I sˈi tˈɛn ɹˈɛd pˈɛnz."
+  },
+  "misaki": true
+ },
+ "my": {
+  "file": "word-my",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "My",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "mˈI"
+  },
+  "misaki": true
+ },
+ "my leg is wet": {
+  "file": "sentence-my-leg-is-wet",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "My leg is wet.",
+  "seconds": 1.06,
+  "tries": 1,
+  "input": {
+   "phonemes": "mI lˈɛɡ ɪz wˈɛt."
+  },
+  "misaki": true
+ },
+ "the pig can dig": {
+  "file": "sentence-the-pig-can-dig",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The pig can dig.",
+  "seconds": 1.06,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə pˈɪɡ kæn dˈɪɡ."
+  },
+  "misaki": true
+ },
+ "kids": {
+  "file": "word-kids",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Kids",
+  "seconds": 0.66,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈɪdz"
+  },
+  "misaki": true
+ },
+ "six kids win": {
+  "file": "sentence-six-kids-win",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "6 Kids win.",
+  "seconds": 1.09,
+  "tries": 1,
+  "input": {
+   "phonemes": "sˈɪks kˈɪdz wˈɪn!"
+  },
+  "misaki": true
+ },
+ "put": {
+  "file": "word-put",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "put",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "pˈʊt"
+  },
+  "misaki": true
+ },
+ "it": {
+  "file": "word-it",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "It.",
+  "seconds": 0.5,
+  "tries": 2,
+  "input": {
+   "phonemes": "ˈɪt"
+  },
+  "misaki": true
+ },
+ "put it in the bin": {
+  "file": "sentence-put-it-in-the-bin",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Put it in the bin.",
+  "seconds": 0.98,
+  "tries": 2,
+  "input": {
+   "phonemes": "pˌʊt ɪɾ ɪnðə bˈɪn."
+  },
+  "misaki": true
+ },
+ "the dog is on a log": {
+  "file": "sentence-the-dog-is-on-a-log",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The dog is on a log.",
+  "seconds": 1.27,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə dˈɑɡ ɪz ˌɔn ə lˈɔɡ."
+  },
+  "misaki": true
+ },
+ "a fox is in the box": {
+  "file": "sentence-a-fox-is-in-the-box",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "A fox is in the box.",
+  "seconds": 1.36,
+  "tries": 1,
+  "input": {
+   "phonemes": "ə fˈɑks ɪz ɪnðə bˈɑks."
+  },
+  "misaki": true
+ },
+ "the pot is hot": {
+  "file": "sentence-the-pot-is-hot",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The pot is hot.",
+  "seconds": 1,
+  "tries": 5,
+  "input": {
+   "phonemes": "ðə pˈɑt ɪz hˈɑt!"
+  },
+  "misaki": true
+ },
+ "the bug is in the cup": {
+  "file": "sentence-the-bug-is-in-the-cup",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The bug is in the cup.",
+  "seconds": 1.21,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə bˈʌɡ ɪz ɪnðə kˈʌp."
+  },
+  "misaki": true
+ },
+ "i run in the sun": {
+  "file": "sentence-i-run-in-the-sun",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I run in the sun.",
+  "seconds": 1.12,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "A run in the sun.",
+   "Run in the sun.",
+   "Iran in the Sun."
+  ]
+ },
+ "give": {
+  "file": "word-give",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Give",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡˈɪv"
+  },
+  "misaki": true
+ },
+ "me": {
+  "file": "word-me",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Me.",
+  "seconds": 0.52,
+  "tries": 5,
+  "input": {
+   "phonemes": "mˈi"
+  },
+  "misaki": true
+ },
+ "give me a hug": {
+  "file": "sentence-give-me-a-hug",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Give me a hug.",
+  "seconds": 0.94,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡˈɪv mˌi ə hˈʌɡ!"
+  },
+  "misaki": true
+ },
+ "like": {
+  "file": "word-like",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Like",
+  "seconds": 0.56,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈIk"
+  },
+  "misaki": true
+ },
+ "i like red": {
+  "file": "sentence-i-like-red",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I like red.",
+  "seconds": 0.84,
+  "tries": 1,
+  "input": {
+   "phonemes": "I lˈIk ɹˈɛd."
+  },
+  "misaki": true
+ },
+ "sky": {
+  "file": "word-sky",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.85,
+  "heard": "sky",
+  "seconds": 0.7,
+  "tries": 4,
+  "misaki": false,
+  "misakiTries": [
+   "Skye",
+   "Skye",
+   "is Sky."
+  ]
+ },
+ "the sky is blue": {
+  "file": "sentence-the-sky-is-blue",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The sky is blue.",
+  "seconds": 1.07,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə skˈI ɪz blˈu."
+  },
+  "misaki": true
+ },
+ "i see a green frog": {
+  "file": "sentence-i-see-a-green-frog",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I see a green frog.",
+  "seconds": 1.21,
+  "tries": 1,
+  "input": {
+   "phonemes": "I sˈi ə ɡɹˈin fɹˈɑɡ."
+  },
+  "misaki": true
+ },
+ "one, two, three": {
+  "file": "sentence-one-two-three",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "1 2 3",
+  "seconds": 1.04,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈʌn, tˈu, θɹˈi!"
+  },
+  "misaki": true
+ },
+ "am": {
+  "file": "word-am",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "AM",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈæm"
+  },
+  "misaki": true
+ },
+ "i am seven": {
+  "file": "sentence-i-am-seven",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I am 7.",
+  "seconds": 0.96,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "M7.",
+   "M7",
+   "AM7."
+  ]
+ },
+ "fingers": {
+  "file": "word-fingers",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "fingers",
+  "seconds": 0.77,
+  "tries": 1,
+  "input": {
+   "phonemes": "fˈɪŋɡɚz"
+  },
+  "misaki": true
+ },
+ "i have ten fingers": {
+  "file": "sentence-i-have-ten-fingers",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I have 10 fingers.",
+  "seconds": 1.22,
+  "tries": 1,
+  "input": {
+   "phonemes": "I hæv tˈɛn fˈɪŋɡɚz."
+  },
+  "misaki": true
+ },
+ "i see a bird": {
+  "file": "sentence-i-see-a-bird",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I see a bird.",
+  "seconds": 0.91,
+  "tries": 1,
+  "input": {
+   "phonemes": "I sˈi ə bˈɜd."
+  },
+  "misaki": true
+ },
+ "big": {
+  "file": "word-big",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Big.",
+  "seconds": 0.55,
+  "tries": 1,
+  "input": {
+   "phonemes": "bˈɪɡ"
+  },
+  "misaki": true
+ },
+ "the lion is big": {
+  "file": "sentence-the-lion-is-big",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The lion is big.",
+  "seconds": 1.12,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə lˈIən ɪz bˈɪɡ."
+  },
+  "misaki": true
+ },
+ "jump": {
+  "file": "word-jump",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_bella",
+  "speed": 0.9,
+  "heard": "Jump",
+  "seconds": 0.56,
+  "tries": 5,
+  "misaki": false,
+  "misakiTries": [
+   "Jumpy.",
+   "Jump it.",
+   "Jump it."
+  ]
+ },
+ "a frog can jump": {
+  "file": "sentence-a-frog-can-jump",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "A frog can jump.",
+  "seconds": 1.14,
+  "tries": 1,
+  "input": {
+   "phonemes": "ə fɹˈɑɡ kæn ʤˈʌmp."
+  },
+  "misaki": true
+ },
+ "apples": {
+  "file": "word-apples",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Apples",
+  "seconds": 0.71,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈæpəlz"
+  },
+  "misaki": true
+ },
+ "i like apples": {
+  "file": "sentence-i-like-apples",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I like apples.",
+  "seconds": 0.98,
+  "tries": 1,
+  "input": {
+   "phonemes": "I lˈIk ˈæpəlz."
+  },
+  "misaki": true
+ },
+ "eat": {
+  "file": "word-eat",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "eat",
+  "seconds": 0.55,
+  "tries": 6,
+  "input": {
+   "phonemes": "ˈit"
+  },
+  "misaki": true
+ },
+ "eggs": {
+  "file": "word-eggs",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Eggs.",
+  "seconds": 0.63,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɛɡz"
+  },
+  "misaki": true
+ },
+ "i eat bread and eggs": {
+  "file": "sentence-i-eat-bread-and-eggs",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I eat bread and eggs.",
+  "seconds": 1.36,
+  "tries": 1,
+  "input": {
+   "phonemes": "I ˈit bɹˈɛd ænd ˈɛɡz."
+  },
+  "misaki": true
+ },
+ "some": {
+  "file": "word-some",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 1.05,
+  "heard": "Some",
+  "seconds": 0.52,
+  "tries": 1,
+  "input": {
+   "phonemes": "sˈʌm"
+  },
+  "misaki": true
+ },
+ "can i have some milk": {
+  "file": "sentence-can-i-have-some-milk",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Can I have some milk?",
+  "seconds": 1.11,
+  "tries": 1,
+  "input": {
+   "phonemes": "kæn I hæv sˌʌm mˈɪlk?"
+  },
+  "misaki": true
+ },
+ "touch": {
+  "file": "word-touch",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Touch",
+  "seconds": 0.6,
+  "tries": 5,
+  "input": {
+   "phonemes": "tˈʌʧ"
+  },
+  "misaki": true
+ },
+ "your": {
+  "file": "word-your",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "You're",
+  "seconds": 0.57,
+  "tries": [
+   {
+    "voice": "af_heart",
+    "speed": 0.9,
+    "heard": "You're..."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.95,
+    "heard": "You're"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 1,
+    "heard": "You're..."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.85,
+    "heard": "You're."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 0.9,
+    "heard": "You're."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 1,
+    "heard": "You're"
+   }
+  ],
+  "input": {
+   "phonemes": "jˈʊɹ"
+  },
+  "misaki": true
+ },
+ "touch your nose": {
+  "file": "sentence-touch-your-nose",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Touch your nose.",
+  "seconds": 0.93,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈʌʧ jʊɹ nˈOz."
+  },
+  "misaki": true
+ },
+ "eyes": {
+  "file": "word-eyes",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Eyes",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈIz"
+  },
+  "misaki": true
+ },
+ "i have two eyes": {
+  "file": "sentence-i-have-two-eyes",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I have two eyes.",
+  "seconds": 1.1,
+  "tries": 1,
+  "input": {
+   "phonemes": "I hæv tˈu ˈIz."
+  },
+  "misaki": true
+ },
+ "clap": {
+  "file": "word-clap",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "clap",
+  "seconds": 0.57,
+  "tries": 2,
+  "input": {
+   "phonemes": "klˈæp"
+  },
+  "misaki": true
+ },
+ "hands": {
+  "file": "word-hands",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "hands",
+  "seconds": 0.69,
+  "tries": 1,
+  "input": {
+   "phonemes": "hˈændz"
+  },
+  "misaki": true
+ },
+ "clap your hands": {
+  "file": "sentence-clap-your-hands",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Clap your hands.",
+  "seconds": 1,
+  "tries": 1,
+  "input": {
+   "phonemes": "klˈæp jʊɹ hˈændz!"
+  },
+  "misaki": true
+ },
+ "love": {
+  "file": "word-love",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Love",
+  "seconds": 0.62,
+  "tries": 1,
+  "input": {
+   "phonemes": "lˈʌv"
+  },
+  "misaki": true
+ },
+ "i love my mom": {
+  "file": "sentence-i-love-my-mom",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "I love my mom.",
+  "seconds": 1,
+  "tries": 1,
+  "input": {
+   "phonemes": "I lˈʌv mI mˈɑm."
+  },
+  "misaki": true
+ },
+ "this": {
+  "file": "word-this",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "This.",
+  "seconds": 0.57,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðˈɪs"
+  },
+  "misaki": true
+ },
+ "this is my dad": {
+  "file": "sentence-this-is-my-dad",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "This is my dad.",
+  "seconds": 1.06,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðɪs ɪz mI dˈæd."
+  },
+  "misaki": true
+ },
+ "you are my friend": {
+  "file": "sentence-you-are-my-friend",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "You are my friend.",
+  "seconds": 1.01,
+  "tries": 1,
+  "input": {
+   "phonemes": "ju ɑɹ mI fɹˈɛnd."
+  },
+  "misaki": true
+ },
+ "by": {
+  "file": "word-by",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Bye.",
+  "seconds": 0.58,
+  "tries": [
+   {
+    "voice": "af_heart",
+    "speed": 0.9,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.95,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 1,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.85,
+    "heard": "Bye!"
+   },
+   {
+    "voice": "af_bella",
+    "speed": 0.9,
+    "heard": "Bye."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 1,
+    "heard": "Bye."
+   }
+  ],
+  "input": {
+   "phonemes": "bˈI"
+  },
+  "misaki": true
+ },
+ "the fish is by the ship": {
+  "file": "sentence-the-fish-is-by-the-ship",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The fish is by the ship.",
+  "seconds": 1.34,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə fˈɪʃ ɪz bI ðə ʃˈɪp."
+  },
+  "misaki": true
+ },
+ "eats": {
+  "file": "word-eats",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Eats.",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈits"
+  },
+  "misaki": true
+ },
+ "the chick eats cheese": {
+  "file": "sentence-the-chick-eats-cheese",
+  "kind": "sentence",
+  "status": "close",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The check eats cheese.",
+  "seconds": 1.33,
+  "tries": [
+   {
+    "voice": "af_heart",
+    "speed": 0.9,
+    "heard": "The check eats trees."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.95,
+    "heard": "The check eats trees."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 1,
+    "heard": "The check eats trees."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.85,
+    "heard": "The check eats cheese."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 0.9,
+    "heard": "The Check Eats Trees."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 1,
+    "heard": "The check eats trees."
+   }
+  ],
+  "misaki": true,
+  "misakiTries": [
+   "The check eats cheese.",
+   "The check eats cheese.",
+   "The check eats cheese."
+  ],
+  "input": {
+   "phonemes": "ðə ʧˈɪk ˈits ʧˈiz."
+  },
+  "note": "Whisper hears chick as check in every voice"
+ },
+ "ducks": {
+  "file": "word-ducks",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Ducks.",
+  "seconds": 0.61,
+  "tries": 1,
+  "input": {
+   "phonemes": "dˈʌks"
+  },
+  "misaki": true
+ },
+ "take": {
+  "file": "word-take",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Take.",
+  "seconds": 0.6,
+  "tries": 1,
+  "input": {
+   "phonemes": "tˈAk"
+  },
+  "misaki": true
+ },
+ "three ducks take a bath": {
+  "file": "sentence-three-ducks-take-a-bath",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Three ducks take a bath.",
+  "seconds": 1.35,
+  "tries": 1,
+  "input": {
+   "phonemes": "θɹˈi dˈʌks tˈAk ə bˈæθ."
+  },
+  "misaki": true
+ },
+ "i see a bee in the tree": {
+  "file": "sentence-i-see-a-bee-in-the-tree",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I see a bee in the tree.",
+  "seconds": 1.37,
+  "tries": 1,
+  "input": {
+   "phonemes": "I sˈi ə bˈi ɪnðə tɹˈi."
+  },
+  "misaki": true
+ },
+ "look": {
+  "file": "word-look",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Look.",
+  "seconds": 0.56,
+  "tries": 2,
+  "input": {
+   "phonemes": "lˈʊk"
+  },
+  "misaki": true
+ },
+ "at": {
+  "file": "word-at",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "at",
+  "seconds": 0.52,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈæt"
+  },
+  "misaki": true
+ },
+ "look at the moon": {
+  "file": "sentence-look-at-the-moon",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Look at the moon.",
+  "seconds": 0.93,
+  "tries": 1,
+  "input": {
+   "phonemes": "lˈʊk æt ðə mˈun!"
+  },
+  "misaki": true
+ },
+ "wipe": {
+  "file": "word-wipe",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Wipe",
+  "seconds": 0.56,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈIp"
+  },
+  "misaki": true
+ },
+ "wipe your feet": {
+  "file": "sentence-wipe-your-feet",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Wipe your feet.",
+  "seconds": 0.96,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈIp jʊɹ fˈit."
+  },
+  "misaki": true
+ },
+ "ride": {
+  "file": "word-ride",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "Ride",
+  "seconds": 0.66,
+  "tries": 2,
+  "input": {
+   "phonemes": "ɹˈId"
+  },
+  "misaki": true
+ },
+ "i ride my bike home": {
+  "file": "sentence-i-ride-my-bike-home",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "heard": "I ride my bike home.",
+  "seconds": 1.37,
+  "tries": 1,
+  "misaki": false,
+  "misakiTries": [
+   "You ride my bike home.",
+   "Ride my bike home.",
+   "You ride my bike home."
+  ]
+ },
+ "the dog has a bone": {
+  "file": "sentence-the-dog-has-a-bone",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "The dog has a bone.",
+  "seconds": 1.18,
+  "tries": 1,
+  "input": {
+   "phonemes": "ðə dˈɑɡ həz ə bˈOn."
+  },
+  "misaki": true
+ },
+ "kites": {
+  "file": "word-kites",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Kites",
+  "seconds": 0.63,
+  "tries": 1,
+  "input": {
+   "phonemes": "kˈIts"
+  },
+  "misaki": true
+ },
+ "fly": {
+  "file": "word-fly",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "fly",
+  "seconds": 0.58,
+  "tries": 1,
+  "input": {
+   "phonemes": "flˈI"
+  },
+  "misaki": true
+ },
+ "high": {
+  "file": "word-high",
+  "kind": "word",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Hi.",
+  "seconds": 0.53,
+  "tries": [
+   {
+    "voice": "af_heart",
+    "speed": 0.9,
+    "heard": "Hi."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.95,
+    "heard": "Hi."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 1,
+    "heard": "Hi."
+   },
+   {
+    "voice": "af_heart",
+    "speed": 0.85,
+    "heard": "Hi."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 0.9,
+    "heard": "Hi."
+   },
+   {
+    "voice": "af_bella",
+    "speed": 1,
+    "heard": "Hi."
+   }
+  ],
+  "input": {
+   "phonemes": "hˈI"
+  },
+  "misaki": true
+ },
+ "five kites fly high": {
+  "file": "sentence-five-kites-fly-high",
+  "kind": "sentence",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "5 kites fly high.",
+  "seconds": 1.35,
+  "tries": 1,
+  "input": {
+   "phonemes": "fˈIv kˈIts flˈI hˈI."
+  },
+  "misaki": true
+ },
+ "great job": {
+  "file": "praise-great-job",
+  "kind": "praise",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Great job.",
+  "seconds": 0.87,
+  "tries": 1,
+  "input": {
+   "phonemes": "ɡɹˈAt ʤˈɑb!"
+  },
+  "misaki": true
+ },
+ "awesome": {
+  "file": "praise-awesome",
+  "kind": "praise",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Awesome!",
+  "seconds": 0.65,
+  "tries": 1,
+  "input": {
+   "phonemes": "ˈɔsʌm!"
+  },
+  "misaki": true
+ },
+ "well done": {
+  "file": "praise-well-done",
+  "kind": "praise",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Well done.",
+  "seconds": 0.76,
+  "tries": 1,
+  "input": {
+   "phonemes": "wˈɛl dˈʌn!"
+  },
+  "misaki": true
+ },
+ "you did it": {
+  "file": "praise-you-did-it",
+  "kind": "praise",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "You did it.",
+  "seconds": 0.81,
+  "tries": 1,
+  "input": {
+   "phonemes": "ju dˈɪd ɪt!"
+  },
+  "misaki": true
+ },
+ "super": {
+  "file": "praise-super",
+  "kind": "praise",
+  "status": "pass",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "heard": "Super",
+  "seconds": 0.68,
+  "tries": 1,
+  "input": {
+   "phonemes": "sˈupɚ!"
+  },
+  "misaki": true
+ }
+}

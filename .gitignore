@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files (API keys)
+.env*
+
+# Not part of the published project
+migrated_prompt_history/
+cedict_db/
+.claude/
+test-pinyin.js
+public/test-ruby*.html
+
+# English audio generator downloads (see scripts/english-audio/README.md)
+scripts/english-audio/node_modules/
+scripts/english-audio/cache/
+scripts/english-audio/package.json
+scripts/english-audio/package-lock.json

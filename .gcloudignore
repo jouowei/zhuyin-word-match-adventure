@@ -1,0 +1,16 @@
+# Files not uploaded when deploying to Google Cloud (gcloud run deploy --source .)
+.gcloudignore
+.git
+.gitignore
+node_modules
+dist
+*.log
+*.local
+.env*
+# Not used by the running app
+migrated_prompt_history
+cedict_db
+scripts
+test-pinyin.js
+public/test-ruby*.html
+.claude

@@ -1,0 +1,10 @@
+{
+  "name": "Zhuyin Word Match Adventure",
+  "description": "A fun, interactive word-matching game for children to learn Traditional Chinese characters and Zhuyin. Features a reward system and AI-generated levels.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
