@@ -28,9 +28,7 @@ import { WordFamilyGameView } from './components/WordFamilyGameView';
 import { RadicalGameView } from './components/RadicalGameView';
 import { LessonLoopView } from './components/LessonLoopView';
 import { ParentReportView } from './components/ParentReportView';
-import { ParentPasswordSetup } from './components/ParentLock';
 import { BrowserNotice } from './components/BrowserNotice';
-import { hasParentPassword } from './services/parentLock';
 import { buildFamilyRound, FamilyQuestion } from './services/wordFamilies';
 import { buildRadicalRound, RadicalQuestion } from './services/radicals';
 import { wordsInText } from './services/lessonText';
@@ -85,8 +83,6 @@ export default function App() {
 
   // --- GAME STATE ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOGIN);
-  // First use on this device: ask for a parent password (skipping asks again next time the app opens)
-  const [askParentPassword, setAskParentPassword] = useState(() => !hasParentPassword());
   const [gameMode, setGameMode] = useState<'word' | 'zhuyin'>('word');
   const [currentDifficulty, setCurrentDifficulty] = useState<number>(1);
   const [currentWords, setCurrentWords] = useState<WordItem[]>(INITIAL_WORD_SET);
@@ -901,17 +897,6 @@ export default function App() {
     <>
       {renderScreen()}
       <BrowserNotice />
-      {askParentPassword && gameState === GameState.LOGIN && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-pop border-8 border-indigo-200 my-auto">
-            <ParentPasswordSetup
-              title="歡迎！先設定家長密碼"
-              onDone={() => setAskParentPassword(false)}
-              onSkip={() => setAskParentPassword(false)}
-            />
-          </div>
-        </div>
-      )}
       {celebration && (
         <div key={celebration.id} className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] pointer-events-none animate-pop">
           <div className="bg-gradient-to-r from-yellow-300 to-amber-400 text-amber-900 px-8 py-4 rounded-3xl shadow-2xl border-4 border-white flex items-center gap-3 whitespace-nowrap">
