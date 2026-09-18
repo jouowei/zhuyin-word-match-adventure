@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Home, Star, RefreshCw, Users, Volume2, X } from 'lucide-react';
+import { Volume2, X } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { FamilyQuestion, FamilyWord } from '../services/wordFamilies';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
@@ -7,7 +7,8 @@ import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
-import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
+import { speakHelp, withInstruction } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
 import { ZhuyinText } from './ZhuyinText';
 
 interface WordFamilyGameViewProps {
@@ -28,7 +29,7 @@ const FamilyWordText: React.FC<{ word: FamilyWord; head: string }> = ({ word, he
   return (
     <span className="inline-flex">
       {[...word.word].map((ch, i) => (
-        <ZhuyinText key={i} text={ch} readings={[readings[i]]} className={`text-3xl ${ch === head ? 'text-red-500' : 'text-gray-800'}`} />
+        <ZhuyinText key={i} text={ch} readings={[readings[i]]} className={`text-[clamp(1.25rem,3.8vh,1.875rem)] ${ch === head ? 'text-red-500' : 'text-gray-800'}`} />
       ))}
     </span>
   );
@@ -115,64 +116,51 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen max-w-3xl mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-green-100">
-        <button onClick={onHome} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 active:scale-95">
-          <Home size={24} /> <span className="text-lg">回首頁</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">
-          <Star className="fill-yellow-400 text-yellow-500 animate-pulse" />
-          <span className="font-bold text-yellow-800 text-xl">{currentUser.points}</span>
-        </div>
-        <button onClick={onRefresh} className="p-2 hover:bg-green-50 rounded-full text-green-600 transition">
-          <RefreshCw size={24} />
-        </button>
-      </div>
-
-      <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold text-green-700 flex items-center justify-center gap-2">
-          <Users /> 字的家族：找出一家人！
-        </h2>
-        <p className="text-gray-500 mt-1">{instruction}</p>
-        <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
-      <div className="flex justify-center gap-3 mb-6">
+    <GameScreen
+      currentUser={currentUser}
+      title="找出一家人"
+      instruction={instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent="text-green-700"
+    >
+      <div className="shrink-0 flex justify-center gap-3 mb-[1.5vh]">
         {currentWords.map((item, i) => (
           <div key={item.id} className={`w-4 h-4 rounded-full border-2 ${item.matched ? 'bg-green-400 border-green-500' : i === matchedCount ? 'bg-green-300 border-green-600 scale-125' : 'bg-gray-100 border-gray-300'}`} />
         ))}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border-b-8 border-green-200 p-6 flex flex-col items-center">
-        <div className="flex items-center gap-4 mb-2">
-          <span className="text-6xl">{question.item.emoji}</span>
+      <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-green-200 p-3 flex flex-col items-center gap-[1.2vh]">
+        <div className="shrink-0 flex items-center gap-4">
+          <span className="text-[clamp(2.5rem,8vh,3.75rem)] leading-none">{question.item.emoji}</span>
           {question.item.zhuyin
-            ? <ZhuyinText text={head} readings={[question.item.zhuyin]} className="text-7xl text-red-500" />
-            : <span className="font-kai text-7xl text-red-500">{head}</span>}
+            ? <ZhuyinText text={head} readings={[question.item.zhuyin]} className="text-[clamp(2.75rem,9vh,4.5rem)] text-red-500" />
+            : <span className="font-kai text-[clamp(2.75rem,9vh,4.5rem)] text-red-500">{head}</span>}
           <button onClick={() => playChineseAudio(askSteps())} className="p-3 rounded-full bg-green-100 text-green-700 hover:bg-green-200 active:scale-90 transition" aria-label="再聽一次">
             <Volume2 size={28} />
           </button>
         </div>
-        <p className="text-xl font-bold text-gray-600 mb-5">
+        <p className="shrink-0 text-[clamp(1rem,2.8vh,1.25rem)] font-bold text-gray-600 text-center">
           哪些詞裡面有「<span className="text-red-500">{head}</span>」？找出 {members.length} 個（找到 {found.length} 個）
         </p>
 
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3 w-full">
           {question.words.map(w => {
             const isFound = found.includes(w.word);
             const isWrong = wrong.includes(w.word);
             const isHidden = hidden.includes(w.word);
             const glow = help >= HELP_SHOW && w.member && !isFound;
             return (
-              <div key={w.word} className="relative">
+              <div key={w.word} className="relative min-h-0">
                 <button
                   onClick={() => choose(w)}
                   disabled={isHidden}
-                  className={`w-full min-h-[9rem] rounded-2xl border-4 p-3 pb-8 flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95
+                  className={`w-full h-full rounded-2xl border-4 p-1 pb-6 flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95 overflow-hidden
                     ${isFound ? 'bg-green-50 border-green-400' : isWrong ? 'bg-gray-50 border-gray-200' : isHidden ? 'opacity-20 border-gray-200' : 'bg-white border-green-200 hover:border-green-400'}
                     ${glow ? 'ring-8 ring-yellow-400 animate-bounce' : ''}`}
                 >
-                  <span className={`text-6xl ${isWrong ? 'grayscale opacity-60' : ''}`}>{w.emoji}</span>
+                  <span className={`text-[clamp(1.6rem,8vh,3.75rem)] leading-none ${isWrong ? 'grayscale opacity-60' : ''}`}>{w.emoji}</span>
                   {/* The written word appears once the child has chosen it */}
                   {(isFound || isWrong) && (
                     <span className="flex items-center gap-1">
@@ -195,11 +183,6 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
         </div>
       </div>
 
-      {feedback && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-300 animate-pop z-40 whitespace-nowrap">
-          <span className="text-2xl font-bold text-yellow-600">{feedback}</span>
-        </div>
-      )}
-    </div>
+    </GameScreen>
   );
 };

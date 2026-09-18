@@ -1,14 +1,15 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { WordItem, UserProfile } from '../types';
-import { Home, Star, RefreshCw, Mic, AlertCircle, Volume2, ThumbsUp } from 'lucide-react';
+import { Mic, AlertCircle, Volume2, ThumbsUp, Check } from 'lucide-react';
 import { hasPicture } from '../utils/wordPicture';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { InstructionButton, speakHelp, useInstruction } from './VoiceGuide';
+import { speakHelp, useInstruction } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
 import { ZhuyinText } from './ZhuyinText';
 
 interface SpeakingGameViewProps {
@@ -66,6 +67,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   const [listeningForId, setListeningForId] = useState<string | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [permissionError, setPermissionError] = useState(false);
+  const [pickedId, setPickedId] = useState<string | null>(null);
   // Listening to the model first, or failed tries, count as help
   const [help, setHelp] = useState<Record<string, number>>({});
   const recognitionRef = useRef<any>(null);
@@ -174,130 +176,109 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   };
 
   const isListening = listeningForId !== null;
+  // One word at a time, the next one when it's done; the dots below let the child pick another
+  const current = currentWords.find(w => w.id === pickedId && !w.matched) ?? currentWords.find(w => !w.matched) ?? currentWords[currentWords.length - 1];
+  const isMe = !!current && listeningForId === current.id;
+  const level = current ? help[current.id] || 0 : 0;
 
   return (
-    <div className="flex flex-col min-h-screen max-w-4xl mx-auto p-4 md:p-6 pb-20">
-      {/* Top Bar */}
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-purple-100">
-        <button
-          onClick={onHome}
-          className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 border-2 border-transparent hover:border-gray-200 transform active:scale-95"
-        >
-          <Home size={24} /> <span className="text-lg">回首頁</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">
-          <Star className="fill-yellow-400 text-yellow-500 animate-pulse" />
-          <span className="font-bold text-yellow-800 text-xl">{currentUser.points}</span>
-        </div>
-        <button onClick={onRefresh} className="p-2 hover:bg-purple-50 rounded-full text-purple-500 transition">
-          <RefreshCw size={24} />
-        </button>
-      </div>
-
-      <div className="text-center mb-6">
-         <h2 className="text-2xl font-bold text-purple-600 flex items-center justify-center gap-2">
-           <Mic className="animate-bounce" /> 小小播音員：大聲唸出來！
-         </h2>
-         <p className="text-gray-500 mt-1">{instruction}</p>
-         <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
+    <GameScreen
+      currentUser={currentUser}
+      title="大聲唸出來"
+      instruction={instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedbackMessage}
+      accent="text-purple-600"
+    >
       {permissionError && (
-        <div className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-xl shadow-sm animate-pop flex items-start gap-3">
-           <AlertCircle className="shrink-0 mt-0.5" />
-           <div className="text-left">
-             <p className="font-bold">無法使用麥克風 🎤</p>
-             <p className="text-sm">瀏覽器擋住了麥克風權限。請檢查網址列的鎖頭圖示 🔒，或是設定中的權限，允許我們使用麥克風喔！</p>
-           </div>
+        <div className="shrink-0 mb-2 bg-red-100 border-l-4 border-red-500 text-red-700 px-3 py-2 rounded-r-xl text-sm flex items-start gap-2">
+          <AlertCircle size={18} className="shrink-0 mt-0.5" />
+          <p><span className="font-bold">無法使用麥克風 🎤</span> 請按網址列的鎖頭圖示 🔒，允許使用麥克風。</p>
         </div>
       )}
 
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-        {currentWords.map((item) => {
-          const isMe = listeningForId === item.id;
-          const level = help[item.id] || 0;
-          return (
-            <div
-              key={item.id}
-              className={`
-                 relative flex flex-col items-center p-4 rounded-3xl border-4 shadow-xl transition-all duration-300
-                 ${item.matched
-                   ? 'bg-green-100 border-green-300 opacity-80'
-                   : isMe
-                     ? 'bg-purple-50 border-purple-500 scale-105 ring-4 ring-purple-200 z-10'
-                     : 'bg-white border-purple-200'
-                 }
-              `}
-            >
-              {isMe && (
-                 <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
-                    <Mic size={14} /> 聽你說...
-                 </div>
-              )}
-
-              {item.matched && (
-                <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">OK</div>
-              )}
-
-              {(gameMode === 'zhuyin' || hasPicture(item)) && (
-                <div className="w-32 h-32 md:w-40 md:h-40 mb-4 bg-white rounded-2xl flex items-center justify-center overflow-hidden">
-                   {gameMode === 'zhuyin' ? (
-                     // Show the symbol itself: the example picture would make kids say the word (貓) instead of ㄇ
-                     <span className="text-8xl font-bold text-gray-800">{item.character}</span>
-                   ) : item.imageUrl ? (
-                     <img src={item.imageUrl} alt={item.character} className="w-full h-full object-contain" />
-                   ) : (
-                     <span className="text-7xl">{item.emoji}</span>
-                   )}
-                </div>
-              )}
-
-              <div className="flex flex-col items-center">
-                 {gameMode === 'word' && (
-                   item.zhuyin
-                     ? <ZhuyinText text={item.character} readings={item.zhuyin.split(' ')} className="text-5xl md:text-6xl text-gray-800" />
-                     : <span className="font-kai text-5xl text-gray-800">{item.character}</span>
-                 )}
+      {current && (
+        <div className="flex-1 min-h-0 flex flex-col items-center gap-[2vh]">
+          <div
+            key={current.id}
+            className={`relative w-full max-w-md flex-1 min-h-0 max-h-[36rem] my-auto flex flex-col items-center justify-center gap-[2vh] p-4 rounded-3xl border-4 shadow-xl transition-all duration-300 animate-pop
+              ${current.matched ? 'bg-green-100 border-green-300' : isMe ? 'bg-purple-50 border-purple-500 ring-4 ring-purple-200' : 'bg-white border-purple-200'}`}
+          >
+            {isMe && (
+              <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
+                <Mic size={14} /> 聽你說...
               </div>
+            )}
 
-              {!item.matched && (
-                <div className="flex gap-3 mt-4 w-full">
-                  <button
-                    onClick={() => playModel(item)}
-                    disabled={isListening}
-                    className={`flex-1 flex items-center justify-center gap-1 font-bold py-3 rounded-xl transition active:scale-95 disabled:opacity-50
-                      ${level >= HELP_NARROW ? 'bg-yellow-200 text-yellow-800 ring-4 ring-yellow-300' : 'bg-purple-100 hover:bg-purple-200 text-purple-700'}`}
-                  >
-                    <Volume2 size={20} /> 聽
-                  </button>
-                  <button
-                    onClick={() => startListening(item)}
-                    disabled={isListening}
-                    className={`flex-[2] flex items-center justify-center gap-1 text-white font-bold py-3 rounded-xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
-                  >
-                    <Mic size={20} /> {isMe ? '請說…' : '唸唸看'}
-                  </button>
-                </div>
-              )}
+            {(gameMode === 'zhuyin' || hasPicture(current)) && (
+              <div className="flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden">
+                {gameMode === 'zhuyin' ? (
+                  // Show the symbol itself: the example picture would make kids say the word (貓) instead of ㄇ
+                  <span className="text-[clamp(4rem,22vh,10rem)] leading-none font-bold text-gray-800">{current.character}</span>
+                ) : current.imageUrl ? (
+                  <img src={current.imageUrl} alt={current.character} className="max-w-full max-h-full object-contain" />
+                ) : (
+                  <span className="text-[clamp(3.5rem,16vh,8rem)] leading-none">{current.emoji}</span>
+                )}
+              </div>
+            )}
 
-              {!item.matched && level >= HELP_SHOW && (
+            {gameMode === 'word' && (
+              current.zhuyin
+                ? <ZhuyinText text={current.character} readings={current.zhuyin.split(' ')} className="text-[clamp(2.5rem,min(16vw,10vh),5.5rem)] text-gray-800" />
+                : <span className="font-kai text-[clamp(2.5rem,min(16vw,10vh),5.5rem)] text-gray-800">{current.character}</span>
+            )}
+
+            {current.matched ? (
+              <div className="flex items-center gap-2 text-green-700 font-black text-2xl"><ThumbsUp /> 唸對了！</div>
+            ) : (
+              <div className="flex gap-3 w-full">
                 <button
-                  onClick={() => handleParentPass(item)}
-                  className="mt-3 text-sm text-gray-500 hover:text-purple-600 font-bold flex items-center gap-1 underline"
+                  onClick={() => playModel(current)}
+                  disabled={isListening}
+                  className={`flex-1 flex items-center justify-center gap-1 font-black text-xl py-[1.8vh] rounded-2xl transition active:scale-95 disabled:opacity-50
+                    ${level >= HELP_NARROW ? 'bg-yellow-200 text-yellow-800 ring-4 ring-yellow-300' : 'bg-purple-100 hover:bg-purple-200 text-purple-700'}`}
                 >
-                  <ThumbsUp size={14} /> 爸媽聽過了，唸得很好！先過關
+                  <Volume2 size={24} /> 聽
                 </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                <button
+                  onClick={() => startListening(current)}
+                  disabled={isListening}
+                  className={`flex-[2] flex items-center justify-center gap-1 text-white font-black text-xl py-[1.8vh] rounded-2xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
+                >
+                  <Mic size={24} /> {isMe ? '請說…' : '唸唸看'}
+                </button>
+              </div>
+            )}
 
-      {feedbackMessage && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-300 animate-pop z-50 whitespace-nowrap">
-           <span className="text-2xl font-bold text-yellow-600">{feedbackMessage}</span>
+            {!current.matched && level >= HELP_SHOW && (
+              <button
+                onClick={() => handleParentPass(current)}
+                className="text-sm text-gray-500 hover:text-purple-600 font-bold flex items-center gap-1 underline"
+              >
+                <ThumbsUp size={14} /> 爸媽聽過了，唸得很好！先過關
+              </button>
+            )}
+          </div>
+
+          {/* Every word of the round: done ones ticked, tap another to say it first */}
+          <div className="shrink-0 flex justify-center gap-2">
+            {currentWords.map(item => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => !item.matched && !isListening && setPickedId(item.id)}
+                aria-label={item.character}
+                className={`w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-lg transition
+                  ${item.matched ? 'bg-green-500 border-green-500 text-white' : item.id === current.id ? 'bg-purple-100 border-purple-500 text-purple-700 scale-110' : 'bg-white border-purple-200 text-gray-500'}`}
+              >
+                {item.matched ? <Check size={22} strokeWidth={4} /> : gameMode === 'zhuyin' ? item.character : hasPicture(item) ? item.emoji : [...item.character][0]}
+              </button>
+            ))}
+          </div>
         </div>
       )}
-    </div>
+    </GameScreen>
   );
 };

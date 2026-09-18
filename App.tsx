@@ -247,7 +247,6 @@ export default function App() {
           onDone={loops.lessonLoopDone}
           onMistake={word => answers.recordMistake(statKey('word', word), undefined, false)}
           onBack={() => goTo(lessonLoop.fromPath ? GameState.DAILY_PATH : GameState.LESSON_INTRO)}
-          backLabel={lessonLoop.fromPath ? '冒險地圖' : '回課文'}
         />
       );
     }
@@ -362,6 +361,7 @@ export default function App() {
       if (victoryFrom === 'english') {
         return (
           <VictoryView
+            homeLabel="回英文遊戲"
             onHome={english.goToHub}
             onReplay={() => english.start(english.level)}
           />
@@ -435,7 +435,6 @@ export default function App() {
           onDone={loops.englishLoopDone}
           onMistake={word => answers.recordMistake(englishStatKey({ kind: 'word', text: word }), undefined, false)}
           onBack={() => goTo(englishLoop.fromPath ? GameState.DAILY_PATH : GameState.ENGLISH_UNIT_INTRO)}
-          backLabel={englishLoop.fromPath ? '冒險地圖' : '回單元'}
         />
       );
     }

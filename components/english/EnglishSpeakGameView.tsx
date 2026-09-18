@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { EnglishRoundItem, UserProfile } from '../../types';
-import { EnglishTopBar, FeedbackToast, HighlightedKeyword, useFeedback } from './shared';
-import { Mic, AlertCircle, Volume2, ThumbsUp } from 'lucide-react';
+import { HighlightedKeyword, useFeedback } from './shared';
+import { GameScreen } from '../GameScreen';
+import { Mic, AlertCircle, Volume2, ThumbsUp, Check } from 'lucide-react';
 import { playSound } from '../../utils/sound';
 import { isSpeechMatch, speakEnglish, speakPraise, stopEnglishSpeech } from '../../utils/englishSpeech';
 import { HELP_SHOW, nextHelp, POINTS_WITH_HELP } from '../../services/scaffolding';
 import { praise } from '../Praise';
 import { LETTER_LEVELS, WORD_LEVELS } from '../../english/curriculum';
-import { InstructionButton, speakHelp, useInstruction } from '../VoiceGuide';
+import { speakHelp, useInstruction } from '../VoiceGuide';
 
 interface EnglishSpeakGameViewProps {
   currentUser: UserProfile;
@@ -26,6 +27,7 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
   const instruction = (items[0]?.kind === 'letter' ? LETTER_LEVELS : WORD_LEVELS)[3].instruction;
   useInstruction(`english-speak-${items[0]?.kind}`, instruction);
   const [permissionError, setPermissionError] = useState(false);
+  const [pickedId, setPickedId] = useState<string | null>(null);
   const [feedback, showFeedback] = useFeedback();
   const recognitionRef = useRef<any>(null);
 
@@ -98,87 +100,95 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
   };
 
   const isListening = listeningForId !== null;
+  // One word at a time, the next one when it's done; the dots below let the child pick another
+  const current = items.find(i => i.id === pickedId && !i.matched) ?? items.find(i => !i.matched) ?? items[items.length - 1];
+  const isMe = !!current && listeningForId === current.id;
+  const fails = current ? help[current.id] || 0 : 0;
 
   return (
-    <div className="flex flex-col min-h-screen max-w-4xl mx-auto p-4 md:p-6 pb-20">
-      <EnglishTopBar currentUser={currentUser} onHome={onHome} onRefresh={onRefresh} />
-
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-purple-600 flex items-center justify-center gap-2">
-          <Mic className="animate-bounce" /> 小小播音員：Say it!
-        </h2>
-        <p className="text-gray-500 mt-1">先按 🔊 聽老師唸，再按 🎤 大聲說出來！</p>
-        <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
+    <GameScreen
+      currentUser={currentUser}
+      title="🎙️ Say it!"
+      instruction={instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent="text-purple-600"
+    >
       {permissionError && (
-        <div className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-xl shadow-sm animate-pop flex items-start gap-3">
-          <AlertCircle className="shrink-0 mt-0.5" />
-          <div className="text-left">
-            <p className="font-bold">無法使用麥克風 🎤</p>
-            <p className="text-sm">瀏覽器擋住了麥克風權限。請檢查網址列的鎖頭圖示 🔒，允許我們使用麥克風喔！</p>
-          </div>
+        <div className="shrink-0 mb-2 bg-red-100 border-l-4 border-red-500 text-red-700 px-3 py-2 rounded-r-xl text-sm flex items-start gap-2">
+          <AlertCircle size={18} className="shrink-0 mt-0.5" />
+          <p><span className="font-bold">無法使用麥克風 🎤</span> 請按網址列的鎖頭圖示 🔒，允許使用麥克風。</p>
         </div>
       )}
 
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-        {items.map(item => {
-          const isMe = listeningForId === item.id;
-          const fails = help[item.id] || 0;
-          return (
-            <div
-              key={item.id}
-              className={`relative flex flex-col items-center p-4 rounded-3xl border-4 shadow-xl transition-all duration-300
-                ${item.matched ? 'bg-green-100 border-green-300 opacity-80' : isMe ? 'bg-purple-50 border-purple-500 scale-105 ring-4 ring-purple-200 z-10' : 'bg-white border-purple-200'}`}
-            >
-              {isMe && (
-                <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
-                  <Mic size={14} /> 聽你說...
-                </div>
-              )}
-              {item.matched && (
-                <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">OK</div>
-              )}
+      {current && (
+        <div className="flex-1 min-h-0 flex flex-col items-center gap-[2vh]">
+          <div
+            key={current.id}
+            className={`relative w-full max-w-md flex-1 min-h-0 max-h-[36rem] my-auto flex flex-col items-center justify-center gap-[1.5vh] p-4 rounded-3xl border-4 shadow-xl transition-all duration-300 animate-pop
+              ${current.matched ? 'bg-green-100 border-green-300' : isMe ? 'bg-purple-50 border-purple-500 ring-4 ring-purple-200' : 'bg-white border-purple-200'}`}
+          >
+            {isMe && (
+              <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
+                <Mic size={14} /> 聽你說...
+              </div>
+            )}
 
-              <div className="text-7xl md:text-8xl mb-2">{item.emoji}</div>
-              {item.kind === 'letter'
-                ? <HighlightedKeyword keyword={item.keyword} letter={item.text} className="text-4xl md:text-5xl font-bold text-gray-800" />
-                : <span className="font-english text-4xl md:text-5xl font-bold text-gray-800">{item.keyword}</span>}
-              <span className="text-gray-400 font-bold text-sm mt-1">{item.zh}</span>
+            <div className="text-[clamp(4rem,18vh,9rem)] leading-none">{current.emoji}</div>
+            {current.kind === 'letter'
+              ? <HighlightedKeyword keyword={current.keyword} letter={current.text} className="text-[clamp(2.25rem,min(13vw,8vh),4rem)] font-bold text-gray-800" />
+              : <span className="font-english text-[clamp(2.25rem,min(13vw,8vh),4rem)] font-bold text-gray-800">{current.keyword}</span>}
+            <span className="text-gray-400 font-bold">{current.zh}</span>
 
-              {!item.matched && (
-                <div className="flex gap-3 mt-4 w-full">
-                  <button
-                    onClick={() => speakEnglish(item.keyword)}
-                    disabled={isListening}
-                    className="flex-1 flex items-center justify-center gap-1 bg-purple-100 hover:bg-purple-200 text-purple-700 font-bold py-3 rounded-xl transition active:scale-95 disabled:opacity-50"
-                  >
-                    <Volume2 size={20} /> 聽
-                  </button>
-                  <button
-                    onClick={() => startListening(item)}
-                    disabled={isListening}
-                    className={`flex-[2] flex items-center justify-center gap-1 text-white font-bold py-3 rounded-xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
-                  >
-                    <Mic size={20} /> {isMe ? '請說…' : '說說看'}
-                  </button>
-                </div>
-              )}
-
-              {!item.matched && fails >= HELP_SHOW && (
+            {current.matched ? (
+              <div className="flex items-center gap-2 text-green-700 font-black text-2xl"><ThumbsUp /> Great!</div>
+            ) : (
+              <div className="flex gap-3 w-full">
                 <button
-                  onClick={() => handleEffortPass(item)}
-                  className="mt-3 text-sm text-gray-500 hover:text-purple-600 font-bold flex items-center gap-1 underline"
+                  onClick={() => speakEnglish(current.keyword)}
+                  disabled={isListening}
+                  className="flex-1 flex items-center justify-center gap-1 bg-purple-100 hover:bg-purple-200 text-purple-700 font-black text-xl py-[1.8vh] rounded-2xl transition active:scale-95 disabled:opacity-50"
                 >
-                  <ThumbsUp size={14} /> 爸媽聽過了，唸得很好！先過關
+                  <Volume2 size={24} /> 聽
                 </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                <button
+                  onClick={() => startListening(current)}
+                  disabled={isListening}
+                  className={`flex-[2] flex items-center justify-center gap-1 text-white font-black text-xl py-[1.8vh] rounded-2xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
+                >
+                  <Mic size={24} /> {isMe ? '請說…' : '說說看'}
+                </button>
+              </div>
+            )}
 
-      <FeedbackToast message={feedback} />
-    </div>
+            {!current.matched && fails >= HELP_SHOW && (
+              <button
+                onClick={() => handleEffortPass(current)}
+                className="text-sm text-gray-500 hover:text-purple-600 font-bold flex items-center gap-1 underline"
+              >
+                <ThumbsUp size={14} /> 爸媽聽過了，唸得很好！先過關
+              </button>
+            )}
+          </div>
+
+          {/* Every word of the round: done ones ticked, tap another to say it first */}
+          <div className="shrink-0 flex justify-center gap-2">
+            {items.map(item => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => !item.matched && !isListening && setPickedId(item.id)}
+                aria-label={item.keyword}
+                className={`w-12 h-12 rounded-full border-4 flex items-center justify-center text-xl transition
+                  ${item.matched ? 'bg-green-500 border-green-500 text-white' : item.id === current.id ? 'bg-purple-100 border-purple-500 scale-110' : 'bg-white border-purple-200'}`}
+              >
+                {item.matched ? <Check size={22} strokeWidth={4} /> : item.emoji}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </GameScreen>
   );
 };

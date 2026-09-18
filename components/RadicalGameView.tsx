@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Home, Star, RefreshCw, Search, Volume2, X } from 'lucide-react';
+import { Volume2, X } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { GuessChoice, RadicalCard, RadicalQuestion } from '../services/radicals';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
@@ -7,7 +7,9 @@ import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
-import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
+import { speakHelp, withInstruction } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
+import { heightShare, useViewportHeight } from '../hooks/useViewportHeight';
 import { RadicalGlyph } from './RadicalGlyph';
 
 interface RadicalGameViewProps {
@@ -31,6 +33,10 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
   const current = currentWords.find(w => !w.matched);
   const question = questions.find(q => q.item.id === current?.id);
   const instruction = gameInstruction(8, 'word');
+  const screenHeight = useViewportHeight();
+  const showcaseSize = heightShare(screenHeight, 0.12, 56, 96);
+  const cardSize = heightShare(screenHeight, 0.11, 40, 88);
+  const guessSize = heightShare(screenHeight, 0.13, 60, 96);
 
   const [phase, setPhase] = useState<'find' | 'rule' | 'guess' | 'done'>('find');
   const [found, setFound] = useState<string[]>([]);
@@ -135,43 +141,32 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
   };
 
   return (
-    <div className="flex flex-col min-h-screen max-w-3xl mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-indigo-100">
-        <button onClick={onHome} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 active:scale-95">
-          <Home size={24} /> <span className="text-lg">回首頁</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">
-          <Star className="fill-yellow-400 text-yellow-500 animate-pulse" />
-          <span className="font-bold text-yellow-800 text-xl">{currentUser.points}</span>
-        </div>
-        <button onClick={onRefresh} className="p-2 hover:bg-indigo-50 rounded-full text-indigo-500 transition">
-          <RefreshCw size={24} />
-        </button>
-      </div>
-
-      <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold text-indigo-700 flex items-center justify-center gap-2">
-          <Search /> 部件偵探：{phase === 'find' || phase === 'rule' ? '找出有同一個部件的字' : '哪個新的字有關係？'}
-        </h2>
-        <p className="text-gray-500 mt-1">{instruction}</p>
-        <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
-      <div className="flex justify-center gap-3 mb-6">
+    <GameScreen
+      currentUser={currentUser}
+      title={phase === 'find' || phase === 'rule' ? '找出同一個部件' : '猜猜新的字'}
+      instruction={instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent="text-indigo-700"
+    >
+      <div className="shrink-0 flex justify-center gap-3 mb-[1.5vh]">
         {currentWords.map((item, i) => (
           <div key={item.id} className={`w-4 h-4 rounded-full border-2 ${item.matched ? 'bg-green-400 border-green-500' : i === matchedCount ? 'bg-indigo-300 border-indigo-500 scale-125' : 'bg-gray-100 border-gray-300'}`} />
         ))}
       </div>
 
       {/* The component, and once the characters are found, what it usually means */}
-      <div className="bg-white rounded-3xl shadow-lg border-b-8 border-indigo-200 p-4 mb-4 flex items-center justify-center gap-5 min-h-[8.5rem]">
+      {/* The component above the cards, or beside them on a wide and short screen */}
+      <div className="fit-screen-main flex-1 min-h-0 flex flex-col gap-[1.5vh]">
+      <div className="shrink-0 bg-white rounded-3xl shadow-lg border-b-8 border-indigo-200 p-3 flex items-center justify-center gap-5">
         {/* Drawn inside a character that isn't a choice: a lone 艹 or 足 in a font looks nothing like it does in a character.
             While guessing it is hidden, so the child looks for the shape they remember, and comes back as help. */}
         {phase === 'guess' && guessHelp < HELP_RETRY
-          ? <span className="w-24 h-24 rounded-2xl border-4 border-dashed border-indigo-200 flex items-center justify-center text-5xl text-indigo-300 font-black">?</span>
-          : <RadicalGlyph char={question.showcase} size={96} highlight radicalOnly />}
+          ? <span style={{ width: showcaseSize, height: showcaseSize }} className="rounded-2xl border-4 border-dashed border-indigo-200 flex items-center justify-center text-5xl text-indigo-300 font-black">?</span>
+          : <RadicalGlyph char={question.showcase} size={showcaseSize} highlight radicalOnly />}
         <div className="text-left">
-          <div className="text-3xl font-kai text-indigo-800">{group.name}</div>
+          <div className="text-[clamp(1.5rem,4.5vh,1.875rem)] font-kai text-indigo-800">{group.name}</div>
           {phase === 'find'
             ? <div className="text-gray-500 font-bold">哪些字裡面有它？（找到 {found.length}/{members.length}）</div>
             : <div className="text-lg font-bold text-emerald-700 animate-pop">常常和 {group.meaningEmoji}「{group.meaning}」有關係</div>}
@@ -179,27 +174,27 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
       </div>
 
       {(phase === 'find' || phase === 'rule') && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3">
           {question.cards.map(card => {
             const isFound = found.includes(card.char);
             const isWrong = wrong.includes(card.char);
             const isHidden = hidden.includes(card.char);
             const glow = findHelp >= HELP_SHOW && card.member && !isFound;
             return (
-              <div key={card.char} className="relative">
+              <div key={card.char} className="relative min-h-0">
                 <button
                   onClick={() => choose(card)}
                   disabled={isHidden || phase !== 'find'}
-                  className={`w-full rounded-2xl border-4 p-3 pb-9 flex flex-col items-center gap-1 shadow-md transition active:scale-95
+                  className={`w-full h-full rounded-2xl border-4 p-1 pb-6 flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95 overflow-hidden
                     ${isFound ? 'bg-green-50 border-green-400' : isWrong ? 'bg-gray-50 border-gray-200 opacity-60' : isHidden ? 'opacity-20 border-gray-200' : 'bg-white border-indigo-200 hover:border-indigo-400'}
                     ${glow ? 'ring-8 ring-yellow-400 animate-bounce' : ''}`}
                 >
                   <div className="flex items-center gap-2">
                     {/* The component turns red once found */}
-                    <RadicalGlyph char={card.char} size={88} highlight={isFound} />
-                    <span className="text-4xl">{card.emoji}</span>
+                    <RadicalGlyph char={card.char} size={cardSize} highlight={isFound} />
+                    <span className="text-[clamp(1.75rem,5vh,2.25rem)]">{card.emoji}</span>
                   </div>
-                  <span className="text-lg font-bold text-gray-500">{card.zhuyin}</span>
+                  <span className="text-[clamp(0.9rem,2.5vh,1.125rem)] font-bold text-gray-500">{card.zhuyin}</span>
                   {isWrong && <X size={20} className="absolute top-2 left-2 text-gray-400" />}
                 </button>
                 <button
@@ -217,9 +212,9 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
       )}
 
       {(phase === 'guess' || phase === 'done') && (
-        <div className="bg-white rounded-3xl shadow-xl border-b-8 border-indigo-200 p-5 flex flex-col items-center gap-4 animate-pop">
+        <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-indigo-200 p-3 flex flex-col items-center justify-center gap-[2vh] animate-pop">
           <div className="flex items-center gap-2">
-            <p className="text-xl font-bold text-gray-600">哪一個字和 {group.meaningEmoji}「{group.meaning}」有關係？</p>
+            <p className="text-[clamp(1rem,2.8vh,1.25rem)] font-bold text-gray-600 text-center">哪一個字和 {group.meaningEmoji}「{group.meaning}」有關係？</p>
             <button onClick={() => playChineseAudio(askGuess())} className="p-2 rounded-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 active:scale-90" aria-label="再聽一次">
               <Volume2 size={20} />
             </button>
@@ -239,7 +234,7 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
                     ${isRight ? 'bg-green-50 border-green-400' : isWrong ? 'bg-gray-50 border-gray-200 opacity-40' : phase === 'done' ? 'opacity-40 border-gray-200' : 'bg-white border-indigo-200 hover:border-indigo-400'}
                     ${onlyOneLeft && !isRight ? 'ring-8 ring-yellow-400' : ''}`}
                 >
-                  <RadicalGlyph char={choice.char} size={96} highlight={isRight || onlyOneLeft} />
+                  <RadicalGlyph char={choice.char} size={guessSize} highlight={isRight || onlyOneLeft} />
                   <span className={`text-base font-bold h-6 ${isWrong || isRight ? 'text-gray-500' : 'text-transparent'}`}>{choice.zhuyin}</span>
                 </button>
               );
@@ -252,12 +247,7 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
           )}
         </div>
       )}
-
-      {feedback && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-300 animate-pop z-40 whitespace-nowrap">
-          <span className="text-2xl font-bold text-yellow-600">{feedback}</span>
-        </div>
-      )}
-    </div>
+      </div>
+    </GameScreen>
   );
 };

@@ -20,7 +20,7 @@ export const WordCard: React.FC<WordCardProps> = ({ item, isSelected, onClick, m
     if (item.matched) {
       // In Listening Mode, the Left card reveals the IMAGE when matched!
       return (
-        <div className="w-full h-24 md:h-32 rounded-xl border-4 border-green-500 bg-white flex items-center justify-center animate-pop shadow-sm">
+        <div className="w-full h-full rounded-xl border-4 border-green-500 bg-white flex items-center justify-center animate-pop shadow-sm overflow-hidden">
            {item.imageUrl ? (
             <img
               src={item.imageUrl}
@@ -28,10 +28,10 @@ export const WordCard: React.FC<WordCardProps> = ({ item, isSelected, onClick, m
               className="w-full h-full object-contain rounded-lg p-1"
             />
           ) : hasPicture(item) ? (
-            <span className="text-5xl">{item.emoji}</span>
+            <span className="text-[clamp(2rem,8vh,3.5rem)] leading-none">{item.emoji}</span>
           ) : (
             <span className="flex flex-col items-center leading-tight">
-              <span className="text-3xl md:text-4xl font-bold text-green-700">{item.character}</span>
+              <span className="text-[clamp(1.5rem,5vh,2.5rem)] font-bold text-green-700">{item.character}</span>
               <span className="text-sm font-bold text-gray-500">{item.zhuyin}</span>
             </span>
           )}
@@ -44,7 +44,7 @@ export const WordCard: React.FC<WordCardProps> = ({ item, isSelected, onClick, m
       <button
         onClick={onClick}
         className={`
-          w-full h-24 md:h-32 rounded-xl border-4 flex flex-col items-center justify-center relative gap-1
+          w-full h-full rounded-xl border-4 flex flex-col items-center justify-center relative gap-1
           transition-all duration-300 transform shadow-lg
           ${isSelected 
             ? 'border-yellow-500 bg-yellow-100 ring-4 ring-yellow-300 ring-offset-2 scale-105 z-10' 
@@ -52,10 +52,10 @@ export const WordCard: React.FC<WordCardProps> = ({ item, isSelected, onClick, m
           }
         `}
       >
-        <div className={`p-3 rounded-full ${isSelected ? 'bg-yellow-300 text-yellow-800 animate-bounce' : 'bg-orange-200 text-orange-600'}`}>
+        <div className={`p-[1vh] rounded-full ${isSelected ? 'bg-yellow-300 text-yellow-800 animate-bounce' : 'bg-orange-200 text-orange-600'}`}>
           <Ear size={32} />
         </div>
-        <span className={`text-sm font-bold ${isSelected ? 'text-yellow-800' : 'text-gray-500'}`}>
+        <span className={`text-[clamp(0.7rem,1.8vh,0.875rem)] font-bold ${isSelected ? 'text-yellow-800' : 'text-gray-500'}`}>
           {isSelected ? '選取中...' : '點我聽聲音'}
         </span>
       </button>
@@ -64,14 +64,14 @@ export const WordCard: React.FC<WordCardProps> = ({ item, isSelected, onClick, m
 
   // --- READING MODE (Standard) ---
   if (item.matched) {
-    return <div className="w-full h-24 md:h-32 opacity-0 pointer-events-none" />;
+    return <div className="w-full h-full opacity-0 pointer-events-none" />;
   }
 
   return (
     <button
       onClick={onClick}
       className={`
-        w-full h-24 md:h-32 rounded-xl border-4 flex flex-row items-center justify-center relative gap-3 px-2
+        w-full h-full rounded-xl border-4 flex flex-row items-center justify-center relative gap-3 px-2
         transition-all duration-300 transform shadow-lg
         ${isSelected 
           ? 'border-yellow-500 bg-yellow-100 ring-4 ring-yellow-300 ring-offset-2 scale-105 z-10' 
@@ -88,16 +88,16 @@ export const WordCard: React.FC<WordCardProps> = ({ item, isSelected, onClick, m
       {/* Main Character: textbook 楷書 with zhuyin from the font, or plain when the zhuyin is the question */}
       {gameMode === 'word' ? (
         hideZhuyin || !item.zhuyin ? (
-          <span className={`font-kai text-gray-800 ${[...item.character].length > 2 ? 'text-3xl md:text-5xl' : 'text-4xl md:text-6xl'}`}>{item.character}</span>
+          <span className={`font-kai text-gray-800 leading-none ${[...item.character].length > 2 ? 'text-[clamp(1.4rem,min(8vw,6vh),3.25rem)]' : 'text-[clamp(1.9rem,min(12vw,8vh),4.5rem)]'}`}>{item.character}</span>
         ) : (
           <ZhuyinText
             text={item.character}
             readings={item.zhuyin.split(' ')}
-            className={`text-gray-800 ${[...item.character].length > 2 ? 'text-3xl md:text-5xl' : 'text-5xl md:text-6xl'}`}
+            className={`text-gray-800 ${[...item.character].length > 2 ? 'text-[clamp(1.4rem,min(8vw,6vh),3.25rem)]' : 'text-[clamp(1.9rem,min(12vw,8vh),4.5rem)]'}`}
           />
         )
       ) : (
-        <span className="text-4xl md:text-5xl font-bold text-gray-800 font-sans tracking-wide">{item.character}</span>
+        <span className="text-[clamp(1.9rem,min(11vw,7.5vh),3rem)] font-bold text-gray-800 font-sans tracking-wide leading-none">{item.character}</span>
       )}
 
       {gameMode === 'word' && (

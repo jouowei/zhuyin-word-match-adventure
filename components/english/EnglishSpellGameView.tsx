@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Confusion, EnglishRoundItem, UserProfile } from '../../types';
 import { shuffleItems } from '../../english/curriculum';
-import { EnglishTopBar, FeedbackToast, useFeedback } from './shared';
-import { Puzzle, Volume2, Snail, CheckCircle2 } from 'lucide-react';
+import { useFeedback } from './shared';
+import { GameScreen } from '../GameScreen';
+import { Volume2, Snail, CheckCircle2 } from 'lucide-react';
 import { playSound } from '../../utils/sound';
 import { speakEnglish, speakLetterName, speakPraise } from '../../utils/englishSpeech';
 import { getLetter } from '../../english/letters';
@@ -10,7 +11,7 @@ import { AudioStep, playChineseAudio } from '../../utils/chineseAudio';
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
 import { praise } from '../Praise';
 import { WORD_LEVELS } from '../../english/curriculum';
-import { InstructionButton, speakHelp, withInstruction } from '../VoiceGuide';
+import { speakHelp, withInstruction } from '../VoiceGuide';
 
 interface EnglishSpellGameViewProps {
   currentUser: UserProfile;
@@ -190,19 +191,17 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
   const matchedCount = items.filter(i => i.matched).length;
 
   return (
-    <div className="flex flex-col min-h-screen max-w-3xl mx-auto p-4 md:p-6">
-      <EnglishTopBar currentUser={currentUser} onHome={onHome} onRefresh={onRefresh} />
-
-      <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold text-amber-600 flex items-center justify-center gap-2">
-          <Puzzle className="animate-bounce" /> 拼字高手
-        </h2>
-        <p className="text-gray-500 mt-1">{phase === 'blend' ? '慢慢聽，找出是哪一張圖，再把它拼出來！' : '聽聽看，照順序點字母，把單字拼出來！'}</p>
-        <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
+    <GameScreen
+      currentUser={currentUser}
+      title="🧩 拼字高手"
+      instruction={phase === 'blend' ? '慢慢聽，找出是哪一張圖，再把它拼出來！' : instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent="text-amber-600"
+    >
       {/* Round progress */}
-      <div className="flex justify-center gap-3 mb-6">
+      <div className="shrink-0 flex justify-center gap-3 mb-[1.5vh]">
         {items.map((item, i) => (
           <div
             key={item.id}
@@ -211,40 +210,40 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
         ))}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border-b-8 border-amber-200 p-6 md:p-8 flex flex-col items-center">
+      <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-amber-200 p-4 flex flex-col items-center justify-center gap-[2vh]">
         {phase === 'spell' && (
-          <>
-            <div className={`text-8xl md:text-9xl mb-2 ${isDone ? 'animate-bounce' : 'animate-float'}`}>{current.emoji}</div>
-            <div className="text-gray-400 font-bold mb-4">{current.zh}</div>
-          </>
+          <div className="flex flex-col items-center">
+            <div className={`text-[clamp(3.5rem,14vh,8rem)] leading-none ${isDone ? 'animate-bounce' : 'animate-float'}`}>{current.emoji}</div>
+            <div className="text-gray-400 font-bold">{current.zh}</div>
+          </div>
         )}
 
         {phase === 'blend' && (
           <button
             onClick={() => playSlow([])}
-            className="flex items-center gap-2 bg-green-100 hover:bg-green-200 text-green-800 font-bold px-5 py-3 rounded-2xl transition active:scale-95 mb-6"
+            className="flex items-center gap-2 bg-green-100 hover:bg-green-200 text-green-800 font-bold px-5 py-3 rounded-2xl transition active:scale-95"
           >
             <Snail size={24} /> 再慢慢聽一次
           </button>
         )}
 
-        <div className={`flex gap-3 mb-8 ${phase === 'blend' ? 'hidden' : ''}`}>
+        <div className={`flex gap-3 ${phase === 'blend' ? 'hidden' : ''}`}>
           <button
             onClick={() => speakEnglish(current.text)}
-            className="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-5 py-3 rounded-2xl transition active:scale-95"
+            className="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-4 py-[1.2vh] rounded-2xl transition active:scale-95"
           >
             <Volume2 size={24} /> 聽單字
           </button>
           <button
             onClick={() => speakEnglish(current.text, { rate: 0.4 })}
-            className="flex items-center gap-2 bg-green-100 hover:bg-green-200 text-green-800 font-bold px-5 py-3 rounded-2xl transition active:scale-95"
+            className="flex items-center gap-2 bg-green-100 hover:bg-green-200 text-green-800 font-bold px-4 py-[1.2vh] rounded-2xl transition active:scale-95"
           >
             <Snail size={24} /> 慢慢聽
           </button>
         </div>
 
         {/* Letter blanks */}
-        <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
           {chars.map((ch, i) => {
             if (!isLetter(ch)) {
               return <div key={i} className="w-6 md:w-8 flex items-end justify-center font-english text-4xl font-bold text-gray-400">{ch === ' ' ? '' : ch}</div>;
@@ -255,7 +254,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
             return (
               <div
                 key={i}
-                className={`w-14 h-16 md:w-16 md:h-20 rounded-xl border-b-8 flex items-center justify-center font-english text-4xl md:text-5xl font-bold transition-all
+                className={`w-[clamp(2.75rem,min(13vw,9vh),4rem)] h-[clamp(3.25rem,min(16vw,11vh),5rem)] rounded-xl border-b-8 flex items-center justify-center font-english text-[clamp(1.9rem,min(10vw,6.5vh),3rem)] font-bold transition-all
                   ${lit ? 'bg-yellow-200 border-yellow-500 scale-110' : filled ? (isDone ? 'bg-green-100 border-green-400 text-green-700 animate-pop' : 'bg-amber-50 border-amber-400 text-gray-800 animate-pop') : isNext ? 'bg-yellow-50 border-yellow-400 animate-pulse' : 'bg-gray-50 border-gray-300'}`}
               >
                 {filled ? ch : ''}
@@ -271,11 +270,11 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
                 <button
                   onClick={() => handleBlendChoice(choice)}
                   disabled={blendHidden.includes(choice.id)}
-                  className={`w-full rounded-2xl border-4 bg-white p-3 pb-9 flex flex-col items-center shadow-lg transition
+                  className={`w-full rounded-2xl border-4 bg-white p-2 pb-8 flex flex-col items-center shadow-lg transition
                     ${blendHidden.includes(choice.id) ? 'opacity-20 border-gray-200' : 'border-amber-200 hover:border-amber-400 active:scale-95'}
                     ${blendHelp >= HELP_SHOW && choice.id === current.id ? 'ring-8 ring-yellow-400 animate-bounce' : ''}`}
                 >
-                  <span className="text-6xl">{choice.emoji}</span>
+                  <span className="text-[clamp(2.5rem,9vh,3.75rem)] leading-none">{choice.emoji}</span>
                 </button>
                 {/* Comparing each picture word at normal speed with the stretched one is the task */}
                 <button
@@ -290,7 +289,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
             ))}
           </div>
         ) : isDone ? (
-          <div className="flex items-center gap-2 text-green-600 text-2xl font-black animate-pop h-20">
+          <div className="flex items-center gap-2 text-green-600 text-2xl font-black animate-pop py-4">
             <CheckCircle2 size={32} /> <span className="font-english">{current.text}</span>
           </div>
         ) : (
@@ -300,7 +299,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
                 key={tile.id}
                 onClick={() => handleTileClick(tile)}
                 disabled={tile.used || hiddenTiles.includes(tile.id)}
-                className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl font-english text-4xl md:text-5xl font-bold shadow-lg border-b-4 transition-all transform
+                className={`w-[clamp(3.25rem,min(16vw,10vh),5rem)] h-[clamp(3.25rem,min(16vw,10vh),5rem)] rounded-2xl font-english text-[clamp(1.9rem,min(10vw,6.5vh),3rem)] font-bold shadow-lg border-b-4 transition-all transform
                   ${tile.used ? 'opacity-0 pointer-events-none' : hiddenTiles.includes(tile.id) ? 'opacity-20 bg-gray-100 border-gray-200 text-gray-300' : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 hover:-translate-y-1 active:scale-95'}
                   ${shakeTileId === tile.id ? 'animate-shake-once bg-red-100 border-red-400 text-red-600' : ''}
                   ${hintTile?.id === tile.id ? 'ring-4 ring-yellow-400 animate-bounce' : ''}`}
@@ -312,7 +311,6 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
         )}
       </div>
 
-      <FeedbackToast message={feedback} />
-    </div>
+    </GameScreen>
   );
 };

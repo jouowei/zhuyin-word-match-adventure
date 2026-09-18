@@ -5,14 +5,14 @@ import { WordCard as WordCardComponent } from './WordCard';
 import { ImageSlot } from './ImageSlot';
 import { WritingOverlay } from './WritingOverlay';
 import { ZhuyinTraceOverlay } from './ZhuyinTraceOverlay';
-import { Home, Star, RefreshCw, ArrowRight, Ear, PenTool } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { canPlayPictureRound } from '../utils/wordPicture';
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { InstructionButton, speakHelp, useInstruction } from './VoiceGuide';
+import { speakHelp, useInstruction } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
 
 interface GameViewProps {
   currentUser: UserProfile;
@@ -172,9 +172,22 @@ export const GameView: React.FC<GameViewProps> = ({
 
   const selectedHelp = selectedCardId ? help[selectedCardId] || 0 : 0;
   const slots = slotOrder.map(id => currentWords.find(w => w.id === id)).filter((w): w is WordItem => !!w);
+  const target = gameMode === 'zhuyin' ? '注音' : '國字';
+  const title = currentDifficulty === 2 ? `聽聲音，找${target}`
+    : currentDifficulty === 3 ? `動手寫${target}`
+    : gameMode === 'zhuyin' ? '看符號，找圖片' : zhuyinRound ? '看注音，找國字' : '看圖片，找國字';
 
   return (
-    <div className="flex flex-col min-h-screen max-w-4xl mx-auto p-4 md:p-6">
+    <GameScreen
+      currentUser={currentUser}
+      title={title}
+      instruction={instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedbackMessage}
+      accent={currentDifficulty === 2 ? 'text-red-500' : currentDifficulty === 3 ? 'text-amber-600' : 'text-blue-600'}
+      wide
+    >
       {/* Writing Overlay */}
       {gameMode === 'zhuyin' ? (
         <ZhuyinTraceOverlay
@@ -192,89 +205,41 @@ export const GameView: React.FC<GameViewProps> = ({
         />
       )}
 
-      {/* Top Bar */}
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-blue-100">
-        <button
-          onClick={onHome}
-          className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 border-2 border-transparent hover:border-gray-200 transform active:scale-95"
-        >
-          <Home size={24} /> <span className="text-lg">回首頁</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">
-          <Star className="fill-yellow-400 text-yellow-500 animate-pulse" />
-          <span className="font-bold text-yellow-800 text-xl">{currentUser.points}</span>
-        </div>
-        <button onClick={onRefresh} className="p-2 hover:bg-blue-50 rounded-full text-blue-500 transition">
-          <RefreshCw size={24} />
-        </button>
-      </div>
-
-      {/* Level Title */}
-      <div className="text-center mb-6">
-         {currentDifficulty === 2 && (
-           <h2 className="text-2xl font-bold text-red-500 flex items-center justify-center gap-2">
-             <Ear className="animate-pulse" /> 聽力大挑戰：聽聲音，找{gameMode === 'zhuyin' ? '注音' : '國字'}！
-           </h2>
-         )}
-         {currentDifficulty === 3 && (
-           <h2 className="text-2xl font-bold text-amber-600 flex items-center justify-center gap-2">
-             <PenTool className="animate-bounce" /> 小小書法家：動手寫{gameMode === 'zhuyin' ? '注音' : '國字'}！
-           </h2>
-         )}
-         {currentDifficulty === 1 && (
-           <h2 className="text-2xl font-bold text-blue-600">
-             冒險模式：{gameMode === 'zhuyin' ? '看符號，找圖片' : zhuyinRound ? '看注音，找國字' : '看圖片找國字'}！
-           </h2>
-         )}
-         <p className="text-gray-500 mt-1">{instruction}</p>
-         <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
-      {/* Game Area */}
-      <div className="flex-1 grid grid-cols-2 gap-4 md:gap-12 items-start relative">
-        <div className="flex flex-col gap-4">
+      {/* Cards on the left, where they go on the right: the rows share the height of the screen */}
+      <div className="flex-1 min-h-0 w-full max-h-[46rem] my-auto grid grid-cols-2 gap-3 md:gap-10">
+        <div className="min-h-0 flex flex-col gap-[1.5vh]">
           {currentWords.map((item) => (
-            <WordCardComponent
-              key={item.id}
-              item={item}
-              isSelected={selectedCardId === item.id}
-              onClick={() => handleCardClick(item.id)}
-              mode={currentDifficulty === 2 ? 'listening' : 'reading'}
-              gameMode={gameMode}
-              hideZhuyin={zhuyinRound}
-            />
+            <div key={item.id} className="flex-1 min-h-0">
+              <WordCardComponent
+                item={item}
+                isSelected={selectedCardId === item.id}
+                onClick={() => handleCardClick(item.id)}
+                mode={currentDifficulty === 2 ? 'listening' : 'reading'}
+                gameMode={gameMode}
+                hideZhuyin={zhuyinRound}
+              />
+            </div>
           ))}
         </div>
 
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex flex-col gap-24 pointer-events-none opacity-20">
-           <ArrowRight size={48} />
-           <ArrowRight size={48} />
-        </div>
-
-        <div className="flex flex-col gap-4">
+        <div className="min-h-0 flex flex-col gap-[1.5vh]">
           {slots.map((item) => (
-             <ImageSlot
-               key={`slot-${item.id}`}
-               item={item}
-               onSlotClick={() => handleSlotClick(item)}
-               isCorrectlyMatched={item.matched}
-               highlight={selectedCardId !== null && !item.matched}
-               hiddenChoice={!!selectedCardId && !!hiddenSlots[selectedCardId]?.includes(item.id)}
-               answerHint={selectedHelp >= HELP_SHOW && item.id === selectedCardId}
-               mode={currentDifficulty === 2 ? 'listening' : 'reading'}
-               gameMode={gameMode}
-               showZhuyin={zhuyinRound}
-             />
+            <div key={`slot-${item.id}`} className="flex-1 min-h-0">
+              <ImageSlot
+                item={item}
+                onSlotClick={() => handleSlotClick(item)}
+                isCorrectlyMatched={item.matched}
+                highlight={selectedCardId !== null && !item.matched}
+                hiddenChoice={!!selectedCardId && !!hiddenSlots[selectedCardId]?.includes(item.id)}
+                answerHint={selectedHelp >= HELP_SHOW && item.id === selectedCardId}
+                mode={currentDifficulty === 2 ? 'listening' : 'reading'}
+                gameMode={gameMode}
+                showZhuyin={zhuyinRound}
+              />
+            </div>
           ))}
         </div>
       </div>
-
-      {/* Feedback Toast */}
-      {feedbackMessage && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-300 animate-pop z-40 whitespace-nowrap">
-           <span className="text-2xl font-bold text-yellow-600">{feedbackMessage}</span>
-        </div>
-      )}
-    </div>
+    </GameScreen>
   );
 };

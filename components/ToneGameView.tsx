@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { WordItem, UserProfile, Confusion } from '../types';
-import { Home, Star, RefreshCw, Music, Volume2 } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio } from '../utils/chineseAudio';
 import { hasPicture } from '../utils/wordPicture';
@@ -8,7 +8,8 @@ import { getToneReferences, parseSyllable, Tone, TONE_OPTIONS, toneHelpSteps } f
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
+import { speakHelp, withInstruction } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
 import { ToneCurve } from './ToneCurve';
 import { ToneCompare } from './ToneCompare';
 
@@ -98,50 +99,41 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen max-w-3xl mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-purple-100">
-        <button onClick={onHome} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 transform active:scale-95">
-          <Home size={24} /> <span className="text-lg">回首頁</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">
-          <Star className="fill-yellow-400 text-yellow-500 animate-pulse" />
-          <span className="font-bold text-yellow-800 text-xl">{currentUser.points}</span>
-        </div>
-        <button onClick={onRefresh} className="p-2 hover:bg-purple-50 rounded-full text-purple-500 transition">
-          <RefreshCw size={24} />
-        </button>
-      </div>
-
-      <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold text-purple-600 flex items-center justify-center gap-2">
-          <Music className="animate-bounce" /> 聲調偵探：聽聽看是第幾聲？
-        </h2>
-        <p className="text-gray-500 mt-1">仔細聽聲音是平平的、往上、先下再上、還是往下</p>
-        <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
-      <div className="flex justify-center gap-3 mb-6">
+    <GameScreen
+      currentUser={currentUser}
+      title="聽聽看是第幾聲"
+      instruction={instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent="text-purple-600"
+    >
+      <div className="shrink-0 flex justify-center gap-3 mb-[1.5vh]">
         {currentWords.map((item, i) => (
           <div key={item.id} className={`w-4 h-4 rounded-full border-2 ${item.matched ? 'bg-green-400 border-green-500' : i === matchedCount ? 'bg-purple-300 border-purple-500 scale-125' : 'bg-gray-100 border-gray-300'}`} />
         ))}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border-b-8 border-purple-200 p-6 md:p-8 flex flex-col items-center">
+      <div className="fit-screen-main flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-purple-200 p-4 flex flex-col items-center justify-center gap-[1.5vh]">
+        <div className="flex flex-col items-center gap-[1.5vh]">
         <button
           onClick={() => playChineseWord(current.character, current.audioUrl)}
-          className="w-28 h-28 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 flex items-center justify-center shadow-inner mb-4 transition active:scale-95"
+          className="w-[clamp(4rem,13vh,7rem)] h-[clamp(4rem,13vh,7rem)] shrink-0 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 flex items-center justify-center shadow-inner transition active:scale-95"
+          aria-label="再聽一次"
         >
-          <Volume2 size={56} />
+          <Volume2 size={48} />
         </button>
 
-        <div className="flex items-center gap-4 mb-2">
-          {hasPicture(current) && <span className="text-6xl">{current.emoji}</span>}
-          <span className="font-kai text-6xl md:text-7xl text-gray-800">{current.character}</span>
+        <div className="flex items-center gap-4">
+          {hasPicture(current) && <span className="text-[clamp(2.5rem,9vh,4.5rem)] leading-none">{current.emoji}</span>}
+          <span className="font-kai text-[clamp(2.75rem,10vh,4.5rem)] leading-none text-gray-800">{current.character}</span>
         </div>
-        <div className={`text-3xl font-bold mb-4 ${solved ? 'text-green-600 animate-pop' : 'text-gray-500'}`}>
+        <div className={`text-[clamp(1.4rem,4.5vh,1.875rem)] font-bold ${solved ? 'text-green-600 animate-pop' : 'text-gray-500'}`}>
           {solved ? current.zhuyin : <>{symbols.join('')} <span className="text-purple-400">？</span></>}
         </div>
+        </div>
 
+        <div className="w-full max-w-md flex flex-col items-center gap-[1.5vh]">
         {!solved && (
           <ToneCompare
             references={toneReferences}
@@ -161,7 +153,7 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
                 key={option.tone}
                 onClick={() => handleChoice(option.tone)}
                 disabled={isOut}
-                className={`rounded-2xl border-b-4 py-3 flex flex-col items-center shadow-lg transition active:scale-95
+                className={`rounded-2xl border-b-4 py-[1.5vh] flex flex-col items-center shadow-lg transition active:scale-95
                   ${isAnswer ? 'bg-green-100 border-green-400 text-green-700' : isOut ? 'bg-gray-100 border-gray-200 text-gray-300' : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50'}
                   ${shakeTone === option.tone ? 'animate-shake-once' : ''}
                   ${hint === option.tone ? 'ring-4 ring-yellow-400 animate-bounce' : ''}`}
@@ -172,13 +164,8 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
             );
           })}
         </div>
-      </div>
-
-      {feedback && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-300 animate-pop z-40 whitespace-nowrap">
-          <span className="text-2xl font-bold text-yellow-600">{feedback}</span>
         </div>
-      )}
-    </div>
+      </div>
+    </GameScreen>
   );
 };

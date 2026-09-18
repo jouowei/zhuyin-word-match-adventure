@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { praise } from '../Praise';
-import { ArrowLeft, ArrowRight, Volume2, Sparkles, Snail } from 'lucide-react';
+import { ArrowRight, Volume2, Snail } from 'lucide-react';
 import { EnglishRoundItem, UserProfile } from '../../types';
 import { getLetter } from '../../english/letters';
 import { EnglishLearnCard } from '../../services/englishPath';
@@ -10,6 +10,7 @@ import { speakLetterSound } from '../../utils/englishSpeech';
 import { playSound } from '../../utils/sound';
 import { speakHelp } from '../VoiceGuide';
 import { HighlightedKeyword } from './shared';
+import { GameScreen } from '../GameScreen';
 
 interface EnglishLearnViewProps {
   currentUser: UserProfile;
@@ -116,39 +117,38 @@ export const EnglishLearnView: React.FC<EnglishLearnViewProps> = ({ currentUser,
       const info = getLetter(item.text);
       return (
         <div className="flex flex-col items-center gap-1">
-          <span className={`font-english ${big ? 'text-9xl' : 'text-6xl'} font-bold text-gray-800`}>{info?.upper}{info?.lower}</span>
-          <span className={big ? 'text-7xl' : 'text-5xl'}>{item.emoji}</span>
-          {info && <HighlightedKeyword keyword={info.keyword} letter={info.lower} className={`${big ? 'text-4xl' : 'text-2xl'} font-bold text-gray-700`} />}
+          <span className={`font-english leading-none ${big ? 'text-[clamp(4rem,15vh,8rem)]' : 'text-[clamp(2.25rem,8vh,3.75rem)]'} font-bold text-gray-800`}>{info?.upper}{info?.lower}</span>
+          <span className={`leading-none ${big ? 'text-[clamp(3rem,10vh,4.5rem)]' : 'text-[clamp(1.75rem,6vh,3rem)]'}`}>{item.emoji}</span>
+          {info && <HighlightedKeyword keyword={info.keyword} letter={info.lower} className={`${big ? 'text-[clamp(1.75rem,5.5vh,2.25rem)]' : 'text-[clamp(1.1rem,3.5vh,1.5rem)]'} font-bold text-gray-700`} />}
         </div>
       );
     }
     return (
       <div className="flex flex-col items-center gap-1">
-        <span className={big ? 'text-8xl' : 'text-6xl'}>{item.emoji}</span>
-        <span className={`font-english ${big ? 'text-6xl' : 'text-4xl'} font-bold text-gray-800`}>{item.text}</span>
+        <span className={`leading-none ${big ? 'text-[clamp(3.5rem,13vh,6rem)]' : 'text-[clamp(2.25rem,8vh,3.75rem)]'}`}>{item.emoji}</span>
+        <span className={`font-english ${big ? 'text-[clamp(2.5rem,9vh,3.75rem)]' : 'text-[clamp(1.5rem,5.5vh,2.25rem)]'} font-bold text-gray-800`}>{item.text}</span>
         <span className={`${big ? 'text-xl' : 'text-base'} font-bold text-gray-500`}>{item.zh}</span>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col min-h-screen max-w-3xl mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-emerald-100">
-        <button onClick={onBack} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 active:scale-95">
-          <ArrowLeft size={22} /> <span className="text-lg">冒險地圖</span>
-        </button>
-        <div className="text-yellow-800 font-bold bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">⭐ {currentUser.points}</div>
-      </div>
-
-      <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold text-emerald-600 flex items-center justify-center gap-2">
-          <Sparkles /> 認識新朋友 <span className="font-english">New Friends</span>
-        </h2>
-        {phase !== 'finished' && <p className="text-gray-500 mt-1">第 {index + 1} 個，共 {cards.length} 個</p>}
+    <GameScreen
+      currentUser={currentUser}
+      title="✨ 認識新朋友"
+      instruction={phase === 'try' ? '哪一個是剛剛聽到的？點點看。' : '看一看、聽一聽新朋友，再按「換我試試」。'}
+      onHome={onBack}
+      accent="text-emerald-600"
+    >
+      {/* Which new friend this is */}
+      <div className="shrink-0 flex justify-center gap-3 mb-[1.5vh]">
+        {cards.map((c, i) => (
+          <div key={c.item.id} className={`w-4 h-4 rounded-full border-2 ${phase === 'finished' || i < index ? 'bg-emerald-400 border-emerald-500' : i === index ? 'bg-emerald-200 border-emerald-500 scale-125' : 'bg-gray-100 border-gray-300'}`} />
+        ))}
       </div>
 
       {phase === 'watch' && card && (
-        <div className="bg-white rounded-3xl shadow-xl border-b-8 border-emerald-200 p-8 flex flex-col items-center gap-6 animate-pop">
+        <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-emerald-200 p-4 flex flex-col items-center justify-center gap-[2.5vh] animate-pop">
           <p className="text-lg font-bold text-emerald-700">看一看、聽一聽</p>
           {renderItem(card.item, true)}
           <div className="flex flex-wrap justify-center gap-3">
@@ -184,21 +184,21 @@ export const EnglishLearnView: React.FC<EnglishLearnViewProps> = ({ currentUser,
       )}
 
       {phase === 'try' && card && (
-        <div className="flex flex-col items-center gap-4 animate-pop">
+        <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-[2vh] animate-pop">
           <button
             onClick={() => playChineseAudio([nameOf(card.item)])}
-            className="w-24 h-24 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-600 flex items-center justify-center shadow-inner transition active:scale-95"
+            className="shrink-0 w-[clamp(4rem,12vh,6rem)] h-[clamp(4rem,12vh,6rem)] rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-600 flex items-center justify-center shadow-inner transition active:scale-95"
             aria-label="再聽一次"
           >
             <Volume2 size={48} />
           </button>
-          <p className="text-xl font-bold text-gray-600">哪一個是剛剛聽到的？</p>
-          <div className="grid grid-cols-2 gap-4 w-full">
+          <p className="shrink-0 text-[clamp(1.1rem,3.2vh,1.25rem)] font-bold text-gray-600">哪一個是剛剛聽到的？</p>
+          <div className="min-h-0 grid grid-cols-2 gap-4 w-full">
             {choices.map(choice => (
               <button
                 key={choice.id}
                 onClick={() => choose(choice)}
-                className={`bg-white rounded-3xl border-4 p-6 shadow-lg transition active:scale-95
+                className={`bg-white rounded-3xl border-4 p-[2.5vh] shadow-lg transition active:scale-95
                   ${solved && choice.id === card.item.id ? 'border-green-400 bg-green-50' : 'border-emerald-200 hover:border-emerald-400'}
                   ${shakeId === choice.id ? 'animate-shake-once border-red-300' : ''}
                   ${help >= HELP_SHOW && !solved && choice.id === card.item.id ? 'ring-8 ring-yellow-400 animate-bounce' : ''}`}
@@ -211,8 +211,8 @@ export const EnglishLearnView: React.FC<EnglishLearnViewProps> = ({ currentUser,
       )}
 
       {phase === 'finished' && (
-        <div className="bg-white rounded-3xl shadow-xl border-b-8 border-emerald-200 p-8 flex flex-col items-center gap-6 animate-pop">
-          <div className="text-6xl">🎉</div>
+        <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-emerald-200 p-4 flex flex-col items-center justify-center gap-[2.5vh] animate-pop">
+          <div className="text-[clamp(3rem,9vh,3.75rem)] leading-none">🎉</div>
           <p className="text-2xl font-black text-emerald-700 text-center">新朋友都認識了！</p>
           <div className="flex flex-wrap justify-center gap-4">
             {cards.map(c => (
@@ -227,6 +227,6 @@ export const EnglishLearnView: React.FC<EnglishLearnViewProps> = ({ currentUser,
           </button>
         </div>
       )}
-    </div>
+    </GameScreen>
   );
 };

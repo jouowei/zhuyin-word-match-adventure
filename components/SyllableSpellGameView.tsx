@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { WordItem, UserProfile, Confusion } from '../types';
-import { Home, Star, RefreshCw, Puzzle, Volume2, CheckCircle2 } from 'lucide-react';
+import { Volume2, CheckCircle2 } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio } from '../utils/chineseAudio';
 import { hasPicture } from '../utils/wordPicture';
@@ -11,7 +11,8 @@ import {
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { InstructionButton, speakHelp, withInstruction } from './VoiceGuide';
+import { speakHelp, withInstruction } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
 import { ToneCurve } from './ToneCurve';
 import { ToneCompare } from './ToneCompare';
 
@@ -223,7 +224,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
   const renderBox = (symbol: string, i: number) => (
     <div
       key={i}
-      className={`w-16 h-20 md:w-20 md:h-24 rounded-xl border-b-8 flex items-center justify-center text-4xl md:text-5xl font-bold transition-all
+      className={`w-[clamp(3rem,min(15vw,10vh),5rem)] h-[clamp(3.75rem,min(19vw,12.5vh),6rem)] rounded-xl border-b-8 flex items-center justify-center text-[clamp(1.9rem,min(10vw,6.5vh),3rem)] font-bold transition-all
         ${soundingBox === i ? 'bg-yellow-200 border-yellow-500 scale-110' : i < position ? (phase === 'done' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-amber-50 border-amber-400 text-gray-800 animate-pop') : i === position && phase === 'symbols' ? 'bg-yellow-50 border-yellow-400 animate-pulse' : 'bg-gray-50 border-gray-300'}`}
     >
       {i < position && phase !== 'blend' ? symbol : ''}
@@ -231,61 +232,48 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
   );
 
   return (
-    <div className="flex flex-col min-h-screen max-w-3xl mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border-b-4 border-amber-100">
-        <button onClick={onHome} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold transition flex items-center gap-2 transform active:scale-95">
-          <Home size={24} /> <span className="text-lg">回首頁</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full border-2 border-yellow-300">
-          <Star className="fill-yellow-400 text-yellow-500 animate-pulse" />
-          <span className="font-bold text-yellow-800 text-xl">{currentUser.points}</span>
-        </div>
-        <button onClick={onRefresh} className="p-2 hover:bg-amber-50 rounded-full text-amber-500 transition">
-          <RefreshCw size={24} />
-        </button>
-      </div>
-
-      <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold text-amber-600 flex items-center justify-center gap-2">
-          <Puzzle className="animate-bounce" /> 拼音高手：{phase === 'blend' ? '把聲音合起來！' : '把注音拼出來！'}
-        </h2>
-        <p className="text-gray-500 mt-1">{phase === 'blend' ? '聽注音符號的聲音，找出合起來是哪一個字' : instruction}</p>
-        <InstructionButton text={instruction} className="mt-2" />
-      </div>
-
-      <div className="flex justify-center gap-3 mb-6">
+    <GameScreen
+      currentUser={currentUser}
+      title={phase === 'blend' ? '把聲音合起來' : '把注音拼出來'}
+      instruction={phase === 'blend' ? '聽注音符號的聲音，找出合起來是哪一個字' : instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent="text-amber-600"
+    >
+      <div className="shrink-0 flex justify-center gap-3 mb-[1.5vh]">
         {currentWords.map((item, i) => (
           <div key={item.id} className={`w-4 h-4 rounded-full border-2 ${item.matched ? 'bg-green-400 border-green-500' : i === matchedCount ? 'bg-amber-300 border-amber-500 scale-125' : 'bg-gray-100 border-gray-300'}`} />
         ))}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border-b-8 border-amber-200 p-6 md:p-8 flex flex-col items-center">
+      <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-amber-200 p-4 flex flex-col items-center justify-center gap-[2.5vh]">
         {phase !== 'blend' && (
-          <>
-            <div className="flex items-center gap-4 mb-2">
-              {hasPicture(current) && <span className="text-7xl md:text-8xl">{current.emoji}</span>}
-              <span className="font-kai text-7xl md:text-8xl text-gray-800">{current.character}</span>
+          <div className="flex flex-col items-center gap-[1.5vh]">
+            <div className="flex items-center gap-4">
+              {hasPicture(current) && <span className="text-[clamp(3rem,11vh,6rem)] leading-none">{current.emoji}</span>}
+              <span className="font-kai text-[clamp(3rem,11vh,6rem)] leading-none text-gray-800">{current.character}</span>
             </div>
             <button
               onClick={() => playChineseWord(current.character, current.audioUrl)}
-              className="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-5 py-2 rounded-2xl transition active:scale-95 mb-6"
+              className="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-5 py-2 rounded-2xl transition active:scale-95"
             >
               <Volume2 size={22} /> 再聽一次
             </button>
-          </>
+          </div>
         )}
 
         {phase === 'blend' && (
           <button
             onClick={() => playLit([...symbolSteps()], 0)}
-            className="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-5 py-2 rounded-2xl transition active:scale-95 mb-6"
+            className="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-5 py-2 rounded-2xl transition active:scale-95"
           >
             <Volume2 size={22} /> 再聽一次聲音
           </button>
         )}
 
         {/* Answer boxes; a medial and its final are grouped like 結合韻 */}
-        <div className="flex items-end gap-2 mb-8">
+        <div className="flex items-end gap-2">
           {medialGroup ? (
             <>
               {renderBox(target.symbols[0], 0)}
@@ -300,7 +288,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
           ) : (
             target.symbols.map((symbol, i) => renderBox(symbol, i))
           )}
-          <div className={`w-14 h-20 md:w-16 md:h-24 rounded-xl border-4 border-dashed flex flex-col items-center justify-center font-bold
+          <div className={`w-[clamp(2.75rem,min(13vw,9vh),4rem)] h-[clamp(3.75rem,min(19vw,12.5vh),6rem)] rounded-xl border-4 border-dashed flex flex-col items-center justify-center font-bold
             ${phase === 'done' ? 'border-green-400 bg-green-50 text-green-700' : phase === 'tone' ? 'border-purple-300 bg-purple-50 text-purple-400 animate-pulse' : 'border-gray-200 text-gray-300'}`}
           >
             {chosenTone ? <><ToneCurve tone={chosenTone} className="w-9 h-7 text-green-600" /><span className="text-xs">{TONE_OPTIONS[chosenTone - 1].name}</span></> : <span className="text-xs">聲調</span>}
@@ -314,13 +302,13 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
                 <button
                   onClick={() => handleBlendChoice(choice)}
                   disabled={hidden.includes(choice.id)}
-                  className={`w-full rounded-2xl border-4 bg-white p-3 pb-8 flex flex-col items-center shadow-lg transition
+                  className={`w-full rounded-2xl border-4 bg-white p-2 pb-7 flex flex-col items-center shadow-lg transition
                     ${hidden.includes(choice.id) ? 'opacity-20 border-gray-200' : 'border-amber-200 hover:border-amber-400 active:scale-95'}
                     ${shakeKey === `blend-${choice.id}` ? 'animate-shake-once border-red-300' : ''}
                     ${stepHelp >= HELP_SHOW && choice.id === current.id ? 'ring-8 ring-yellow-400 animate-bounce' : ''}`}
                 >
-                  {hasPicture(choice) && <span className="text-5xl">{choice.emoji}</span>}
-                  <span className="font-kai text-5xl text-gray-800">{choice.character}</span>
+                  {hasPicture(choice) && <span className="text-[clamp(2rem,7vh,3rem)] leading-tight">{choice.emoji}</span>}
+                  <span className="font-kai text-[clamp(2rem,7vh,3rem)] leading-tight text-gray-800">{choice.character}</span>
                 </button>
                 {/* Listening to a choice is fine: comparing words with the blended sounds is the task */}
                 <button
@@ -343,7 +331,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
                 key={tile.id}
                 onClick={() => handleTile(tile)}
                 disabled={tile.used || hidden.includes(tile.id)}
-                className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl text-4xl md:text-5xl font-bold shadow-lg border-b-4 transition-all
+                className={`w-[clamp(3.25rem,min(16vw,10vh),5rem)] h-[clamp(3.25rem,min(16vw,10vh),5rem)] rounded-2xl text-[clamp(1.9rem,min(10vw,6.5vh),3rem)] font-bold shadow-lg border-b-4 transition-all
                   ${tile.used ? 'opacity-0 pointer-events-none' : hidden.includes(tile.id) ? 'opacity-20 bg-gray-100 border-gray-200 text-gray-300' : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 hover:-translate-y-1 active:scale-95'}
                   ${shakeKey === `tile-${tile.id}` ? 'animate-shake-once bg-red-100 border-red-400 text-red-600' : ''}
                   ${hintTile?.id === tile.id ? 'ring-4 ring-yellow-400 animate-bounce' : ''}`}
@@ -363,7 +351,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
                   key={option.tone}
                   onClick={() => handleTone(option.tone)}
                   disabled={hidden.includes(String(option.tone))}
-                  className={`rounded-2xl border-b-4 py-3 flex flex-col items-center shadow-lg transition
+                  className={`rounded-2xl border-b-4 py-[1.5vh] flex flex-col items-center shadow-lg transition
                     ${hidden.includes(String(option.tone)) ? 'opacity-20 bg-gray-100 border-gray-200 text-gray-300' : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 active:scale-95'}
                     ${shakeKey === `tone-${option.tone}` ? 'animate-shake-once bg-red-100 border-red-400 text-red-600' : ''}
                     ${hintTone === option.tone ? 'ring-4 ring-yellow-400 animate-bounce' : ''}`}
@@ -383,11 +371,6 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
         )}
       </div>
 
-      {feedback && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-300 animate-pop z-40 whitespace-nowrap">
-          <span className="text-2xl font-bold text-yellow-600">{feedback}</span>
-        </div>
-      )}
-    </div>
+    </GameScreen>
   );
 };

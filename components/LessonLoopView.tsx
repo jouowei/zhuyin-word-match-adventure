@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Search, ThumbsUp, Volume2 } from 'lucide-react';
+import { ArrowRight, ThumbsUp, Volume2 } from 'lucide-react';
 import { Confusion, Lesson, UserProfile } from '../types';
 import { getWordReading } from '../services/moedict';
 import { occurrences, sentenceRange, splitLessonPages } from '../services/lessonText';
@@ -8,6 +8,7 @@ import { AudioStep, playChineseAudio, stopChineseAudio } from '../utils/chineseA
 import { playSound } from '../utils/sound';
 import { readingsForSentence, ZhuyinText } from './ZhuyinText';
 import { speakHelp } from './VoiceGuide';
+import { GameScreen } from './GameScreen';
 
 interface LessonLoopViewProps {
   currentUser: UserProfile;
@@ -17,8 +18,7 @@ interface LessonLoopViewProps {
   targets: string[];
   onDone: (results: { word: string; helpLevel: number }[]) => void;
   onMistake: (word: string, confusion?: Confusion) => void;
-  onBack: () => void;
-  backLabel: string;
+  onBack: () => void; // To the adventure map or the lesson page
 }
 
 const isHan = (ch: string) => /\p{Script=Han}/u.test(ch);
@@ -146,60 +146,62 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
   };
 
   return (
-    <div className="min-h-screen bg-orange-50 p-4 flex flex-col items-center">
-      <div className="max-w-3xl w-full flex flex-col gap-4">
-        <div className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm">
-          <button onClick={onBack} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold flex items-center gap-2 active:scale-95">
-            <ArrowLeft size={20} /> {backLabel}
-          </button>
-          <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-bold">{lesson.title}</span>
-          <span className="text-yellow-800 font-bold bg-yellow-100 px-3 py-1 rounded-full border-2 border-yellow-300">⭐ {currentUser.points}</span>
-        </div>
-
-        <div className="text-center">
-          <h2 className="text-2xl font-black text-orange-700 flex items-center justify-center gap-2">
-            {mode === 'listen' ? <><BookOpen /> 聽課文</> : <><Search /> 課文尋寶</>}
-          </h2>
-          {mode === 'listen' ? (
-            <p className="text-gray-500 mt-1">黃色的是今天的新朋友，點一下可以聽</p>
-          ) : target && (
-            <p className="text-xl font-bold text-gray-700 mt-2 flex items-center justify-center gap-2">
+    <GameScreen
+      currentUser={currentUser}
+      title={mode === 'listen' ? `📖 ${lesson.title}` : '🔍 課文尋寶'}
+      instruction={mode === 'listen' ? '聽課文。黃色的是今天的新朋友，點一下可以聽。' : `找找看「${target ?? ''}」在課文的哪裡，找到了就點它。`}
+      onHome={onBack}
+      accent="text-orange-700"
+    >
+      <div className="flex-1 min-h-0 flex flex-col gap-[1.5vh]">
+        {mode === 'find' && target && (
+          <div className="shrink-0 text-center">
+            <p className="text-[clamp(1.05rem,3vh,1.25rem)] font-bold text-gray-700 flex flex-wrap items-center justify-center gap-2">
               找找看「
-              {vocabReadings[target] ? <ZhuyinText text={target} readings={vocabReadings[target].split(' ')} className="text-3xl text-orange-600" /> : <span className="font-kai text-3xl text-orange-600">{target}</span>}
+              {vocabReadings[target] ? <ZhuyinText text={target} readings={vocabReadings[target].split(' ')} className="text-[clamp(1.6rem,5vh,1.875rem)] text-orange-600" /> : <span className="font-kai text-[clamp(1.6rem,5vh,1.875rem)] text-orange-600">{target}</span>}
               」在哪裡？
               <button onClick={() => playChineseAudio([wordSound(target)])} className="p-2 rounded-full bg-orange-100 text-orange-700 hover:bg-orange-200 active:scale-90" aria-label="再聽一次">
                 <Volume2 size={20} />
               </button>
               <span className="text-sm text-gray-400">（{targetIndex + 1}/{targets.length}）</span>
             </p>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="bg-white rounded-3xl shadow-xl border-b-8 border-orange-200 p-6 md:p-8">
-          <div className="flex flex-wrap justify-center gap-y-3">
+        {/* The lesson text; a long page scrolls inside its box so the buttons stay in view */}
+        <div className="flex-1 min-h-0 overflow-y-auto bg-white rounded-3xl shadow-xl border-b-8 border-orange-200 p-4 md:p-8 flex">
+          <div className="m-auto flex flex-wrap justify-center gap-y-3">
             {chars.map((ch, i) => {
-              if (!isHan(ch)) return <span key={i} className="font-bpmf text-4xl text-gray-500 self-end">{ch}</span>;
+              const punctuation = (c: string) => <span className="font-bpmf text-[clamp(1.9rem,min(9vw,6vh),3rem)] text-gray-500 self-end">{c}</span>;
+              if (!isHan(ch)) {
+                // Punctuation goes with the character before it: a line never starts with ，or 。
+                if (i > 0 && isHan(chars[i - 1]) && ch.trim()) return null;
+                return <React.Fragment key={i}>{punctuation(ch)}</React.Fragment>;
+              }
+              const trailing = i + 1 < chars.length && !isHan(chars[i + 1]) && chars[i + 1].trim() ? chars[i + 1] : '';
               const inSentence = mode === 'find' && help >= HELP_NARROW && i >= sentenceStart && i < sentenceEnd;
               const glow = mode === 'find' && help >= HELP_SHOW && targetChars.has(i) && foundAt === null;
               return (
-                <button
-                  key={i}
-                  onClick={() => handleTap(i)}
-                  className={`px-0.5 rounded-lg transition
-                    ${marked.has(i) ? 'bg-yellow-200' : ''}
-                    ${found.has(i) ? 'bg-green-200' : inSentence ? 'bg-sky-100' : ''}
-                    ${glow ? 'ring-4 ring-yellow-400 animate-pulse' : ''}
-                    ${shakeIndex === i ? 'animate-shake-once bg-red-100' : ''}`}
-                >
-                  <ZhuyinText text={ch} readings={[readings[hanIndex[i]]]} className="text-4xl md:text-5xl text-gray-800" />
-                </button>
+                <span key={i} className="inline-flex">
+                  <button
+                    onClick={() => handleTap(i)}
+                    className={`px-0.5 rounded-lg transition
+                      ${marked.has(i) ? 'bg-yellow-200' : ''}
+                      ${found.has(i) ? 'bg-green-200' : inSentence ? 'bg-sky-100' : ''}
+                      ${glow ? 'ring-4 ring-yellow-400 animate-pulse' : ''}
+                      ${shakeIndex === i ? 'animate-shake-once bg-red-100' : ''}`}
+                  >
+                    <ZhuyinText text={ch} readings={[readings[hanIndex[i]]]} className="text-[clamp(1.9rem,min(9vw,6vh),3rem)] text-gray-800" />
+                  </button>
+                  {trailing && punctuation(trailing)}
+                </span>
               );
             })}
           </div>
         </div>
 
         {mode === 'listen' && (
-          <div className="flex flex-wrap justify-center items-center gap-3">
+          <div className="shrink-0 flex flex-wrap justify-center items-center gap-3">
             <button onClick={() => readPage(page)} className="flex items-center gap-2 bg-orange-100 hover:bg-orange-200 text-orange-800 font-bold px-5 py-3 rounded-2xl active:scale-95">
               <Volume2 size={22} /> 再聽一次
             </button>
@@ -216,8 +218,8 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
         )}
 
         {mode === 'find' && foundAt !== null && (
-          <div className="bg-white rounded-3xl shadow-lg p-5 flex flex-col items-center gap-3 animate-pop">
-            <p className="text-xl font-bold text-green-700">找到了！換你把這一句唸一次</p>
+          <div className="shrink-0 bg-white rounded-3xl shadow-lg p-3 flex flex-col items-center gap-2 animate-pop">
+            <p className="text-lg font-bold text-green-700">找到了！換你把這一句唸一次</p>
             <div className="flex gap-3">
               <button
                 onClick={() => {
@@ -235,6 +237,6 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
           </div>
         )}
       </div>
-    </div>
+    </GameScreen>
   );
 };

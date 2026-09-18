@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Search, ThumbsUp, Volume2 } from 'lucide-react';
+import { ArrowRight, ThumbsUp, Volume2 } from 'lucide-react';
 import { EnglishUnit, UserProfile } from '../../types';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
 import { AudioStep, playChineseAudio, stopChineseAudio } from '../../utils/chineseAudio';
 import { playSound } from '../../utils/sound';
 import { speakHelp } from '../VoiceGuide';
+import { GameScreen } from '../GameScreen';
 
 interface EnglishSentenceLoopViewProps {
   currentUser: UserProfile;
@@ -14,8 +15,7 @@ interface EnglishSentenceLoopViewProps {
   targets: string[];
   onDone: (results: { word: string; helpLevel: number }[]) => void;
   onMistake: (word: string) => void;
-  onBack: () => void;
-  backLabel: string;
+  onBack: () => void; // To the adventure map or the unit page
 }
 
 const en = (text: string, rate = 0.75): AudioStep => ({ text, lang: 'en', rate });
@@ -109,34 +109,28 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
   };
 
   return (
-    <div className="min-h-screen bg-sky-50 p-4 flex flex-col items-center">
-      <div className="max-w-3xl w-full flex flex-col gap-4">
-        <div className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm">
-          <button onClick={onBack} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold flex items-center gap-2 active:scale-95">
-            <ArrowLeft size={20} /> {backLabel}
-          </button>
-          <span className="bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-sm font-bold">{unit.icon} {unit.title}</span>
-          <span className="text-yellow-800 font-bold bg-yellow-100 px-3 py-1 rounded-full border-2 border-yellow-300">⭐ {currentUser.points}</span>
-        </div>
-
-        <div className="text-center">
-          <h2 className="text-2xl font-black text-sky-700 flex items-center justify-center gap-2">
-            {mode === 'listen' ? <><BookOpen /> 聽句子 <span className="font-english">Let's listen</span></> : <><Search /> 句子尋寶</>}
-          </h2>
-          {mode === 'listen' ? (
-            <p className="text-gray-500 mt-1">黃色的是今天的新朋友，點句子可以再聽一次</p>
-          ) : target && (
-            <p className="text-xl font-bold text-gray-700 mt-2 flex items-center justify-center gap-2">
-              找找看 <span className="font-english text-3xl text-sky-600">{target}</span> 在哪裡？
+    <GameScreen
+      currentUser={currentUser}
+      title={mode === 'listen' ? `📖 ${unit.icon} 聽句子` : '🔍 句子尋寶'}
+      instruction={mode === 'listen' ? '聽句子。黃色的是今天的新朋友，點喇叭可以再聽一次。' : '找找看這個英文字在句子的哪裡，找到了就點它。'}
+      onHome={onBack}
+      accent="text-sky-700"
+    >
+      <div className="flex-1 min-h-0 flex flex-col gap-[1.5vh]">
+        {mode === 'find' && target && (
+          <div className="shrink-0 text-center">
+            <p className="text-[clamp(1.05rem,3vh,1.25rem)] font-bold text-gray-700 flex flex-wrap items-center justify-center gap-2">
+              找找看 <span className="font-english text-[clamp(1.6rem,5vh,1.875rem)] text-sky-600">{target}</span> 在哪裡？
               <button onClick={() => playChineseAudio([en(target, 0.85)])} className="p-2 rounded-full bg-sky-100 text-sky-700 hover:bg-sky-200 active:scale-90" aria-label="再聽一次">
                 <Volume2 size={20} />
               </button>
               <span className="text-sm text-gray-400">（{targetIndex + 1}/{targets.length}）</span>
             </p>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="bg-white rounded-3xl shadow-xl border-b-8 border-sky-200 p-5 md:p-8 flex flex-col gap-3">
+        {/* The sentences; many scroll inside their box so the buttons stay in view */}
+        <div className="flex-1 min-h-0 overflow-y-auto bg-white rounded-3xl shadow-xl border-b-8 border-sky-200 p-3 md:p-8 flex flex-col justify-center gap-2">
           {sentences.map((sentence, s) => {
             const inHelpSentence = mode === 'find' && help >= HELP_NARROW && s === targetSentence && !found;
             return (
@@ -154,7 +148,7 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
                       <button
                         key={key}
                         onClick={() => tap(token)}
-                        className={`font-english text-3xl md:text-4xl font-bold text-gray-800 px-1 rounded-lg transition
+                        className={`font-english text-[clamp(1.6rem,min(8vw,5vh),2.25rem)] font-bold text-gray-800 px-1 rounded-lg transition
                           ${isTarget ? 'bg-yellow-200' : ''} ${isFound ? 'bg-green-200' : ''}
                           ${glow ? 'ring-4 ring-yellow-400 animate-pulse' : ''} ${shakeKey === key ? 'animate-shake-once bg-red-100' : ''}`}
                       >
@@ -169,14 +163,14 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
         </div>
 
         {mode === 'listen' && (
-          <button onClick={() => { stopChineseAudio(); onDone([]); }} className="self-center flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-bold px-6 py-3 rounded-2xl shadow-lg active:scale-95">
+          <button onClick={() => { stopChineseAudio(); onDone([]); }} className="shrink-0 self-center flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-bold px-6 py-3 rounded-2xl shadow-lg active:scale-95">
             聽完了，出發！ <ArrowRight size={22} />
           </button>
         )}
 
         {mode === 'find' && found && (
-          <div className="bg-white rounded-3xl shadow-lg p-5 flex flex-col items-center gap-3 animate-pop">
-            <p className="text-xl font-bold text-green-700">找到了！換你把這一句唸一次</p>
+          <div className="shrink-0 bg-white rounded-3xl shadow-lg p-3 flex flex-col items-center gap-2 animate-pop">
+            <p className="text-lg font-bold text-green-700">找到了！換你把這一句唸一次</p>
             <div className="flex gap-3">
               <button onClick={() => readSentence(found.sentence)} className="flex items-center gap-2 bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold px-5 py-3 rounded-2xl active:scale-95">
                 <Volume2 size={22} /> 再聽這一句
@@ -188,6 +182,6 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
           </div>
         )}
       </div>
-    </div>
+    </GameScreen>
   );
 };

@@ -55,7 +55,8 @@ export const LetterTraceOverlay: React.FC<LetterTraceOverlayProps> = ({ item, st
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setSize(Math.min(window.innerWidth - 64, 340));
+      // The grid is as big as the screen allows, leaving room for the buttons around it
+      setSize(Math.max(200, Math.min(window.innerWidth - 56, window.innerHeight - 330, 340)));
     }
     return () => timers.current.forEach(clearTimeout);
   }, []);
@@ -223,10 +224,10 @@ export const LetterTraceOverlay: React.FC<LetterTraceOverlayProps> = ({ item, st
   const showModel = shownStage <= 2 || finished;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-90 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex flex-col items-center overflow-y-auto bg-black bg-opacity-90 backdrop-blur-sm p-3">
       {/* Pop only once on open: replaying it when feedback clears would scale the canvas under the child's finger */}
-      <div className="animate-pop max-w-md w-full">
-      <div className={`bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center w-full ${feedback ? 'animate-shake-once' : ''}`}>
+      <div className="animate-pop max-w-md w-full my-auto">
+      <div className={`bg-white p-4 md:p-6 rounded-3xl shadow-2xl flex flex-col items-center w-full ${feedback ? 'animate-shake-once' : ''}`}>
         <h2 className="text-2xl font-bold text-gray-800 mb-1 flex items-center gap-2">
           <PenTool className="text-amber-500" /> 字母描寫
           <span className="text-sm bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">{WRITING_STAGE_NAMES[shownStage]}</span>

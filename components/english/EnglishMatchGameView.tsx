@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Confusion, EnglishRoundItem, EnglishUnit, UserProfile } from '../../types';
 import { getLetter } from '../../english/letters';
 import { getLevels, shuffleItems } from '../../english/curriculum';
-import { EnglishTopBar, FeedbackToast, HighlightedKeyword, useFeedback } from './shared';
+import { HighlightedKeyword, useFeedback } from './shared';
+import { GameScreen } from '../GameScreen';
 import { Ear, MousePointerClick, Volume2 } from 'lucide-react';
 import { playSound } from '../../utils/sound';
 import { speakEnglish, speakLetterName } from '../../utils/englishSpeech';
 import { AudioStep } from '../../utils/chineseAudio';
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
 import { praise } from '../Praise';
-import { InstructionButton, speakHelp, useInstruction } from '../VoiceGuide';
+import { speakHelp, useInstruction } from '../VoiceGuide';
 
 interface EnglishMatchGameViewProps {
   currentUser: UserProfile;
@@ -22,7 +23,8 @@ interface EnglishMatchGameViewProps {
   onRefresh: () => void;
 }
 
-const CARD_HEIGHT = 'h-24 md:h-32';
+// Cards fill the row they are given: the rows share the height of the screen
+const CARD_HEIGHT = 'h-full';
 
 export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
   currentUser, unit, level, items, onMatch, onMistake, onHome, onRefresh
@@ -129,10 +131,10 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
     if (item.matched) {
       return (
         <div key={item.id} className={`w-full ${CARD_HEIGHT} rounded-xl border-4 border-green-400 bg-green-50 flex items-center justify-center gap-3 animate-pop`}>
-          <span className="text-4xl md:text-5xl">{item.emoji}</span>
+          <span className="text-[clamp(1.75rem,6vh,3rem)] leading-none">{item.emoji}</span>
           {isLetters && info
-            ? <HighlightedKeyword keyword={item.keyword} letter={item.text} className="text-2xl md:text-3xl font-bold text-gray-700" />
-            : <span className="font-english text-2xl md:text-3xl font-bold text-green-700">{item.text}</span>}
+            ? <HighlightedKeyword keyword={item.keyword} letter={item.text} className="text-[clamp(1.25rem,4vh,1.875rem)] font-bold text-gray-700" />
+            : <span className="font-english text-[clamp(1.25rem,4vh,1.875rem)] font-bold text-green-700">{item.text}</span>}
         </div>
       );
     }
@@ -147,10 +149,10 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
           onClick={() => handlePromptClick(item)}
           className={`${baseClass} flex-col ${isSelected ? selectedClass : 'border-orange-300 bg-orange-50 hover:border-orange-400 hover:scale-105 active:scale-95'}`}
         >
-          <div className={`p-3 rounded-full ${isSelected ? 'bg-yellow-300 text-yellow-800 animate-bounce' : 'bg-orange-200 text-orange-600'}`}>
+          <div className={`p-[1vh] rounded-full ${isSelected ? 'bg-yellow-300 text-yellow-800 animate-bounce' : 'bg-orange-200 text-orange-600'}`}>
             <Ear size={32} />
           </div>
-          <span className={`text-sm font-bold ${isSelected ? 'text-yellow-800' : 'text-gray-500'}`}>
+          <span className={`text-[clamp(0.7rem,1.8vh,0.875rem)] font-bold ${isSelected ? 'text-yellow-800' : 'text-gray-500'}`}>
             {isSelected ? '再點一次可以重聽' : '點我聽聲音'}
           </span>
         </button>
@@ -168,7 +170,7 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
             <MousePointerClick size={20} className="fill-current" />
           </div>
         )}
-        <span className="font-english text-5xl md:text-6xl font-bold text-gray-800">
+        <span className={`font-english font-bold text-gray-800 leading-none ${isLetters ? 'text-[clamp(2.25rem,min(14vw,8vh),4rem)]' : 'text-[clamp(1.5rem,min(9vw,6vh),3rem)]'}`}>
           {isLetters && info ? info.upper : item.text}
         </span>
         <Volume2 size={18} className={`absolute bottom-2 right-2 ${isSelected ? 'text-yellow-700 animate-pulse' : 'text-gray-300'}`} />
@@ -193,19 +195,19 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
           <button
             onClick={() => handleAnswerClick(item)}
             disabled={item.matched}
-            className={`w-24 h-24 md:w-32 md:h-32 rounded-xl border-4 border-dashed flex items-center justify-center transition-all duration-300 shrink-0 ${item.matched ? 'border-green-500 bg-green-50' : highlight ? 'border-yellow-400 bg-yellow-50 scale-105 animate-pulse cursor-pointer' : 'border-gray-300 bg-gray-50'}`}
+            className={`h-full max-h-32 aspect-square max-w-[48%] min-w-0 rounded-xl border-4 border-dashed flex items-center justify-center transition-all duration-300 ${item.matched ? 'border-green-500 bg-green-50' : highlight ? 'border-yellow-400 bg-yellow-50 scale-105 animate-pulse cursor-pointer' : 'border-gray-300 bg-gray-50'}`}
           >
             {item.matched
-              ? <span className="font-english text-2xl md:text-3xl font-bold text-green-700 animate-pop">{item.text}</span>
-              : <span className="text-gray-300 text-4xl">?</span>}
+              ? <span className="font-english text-[clamp(1.1rem,min(6vw,4vh),1.875rem)] font-bold text-green-700 animate-pop">{item.text}</span>
+              : <span className="text-gray-300 text-[clamp(1.5rem,5vh,2.25rem)]">?</span>}
           </button>
           <button
             onClick={() => handleAnswerClick(item)}
             disabled={item.matched}
-            className="w-24 h-24 md:w-32 md:h-32 flex flex-col items-center justify-center shrink-0"
+            className="h-full max-h-32 aspect-square max-w-[48%] min-w-0 flex flex-col items-center justify-center"
           >
-            <span className="text-6xl md:text-7xl drop-shadow-md">{item.emoji}</span>
-            <span className="text-xs md:text-sm text-gray-400 font-bold mt-1">{item.zh}</span>
+            <span className="text-[clamp(2.25rem,8vh,4.5rem)] leading-none drop-shadow-md">{item.emoji}</span>
+            <span className="text-[clamp(0.65rem,1.6vh,0.875rem)] text-gray-400 font-bold mt-1">{item.zh}</span>
           </button>
         </div>
       );
@@ -214,10 +216,10 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
     let content: React.ReactNode;
     if (isLetters && info) {
       content = item.matched && !isListening
-        ? <span className="flex items-center gap-2"><span className="font-english text-4xl md:text-5xl font-bold text-green-700">{info.upper}{info.lower}</span><span className="text-3xl">{item.emoji}</span></span>
-        : <span className={`font-english text-5xl md:text-6xl font-bold ${item.matched ? 'text-gray-400' : 'text-gray-800'}`}>{isListening ? `${info.upper}${info.lower}` : info.lower}</span>;
+        ? <span className="flex items-center gap-2"><span className="font-english text-[clamp(1.75rem,min(10vw,6vh),3rem)] font-bold text-green-700">{info.upper}{info.lower}</span><span className="text-[clamp(1.25rem,4vh,1.875rem)]">{item.emoji}</span></span>
+        : <span className={`font-english text-[clamp(2.25rem,min(14vw,8vh),4rem)] leading-none font-bold ${item.matched ? 'text-gray-400' : 'text-gray-800'}`}>{isListening ? `${info.upper}${info.lower}` : info.lower}</span>;
     } else {
-      content = <span className={`font-english text-3xl md:text-4xl font-bold ${item.matched ? 'text-gray-400' : 'text-gray-800'}`}>{item.text}</span>;
+      content = <span className={`font-english text-[clamp(1.4rem,min(8vw,5vh),2.25rem)] font-bold ${item.matched ? 'text-gray-400' : 'text-gray-800'}`}>{item.text}</span>;
     }
 
     return (
@@ -233,27 +235,24 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen max-w-4xl mx-auto p-4 md:p-6">
-      <EnglishTopBar currentUser={currentUser} onHome={onHome} onRefresh={onRefresh} />
-
-      <div className="text-center mb-6">
-        <h2 className={`text-2xl font-bold flex items-center justify-center gap-2 ${isListening ? 'text-red-500' : 'text-blue-600'}`}>
-          <span className={isListening ? 'animate-pulse' : ''}>{levelInfo.emoji}</span> {levelInfo.title}
-        </h2>
-        <p className="text-gray-500 mt-1">
-          {isListening
-            ? (isLetters ? '先點左邊聽單字，再找出它「開頭」的字母！' : '先點左邊聽聲音，再點右邊的單字！')
-            : (isLetters ? '先點大寫字母，再點一樣的小寫字母！' : '先點單字，再點它的圖片！')}
-        </p>
-        <InstructionButton text={levelInfo.instruction} className="mt-2" />
+    <GameScreen
+      currentUser={currentUser}
+      title={`${levelInfo.emoji} ${levelInfo.title}`}
+      instruction={levelInfo.instruction}
+      onHome={onHome}
+      onRefresh={onRefresh}
+      feedback={feedback}
+      accent={isListening ? 'text-red-500' : 'text-blue-600'}
+      wide
+    >
+      <div className="flex-1 min-h-0 w-full max-h-[46rem] my-auto grid grid-cols-2 gap-3 md:gap-10">
+        <div className="min-h-0 flex flex-col gap-[1.5vh]">
+          {items.map(item => <div key={item.id} className="flex-1 min-h-0">{renderPrompt(item)}</div>)}
+        </div>
+        <div className="min-h-0 flex flex-col gap-[1.5vh]">
+          {answers.map(a => <div key={`slot-${a.id}`} className="flex-1 min-h-0">{renderAnswer(byId(a.id) || a)}</div>)}
+        </div>
       </div>
-
-      <div className="flex-1 grid grid-cols-2 gap-4 md:gap-12 items-start">
-        <div className="flex flex-col gap-4">{items.map(renderPrompt)}</div>
-        <div className="flex flex-col gap-4">{answers.map(a => renderAnswer(byId(a.id) || a))}</div>
-      </div>
-
-      <FeedbackToast message={feedback} />
-    </div>
+    </GameScreen>
   );
 };
