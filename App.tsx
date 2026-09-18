@@ -30,6 +30,7 @@ import { LessonLoopView } from './components/LessonLoopView';
 import { ParentReportView } from './components/ParentReportView';
 import { BrowserNotice } from './components/BrowserNotice';
 import { PraiseBurst } from './components/Praise';
+import { familyStore } from './services/familyStore';
 import { buildFamilyRound, FamilyQuestion } from './services/wordFamilies';
 import { buildRadicalRound, RadicalQuestion } from './services/radicals';
 import { wordsInText } from './services/lessonText';
@@ -66,22 +67,18 @@ const MILESTONE_SIZE = 10;
 /** 今日冒險 rounds: planned words (most important first), which ones must be in, and how many items. */
 interface RoundPlan { words: string[]; focus: string[]; count: number; }
 
+/** Saved lessons, plus built-in lessons added to the app since they were saved. */
+const withDefaultLessons = (saved: Lesson[] | null): Lesson[] => {
+  if (!saved) return INITIAL_LESSONS;
+  return [...saved, ...INITIAL_LESSONS.filter(lesson => !saved.some(l => l.id === lesson.id))];
+};
+
 // After the last answer of a round: time to hear the word and the praise and see the stars before moving on
 const ROUND_END_PAUSE = 2000;
 
 export default function App() {
   // --- USER SYSTEM STATE ---
-  const [users, setUsers] = useState<UserProfile[]>(() => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const saved = window.localStorage.getItem('zhuyin_users');
-        if (saved) return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.error("Failed to load users", e);
-    }
-    return [];
-  });
+  const [users, setUsers] = useState<UserProfile[]>(() => familyStore.read('users') ?? []);
 
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
@@ -93,46 +90,12 @@ export default function App() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
   // --- LESSON STATE ---
-  const [lessons, setLessons] = useState<Lesson[]>(() => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const saved = window.localStorage.getItem('zhuyin_lessons');
-        if (saved) {
-          const savedLessons = JSON.parse(saved);
-          
-          // Smart Merge: Check if there are new default lessons (like Lesson 6) 
-          // that are present in code (INITIAL_LESSONS) but missing from storage.
-          const mergedLessons = [...savedLessons];
-          let hasNewContent = false;
-
-          INITIAL_LESSONS.forEach(initLesson => {
-            // If this initial lesson ID does not exist in the saved lessons, add it
-            if (!savedLessons.some((l: Lesson) => l.id === initLesson.id)) {
-               mergedLessons.push(initLesson);
-               hasNewContent = true;
-            }
-          });
-
-          // If we added new lessons, return the merged list
-          return mergedLessons;
-        }
-      }
-    } catch (e) {}
-    return INITIAL_LESSONS;
-  });
+  const [lessons, setLessons] = useState<Lesson[]>(() => withDefaultLessons(familyStore.read('lessons')));
 
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
   // --- ENGLISH STATE ---
-  const [customEnglishUnits, setCustomEnglishUnits] = useState<EnglishUnit[]>(() => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const saved = window.localStorage.getItem('english_custom_units');
-        if (saved) return JSON.parse(saved);
-      }
-    } catch (e) {}
-    return [];
-  });
+  const [customEnglishUnits, setCustomEnglishUnits] = useState<EnglishUnit[]>(() => familyStore.read('englishUnits') ?? []);
   const [activeEnglishUnit, setActiveEnglishUnit] = useState<EnglishUnit | null>(null);
   const [englishLevel, setEnglishLevel] = useState<number>(1);
   const [englishItems, setEnglishItems] = useState<EnglishRoundItem[]>([]);
@@ -199,40 +162,44 @@ export default function App() {
       setRewardImages(prev => ({ ...prev, ...loaded }));
     };
     loadRewardImages();
-  }, [gameState]); 
+  }, [gameState]);
 
-  // Save Users
+  // Save the family's data (skipping the first run, which only has what was just loaded)
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      if (isMounted.current) {
-        try {
-          localStorage.setItem('zhuyin_users', JSON.stringify(users));
-        } catch (e) {}
-      } else {
-        isMounted.current = true;
-      }
-    }
+    if (isMounted.current) familyStore.write('users', users);
+    else isMounted.current = true;
   }, [users]);
 
-  // Save Lessons
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage && isMounted.current) {
-      try {
-        localStorage.setItem('zhuyin_lessons', JSON.stringify(lessons));
-      } catch (e) {}
-    }
+    if (isMounted.current) familyStore.write('lessons', lessons);
   }, [lessons]);
+
+  // Changes made in another tab (later: on another device) replace what this one holds, so neither overwrites the other
+  useEffect(() => familyStore.subscribe(key => {
+    if (key === 'users') {
+      const fresh = familyStore.read('users') ?? [];
+      usersRef.current = fresh;
+      setUsers(fresh);
+      setCurrentUser(current => {
+        if (!current) return current;
+        const same = fresh.find(u => u.id === current.id);
+        if (!same) setGameState(GameState.LOGIN); // This player was deleted elsewhere
+        return same ?? null;
+      });
+    } else if (key === 'lessons') {
+      setLessons(withDefaultLessons(familyStore.read('lessons')));
+    } else if (key === 'englishUnits') {
+      setCustomEnglishUnits(familyStore.read('englishUnits') ?? []);
+    }
+  }), []);
 
   // Start each new screen from the top
   useEffect(() => {
     if (typeof window !== 'undefined') window.scrollTo(0, 0);
   }, [gameState]);
 
-  // Save custom English units
   useEffect(() => {
-    try {
-      localStorage.setItem('english_custom_units', JSON.stringify(customEnglishUnits));
-    } catch (e) {}
+    if (isMounted.current) familyStore.write('englishUnits', customEnglishUnits);
   }, [customEnglishUnits]);
 
   // --- ACTIONS ---
@@ -284,7 +251,7 @@ export default function App() {
   const createUser = (name: string, avatar: string) => {
     // Secret backdoor for testing
     const initialPoints = (name === 'Administrator' || name === 'Administration') ? 9999 : 0;
-    
+
     const newUser: UserProfile = {
       id: Date.now().toString(),
       name,
@@ -739,7 +706,7 @@ export default function App() {
     pathRoundRef.current = !!plan;
     setIsGenerating(true);
     const diff = difficulty !== undefined ? difficulty : currentDifficulty;
-    
+
     // Determine source words
     let sourceWords: string[] = [];
     let customImages: Record<string, string> = {};
@@ -782,7 +749,7 @@ export default function App() {
       setIsGenerating(false);
       return;
     }
-    
+
     try {
       const schedule = reviewSchedule(currentUser?.wordStats);
       let newItems: WordItem[] | null;
@@ -923,9 +890,9 @@ export default function App() {
   switch (gameState) {
     case GameState.LOGIN:
       return (
-        <LoginView 
-          users={users} 
-          onLogin={(u) => { setCurrentUser(u); setGameState(GameState.MENU); }} 
+        <LoginView
+          users={users}
+          onLogin={(u) => { setCurrentUser(u); setGameState(GameState.MENU); }}
           onCreateUser={createUser}
           onDeleteUser={deleteUser}
         />
@@ -933,7 +900,7 @@ export default function App() {
 
     case GameState.MENU:
       return currentUser ? (
-        <MenuView 
+        <MenuView
           currentUser={currentUser}
           currentVocabulary={[]} // Not used anymore
           activeLesson={activeLesson}
@@ -994,7 +961,7 @@ export default function App() {
     case GameState.LESSON_INTRO:
       if (!activeLesson) return null;
       return (
-        <LessonIntroView 
+        <LessonIntroView
            lesson={activeLesson}
            onStartGame={() => setGameState(GameState.DIFFICULTY_SELECT)}
            onBack={() => setGameState(GameState.MENU)} // Back to Menu (Lesson Dashboard)
@@ -1024,7 +991,7 @@ export default function App() {
 
     case GameState.ZHUYIN_INTRO:
       return (
-        <ZhuyinIntroView 
+        <ZhuyinIntroView
            onStartGame={() => setGameState(GameState.DIFFICULTY_SELECT)}
            onBack={() => setGameState(GameState.MENU)}
         />
@@ -1165,7 +1132,7 @@ export default function App() {
     case GameState.SHOP:
       if (!currentUser) return null;
       return (
-        <ShopView 
+        <ShopView
           currentUser={currentUser}
           rewardImages={rewardImages}
           imageRefreshVersion={imageRefreshVersion}

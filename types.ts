@@ -45,6 +45,13 @@ export interface RewardCard {
   cost: number;  // Cost in points
 }
 
+/** The parent password, as a salted hash (services/parentLock.ts). */
+export interface ParentLockRecord {
+  salt: string;
+  hash: string;
+  hint?: string;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
