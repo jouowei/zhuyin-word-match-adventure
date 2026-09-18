@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { STROKE_DATA_URL } from '../services/offline';
 import { X, BookOpen, Loader2, Volume2 } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { playChineseWord, stopChineseAudio } from '../utils/chineseAudio';
@@ -39,13 +40,7 @@ const SingleCharacterView: React.FC<{ char: string }> = ({ char }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // 1. Try fetching from Traditional Chinese Data source first
-        let response = await fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-traditional@2.0/${char}.json`);
-        
-        // 2. Fallback to standard (Simplified) source if not found
-        if (!response.ok) {
-           response = await fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`);
-        }
+        const response = await fetch(STROKE_DATA_URL(char));
 
         if (response.ok) {
           const json = await response.json();
@@ -79,29 +74,29 @@ const SingleCharacterView: React.FC<{ char: string }> = ({ char }) => {
 
   // Calculate scaling for SVG (Hanzi Writer data is 1024x1024)
   const size = 1024;
-  const displaySize = 160; 
+  const displaySize = 160;
 
   // --- Logic to determine radical display ---
-  
+
   // 1. Check for manual override info
   const customInfo = CUSTOM_RADICAL_INFO[char];
-  
+
   // 2. Determine strokes to highlight
   let radicalStrokesToUse = data.radStrokes || [];
-  
+
   // If we have a manual stroke override, use it
   if (customInfo?.strokes) {
     radicalStrokesToUse = customInfo.strokes;
   }
 
   const totalStrokes = data.strokes.length;
-  
+
   // Check if it is a "Self Radical" (e.g., Fish, Sun)
   // Condition: No radical strokes defined (and no override), OR radical strokes equal total strokes
   const isSelfRadical = (radicalStrokesToUse.length === 0 || radicalStrokesToUse.length === totalStrokes);
 
   // Final list of indices to highlight red
-  const strokesToHighlight = isSelfRadical 
+  const strokesToHighlight = isSelfRadical
     ? data.strokes.map((_, i) => i) // Highlight all
     : radicalStrokesToUse;
 
@@ -121,7 +116,7 @@ const SingleCharacterView: React.FC<{ char: string }> = ({ char }) => {
              <div className="absolute inset-0 border-t-2 border-dashed border-red-100 top-1/2 -translate-y-1/2"></div>
              <div className="absolute inset-0 border-l-2 border-dashed border-red-100 left-1/2 -translate-x-1/2"></div>
         </div>
-        
+
         <svg width={displaySize} height={displaySize} viewBox={`0 0 ${size} ${size}`}>
           <g transform="translate(0, 900) scale(1, -1)">
             {data.strokes.map((path, index) => {
@@ -153,7 +148,7 @@ const SingleCharacterView: React.FC<{ char: string }> = ({ char }) => {
                 <path
                   key={index}
                   d={path}
-                  fill="#ef4444" 
+                  fill="#ef4444"
                 />
               );
             })}
@@ -193,11 +188,11 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ word
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
-      <div 
+      <div
         className="bg-white rounded-[2rem] p-6 max-w-2xl w-full shadow-2xl animate-pop border-8 border-indigo-200 relative"
         onClick={e => e.stopPropagation()}
       >
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition"
         >
@@ -209,7 +204,7 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ word
              <h2 className="text-2xl font-bold text-indigo-800 flex items-center gap-2">
                <BookOpen className="text-indigo-500" /> 生字小教室
              </h2>
-             <button 
+             <button
                onClick={speakWord}
                className="p-2 bg-indigo-100 text-indigo-600 rounded-full hover:bg-indigo-200 transition-colors shadow-sm"
                title="再聽一次"
@@ -217,7 +212,7 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ word
                <Volume2 size={20} />
              </button>
            </div>
-           
+
            <div className="flex justify-center my-4 text-6xl text-orange-500">
              <ZhuyinText text={word} readings={zhuyin.split(' ')} />
            </div>
@@ -233,7 +228,7 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ word
            ))}
         </div>
 
-        <button 
+        <button
           onClick={onClose}
           className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md transform active:scale-95 transition mt-4"
         >

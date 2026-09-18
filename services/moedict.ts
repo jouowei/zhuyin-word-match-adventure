@@ -41,7 +41,7 @@ const lookup = (word: string): Promise<Heteronym[] | null> => {
   return task;
 };
 
-const canPlayOgg = () => {
+export const canPlayOgg = () => {
   try {
     return typeof document !== 'undefined' && document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis"') !== '';
   } catch (e) {

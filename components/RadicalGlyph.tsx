@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { STROKE_DATA_URL } from '../services/offline';
 
 interface StrokeData {
   strokes: string[];
@@ -10,7 +11,7 @@ const cache = new Map<string, Promise<StrokeData | null>>();
 /** hanzi-writer stroke data (the "-traditional" package doesn't exist, so the main one is used). */
 export const loadStrokeData = (char: string): Promise<StrokeData | null> => {
   if (!cache.has(char)) {
-    cache.set(char, fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encodeURIComponent(char)}.json`)
+    cache.set(char, fetch(STROKE_DATA_URL(char))
       .then(res => (res.ok ? res.json() : null))
       .catch(() => {
         cache.delete(char); // Retry next time

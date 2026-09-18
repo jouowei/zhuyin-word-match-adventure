@@ -152,6 +152,29 @@ const ENGLISH_PART_PAUSE = 250; // Between "bee." and "bear."
 // One Chinese character is one syllable; zhuyin symbols count as one
 const countSyllables = (text: string) => Math.max(1, (text.match(/\p{Script=Han}/gu) || []).length);
 
+/** 16-bit mono WAV. */
+const encodeWav = (buffer: AudioBuffer): Blob => {
+  const samples = buffer.getChannelData(0);
+  const view = new DataView(new ArrayBuffer(44 + samples.length * 2));
+  const text = (at: number, s: string) => [...s].forEach((c, i) => view.setUint8(at + i, c.charCodeAt(0)));
+  text(0, 'RIFF'); view.setUint32(4, 36 + samples.length * 2, true); text(8, 'WAVE');
+  text(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, buffer.sampleRate, true); view.setUint32(28, buffer.sampleRate * 2, true);
+  view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+  text(36, 'data'); view.setUint32(40, samples.length * 2, true);
+  samples.forEach((v, i) => view.setInt16(44 + i * 2, Math.max(-1, Math.min(1, v)) * 0x7fff, true));
+  return new Blob([view], { type: 'audio/wav' });
+};
+
+/**
+ * Just the word at the start of a 教育部 recording, cut exactly as playback cuts it: the offline copy on this device
+ * then takes a few dozen KB instead of the whole definition (several hundred KB).
+ */
+export const wordOnlyRecording = async (data: ArrayBuffer, text: string): Promise<Blob> => {
+  const ctx = getContext();
+  return encodeWav(trimToFirstUtterance(ctx, await ctx.decodeAudioData(data), countSyllables(text)));
+};
+
 const loadClip = (url: string, text: string): Promise<AudioBuffer | null> => {
   const syllables = countSyllables(text);
   const key = `${url}#${syllables}`;

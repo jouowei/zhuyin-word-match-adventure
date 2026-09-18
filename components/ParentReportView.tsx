@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { ArrowLeft, KeyRound, TrendingUp, TrendingDown, Minus, Lightbulb, BookOpen, Calendar } from 'lucide-react';
-import { Lesson, UserProfile } from '../types';
+import { EnglishUnit, Lesson, UserProfile } from '../types';
 import { summarizeWeek } from '../services/activityLog';
 import { CHINESE_PREFIXES, ENGLISH_PREFIXES, masteredCount, reviewSchedule, startOfDay } from '../services/learningStats';
 import { confusionLabel, ENGLISH_TIPS, GENERAL_TIPS, readingPrompts, tipForConfusion } from '../services/parentTips';
 import { ParentPasswordSetup, ParentUnlock } from './ParentLock';
+import { OfflineModePanel } from './OfflineModePanel';
 
 interface ParentReportViewProps {
   currentUser: UserProfile;
   lessons: Lesson[];
+  englishUnits: EnglishUnit[];
   activeLesson: Lesson | null;
   onBack: () => void;
 }
@@ -27,7 +29,7 @@ const Trend: React.FC<{ now: number | null; before: number | null }> = ({ now, b
 
 const itemLabel = (key: string) => key.replace(/^(w|zy|el|ew):/, '');
 
-export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser, lessons, activeLesson, onBack }) => {
+export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser, lessons, englishUnits, activeLesson, onBack }) => {
   const [unlocked, setUnlocked] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
@@ -251,6 +253,10 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser,
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow p-5">
+          <OfflineModePanel lessons={lessons} englishUnits={englishUnits} />
         </div>
 
         <div className="bg-white rounded-3xl shadow p-5">

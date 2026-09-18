@@ -29,6 +29,7 @@ import { RadicalGameView } from './components/RadicalGameView';
 import { LessonLoopView } from './components/LessonLoopView';
 import { ParentReportView } from './components/ParentReportView';
 import { BrowserNotice } from './components/BrowserNotice';
+import { OfflineNotice } from './components/OfflineNotice';
 import { PraiseBurst } from './components/Praise';
 import { familyStore } from './services/familyStore';
 import { buildFamilyRound, FamilyQuestion } from './services/wordFamilies';
@@ -874,6 +875,7 @@ export default function App() {
     <>
       {renderScreen()}
       <BrowserNotice />
+      <OfflineNotice />
       <PraiseBurst />
       {celebration && (
         <div key={celebration.id} className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] pointer-events-none animate-pop">
@@ -987,7 +989,7 @@ export default function App() {
 
     case GameState.PARENT_REPORT:
       if (!currentUser) return null;
-      return <ParentReportView currentUser={currentUser} lessons={lessons} activeLesson={activeLesson} onBack={() => setGameState(GameState.MENU)} />;
+      return <ParentReportView currentUser={currentUser} lessons={lessons} englishUnits={customEnglishUnits} activeLesson={activeLesson} onBack={() => setGameState(GameState.MENU)} />;
 
     case GameState.ZHUYIN_INTRO:
       return (

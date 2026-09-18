@@ -1,6 +1,7 @@
 
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { WordItem } from '../types';
+import { STROKE_DATA_URL } from '../services/offline';
 import { PenTool, Eraser, CheckCircle, AlertCircle, PlayCircle, Volume2 } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { playChineseAudio } from '../utils/chineseAudio';
@@ -74,13 +75,7 @@ export const WritingOverlay: React.FC<WritingOverlayProps> = ({ character, stage
 
   const loadStrokeData = async (char: string) => {
     try {
-      // 1. Try Traditional First
-      let response = await fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-traditional@2.0/${char}.json`);
-
-      // 2. Fallback to Standard
-      if (!response.ok) {
-         response = await fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`);
-      }
+      const response = await fetch(STROKE_DATA_URL(char));
 
       if (response.ok) {
         const data = await response.json();
