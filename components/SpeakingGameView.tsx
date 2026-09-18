@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { WordItem, UserProfile } from '../types';
-import { Mic, AlertCircle, Volume2, ThumbsUp, Check } from 'lucide-react';
+import { Mic, AlertCircle, Volume2, ThumbsUp, Check, RotateCcw } from 'lucide-react';
 import { hasPicture } from '../utils/wordPicture';
 import { playSound } from '../utils/sound';
 import { AudioStep, playChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
@@ -13,6 +13,7 @@ import { GameScreen } from './GameScreen';
 import { ZhuyinText } from './ZhuyinText';
 import { describeOutcome, loadPinyin, saidWord, saidZhuyin, SpeechOutcome } from '../services/speechMatch';
 import { canListen, listenOnce } from '../utils/listenOnce';
+import { canRecord, recordVoice, RecordOutcome } from '../utils/voiceRecorder';
 
 interface SpeakingGameViewProps {
   currentUser: UserProfile;
@@ -31,6 +32,10 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   const [micReady, setMicReady] = useState(false);
   // For parents: what the phone heard on the last try
   const [heardNote, setHeardNote] = useState<{ id: string; text: string } | null>(null);
+  // 錄音比一比 (zhuyin): the child's voice is recorded, then heard next to the model
+  const [voiceOn, setVoiceOn] = useState(false);
+  const [recording, setRecording] = useState<{ id: string; buffer: AudioBuffer } | null>(null);
+  const [playingPart, setPlayingPart] = useState<'model' | 'mine' | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [permissionError, setPermissionError] = useState(false);
   const [pickedId, setPickedId] = useState<string | null>(null);
@@ -43,7 +48,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   useInstruction(`game-${gameMode}-4`, instruction);
 
   // The sound comparison is loaded now, so it is ready when the child speaks
-  useEffect(() => { loadPinyin().catch(() => {}); }, []);
+  useEffect(() => { if (gameMode === 'word' || !canRecord()) loadPinyin().catch(() => {}); }, [gameMode]);
 
   useEffect(() => () => {
     cancelListening.current();
@@ -77,6 +82,59 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
       showFeedback(level >= HELP_SHOW ? '先聽一次，再跟著唸！' : '聽聽看怎麼唸，換你唸！', 2500);
       speakHelp([{ text: '聽聽看怎麼唸' }, modelSound(item), { text: '換你唸' }]);
     }
+  };
+
+  /**
+   * Zhuyin symbols are judged by ear: phones can't recognize a sound said on its own (ㄨ and ㄠ both came back as 福).
+   * The child records, hears the model and then their own voice, and says whether they sound the same.
+   */
+  const startRecording = (item: WordItem) => {
+    if (!canRecord()) {
+      startListening(item);
+      return;
+    }
+    setPermissionError(false);
+    stopChineseAudio(); // The microphone shouldn't hear the model voice
+    setListeningForId(item.id);
+    setMicReady(false);
+    setVoiceOn(false);
+    setRecording(null);
+    cancelListening.current = recordVoice({
+      onReady: () => setMicReady(true),
+      onVoice: () => setVoiceOn(true),
+      onOutcome: outcome => {
+        setListeningForId(null);
+        recorded(item, outcome);
+      },
+    });
+  };
+
+  const recorded = (item: WordItem, outcome: RecordOutcome) => {
+    if (outcome.kind === 'voice') {
+      setRecording({ id: item.id, buffer: outcome.buffer });
+      compare(item, outcome.buffer, 'both');
+      return;
+    }
+    if (outcome.kind === 'denied') setPermissionError(true);
+    if (outcome.kind === 'error') showFeedback('麥克風出了問題，再試一次！', 2500);
+    else handleFailedTry(item, '');
+  };
+
+  /** The model, then the child's voice, then 「一樣嗎？」; or just one of them again. */
+  const compare = (item: WordItem, buffer: AudioBuffer, which: 'both' | 'model' | 'mine') => {
+    const model: AudioStep = { ...modelSound(item), pause: 600 };
+    const mine: AudioStep = { buffer, text: '', pause: 300 };
+    const steps = which === 'both' ? [model, mine, { text: '一樣嗎？' }] : which === 'model' ? [model] : [mine];
+    const parts: ('model' | 'mine' | null)[] = which === 'both' ? ['model', 'mine', null] : [which];
+    playChineseAudio(steps, () => setPlayingPart(null), index => setPlayingPart(parts[index]));
+  };
+
+  const soundsTheSame = (item: WordItem) => {
+    const level = help[item.id] || 0;
+    setRecording(null);
+    playSound('success');
+    onMatch(item.id, level);
+    showFeedback(praise(level, 'say'));
   };
 
   const startListening = (item: WordItem) => {
@@ -130,6 +188,9 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   // One word at a time, the next one when it's done; the dots below let the child pick another
   const current = currentWords.find(w => w.id === pickedId && !w.matched) ?? currentWords.find(w => !w.matched) ?? currentWords[currentWords.length - 1];
   const isMe = !!current && listeningForId === current.id;
+  const myRecording = current && recording?.id === current.id && !current.matched ? recording : null;
+  const say = gameMode === 'zhuyin' ? startRecording : startListening;
+  const listeningLabel = voiceOn && gameMode === 'zhuyin' ? '聽到了…' : '請說！';
   const level = current ? help[current.id] || 0 : 0;
 
   return (
@@ -158,7 +219,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
           >
             {isMe && (
               <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
-                <Mic size={14} /> {micReady ? '請說！' : '準備中…'}
+                <Mic size={14} /> {micReady ? listeningLabel : '準備中…'}
               </div>
             )}
 
@@ -183,6 +244,39 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
 
             {current.matched ? (
               <div className="flex items-center gap-2 text-green-700 font-black text-2xl"><ThumbsUp /> 唸對了！</div>
+            ) : myRecording ? (
+              // 錄音比一比: hear both again, then decide
+              <div className="w-full flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => compare(current, myRecording.buffer, 'model')}
+                    className={`flex-1 flex items-center justify-center gap-1 font-black text-lg py-[1.4vh] rounded-2xl transition active:scale-95 ${playingPart === 'model' ? 'bg-sky-300 text-sky-900 ring-4 ring-sky-200' : 'bg-sky-100 text-sky-700'}`}
+                  >
+                    <Volume2 size={22} /> 標準
+                  </button>
+                  <button
+                    onClick={() => compare(current, myRecording.buffer, 'mine')}
+                    className={`flex-1 flex items-center justify-center gap-1 font-black text-lg py-[1.4vh] rounded-2xl transition active:scale-95 ${playingPart === 'mine' ? 'bg-orange-300 text-orange-900 ring-4 ring-orange-200' : 'bg-orange-100 text-orange-700'}`}
+                  >
+                    <Mic size={22} /> 我的
+                  </button>
+                </div>
+                <p className="text-center font-bold text-gray-600 leading-tight">跟標準的一樣嗎？</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => startRecording(current)}
+                    className="flex-1 flex items-center justify-center gap-1 bg-purple-100 hover:bg-purple-200 text-purple-700 font-black text-lg py-[1.6vh] rounded-2xl transition active:scale-95"
+                  >
+                    <RotateCcw size={22} /> 再唸一次
+                  </button>
+                  <button
+                    onClick={() => soundsTheSame(current)}
+                    className="flex-[1.4] flex items-center justify-center gap-1 bg-green-500 hover:bg-green-600 text-white font-black text-xl py-[1.6vh] rounded-2xl shadow-md transition active:scale-95"
+                  >
+                    <ThumbsUp size={24} /> 一樣！
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="flex gap-3 w-full">
                 <button
@@ -194,11 +288,11 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
                   <Volume2 size={24} /> 聽
                 </button>
                 <button
-                  onClick={() => startListening(current)}
+                  onClick={() => say(current)}
                   disabled={isListening}
                   className={`flex-[2] flex items-center justify-center gap-1 text-white font-black text-xl py-[1.8vh] rounded-2xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
                 >
-                  <Mic size={24} /> {isMe ? (micReady ? '請說！' : '等一下…') : '唸唸看'}
+                  <Mic size={24} /> {isMe ? (micReady ? listeningLabel : '等一下…') : '唸唸看'}
                 </button>
               </div>
             )}
@@ -207,7 +301,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
               <p className="text-xs text-gray-400 text-center leading-tight">{heardNote.text}</p>
             )}
 
-            {!current.matched && level >= HELP_SHOW && (
+            {!current.matched && !myRecording && level >= HELP_SHOW && (
               <button
                 onClick={() => handleParentPass(current)}
                 className="text-sm text-gray-500 hover:text-purple-600 font-bold flex items-center gap-1 underline"

@@ -5,6 +5,7 @@ import { clipStretch, englishClipUrls, stretchSamples } from './englishClips';
 
 export interface AudioStep {
   url?: string;   // Same-origin recording to play
+  buffer?: AudioBuffer; // A recording made on this device (the child's voice in 錄音比一比)
   text: string;   // Spoken with speech synthesis when there is no recording or it fails
   lang?: 'en';    // English words inside Chinese instructions and hints
   rate?: number;
@@ -34,6 +35,9 @@ const getContext = () => {
   }
   return audioContext!;
 };
+
+/** The one audio context: recordings made on this device (utils/voiceRecorder.ts) play in it too. */
+export const sharedAudioContext = () => getContext();
 
 // iPhone Safari only plays speech and web audio that a tap started; unlock both on the first touch,
 // so instructions that play by themselves on later screens are heard
@@ -258,8 +262,8 @@ export const playChineseAudio = (inputSteps: AudioStep[], onEnd?: () => void, on
       setTimeout(() => playStep(index + 1), step.pause ?? 200);
     };
 
-    const englishUrls = !step.url && step.lang === 'en' ? englishClipUrls(step.text) : null;
-    const clips = englishUrls
+    const englishUrls = !step.url && !step.buffer && step.lang === 'en' ? englishClipUrls(step.text) : null;
+    const clips = step.buffer ? [step.buffer] : englishUrls
       ? await Promise.all(englishUrls.map(url => loadEnglishClip(url, clipStretch(step.rate))))
       : [step.url ? await loadClip(step.url, step.text) : null];
     if (token !== playToken) return;

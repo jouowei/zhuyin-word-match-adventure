@@ -15,7 +15,7 @@ export const levelInfo = (level: number, gameMode: 'word' | 'zhuyin' | string): 
     { level: 1, emoji: '🏰', title: zhuyin ? '注音大冒險' : '字卡大冒險', desc: zhuyin ? '看注音符號找圖片' : '看圖片找國字' },
     { level: 2, emoji: '🎧', title: '聽力大師', desc: zhuyin ? '聽聲音找注音' : '聽聲音找國字' },
     { level: 3, emoji: '🖌️', title: '小小書法家', desc: zhuyin ? '照筆順寫注音' : '動手練習寫國字' },
-    { level: 4, emoji: '🎙️', title: '小小播音員', desc: '大聲唸出圖卡' },
+    { level: 4, emoji: '🎙️', title: '小小播音員', desc: zhuyin ? '唸注音，和標準的比一比' : '大聲唸出圖卡' },
     { level: 5, emoji: '🧩', title: '拼音高手', desc: zhuyin ? '看圖片，拼出注音' : '看國字，拼出注音' },
     { level: 6, emoji: '🎵', title: '聲調偵探', desc: '聽聲音，找出第幾聲' },
     { level: 7, emoji: '👨‍👩‍👧', title: '字的家族', desc: '找出有同一個字的詞' },
@@ -40,7 +40,9 @@ export const gameInstruction = (level: number, gameMode: 'word' | 'zhuyin' | str
         ? '先點注音符號，找到有這個聲音的圖片，再照著筆順寫一寫。'
         : `先點字，找到對的${target}，再跟著筆順寫一寫。`;
     case 4:
-      return `點麥克風，大聲唸出卡片上的${zhuyin ? '注音符號' : '字'}。唸不出來的時候，可以先按喇叭聽一聽。`;
+      return zhuyin
+        ? '點麥克風，大聲唸出注音符號。唸完會先放標準的聲音，再放你的聲音，一樣就按大拇指！'
+        : '點麥克風，大聲唸出卡片上的字。唸不出來的時候，可以先按喇叭聽一聽。';
     case 5:
       return '聽聽看這個字，照順序點出注音符號，最後選出第幾聲。';
     case 6:
