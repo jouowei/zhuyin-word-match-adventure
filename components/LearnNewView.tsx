@@ -120,7 +120,11 @@ export const LearnNewView: React.FC<LearnNewViewProps> = ({ currentUser, cards, 
         ) : (
           <span className={`font-kai ${big ? 'text-[clamp(3.5rem,min(20vw,13vh),6rem)]' : 'text-[clamp(2rem,min(11vw,7vh),3rem)]'} text-gray-800`}>{item.character}</span>
         )}
-        {hasPicture(item) && (
+        {/* Choices have no picture: children found the answer by its picture instead of reading it */}
+        {!big && zhuyin && item.exampleWord && (
+          <span className="text-[clamp(1rem,3vh,1.35rem)] font-bold text-gray-600 whitespace-nowrap">{item.exampleWord}</span>
+        )}
+        {big && hasPicture(item) && (
           <div className="flex flex-col items-center">
             {item.imageUrl
               ? <img src={item.imageUrl} alt="" className={`${big ? 'h-[clamp(5rem,16vh,8rem)]' : 'h-[clamp(3.5rem,10vh,5rem)]'} w-auto object-contain`} />
