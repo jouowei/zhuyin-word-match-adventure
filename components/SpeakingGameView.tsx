@@ -11,7 +11,8 @@ import { gameInstruction } from '../services/instructions';
 import { speakHelp, useInstruction } from './VoiceGuide';
 import { GameScreen } from './GameScreen';
 import { ZhuyinText } from './ZhuyinText';
-import { loadPinyin, saidWord, saidZhuyin } from '../services/speechMatch';
+import { describeOutcome, loadPinyin, saidWord, saidZhuyin, SpeechOutcome } from '../services/speechMatch';
+import { canListen, listenOnce } from '../utils/listenOnce';
 
 interface SpeakingGameViewProps {
   currentUser: UserProfile;
@@ -26,13 +27,16 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   currentUser, currentWords, onMatch, onHome, onRefresh, gameMode = 'word'
 }) => {
   const [listeningForId, setListeningForId] = useState<string | null>(null);
+  // The phone takes a moment to open the microphone: the child speaks when it says so
+  const [micReady, setMicReady] = useState(false);
+  // For parents: what the phone heard on the last try
+  const [heardNote, setHeardNote] = useState<{ id: string; text: string } | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [permissionError, setPermissionError] = useState(false);
   const [pickedId, setPickedId] = useState<string | null>(null);
   // Listening to the model first, or failed tries, count as help
   const [help, setHelp] = useState<Record<string, number>>({});
-  const recognitionRef = useRef<any>(null);
-  const listenTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const cancelListening = useRef<() => void>(() => {});
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const instruction = gameInstruction(4, gameMode);
@@ -42,9 +46,8 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
   useEffect(() => { loadPinyin().catch(() => {}); }, []);
 
   useEffect(() => () => {
-    recognitionRef.current?.abort?.();
+    cancelListening.current();
     clearTimeout(feedbackTimer.current);
-    clearTimeout(listenTimer.current);
     stopChineseAudio();
   }, []);
 
@@ -78,82 +81,42 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
 
   const startListening = (item: WordItem) => {
     setPermissionError(false);
-
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    if (!canListen()) {
       alert("你的瀏覽器不支援語音功能喔，請用 Chrome 試試看！");
       return;
     }
 
     stopChineseAudio(); // The microphone shouldn't hear the model voice
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition;
-    recognition.lang = 'zh-TW';
-    recognition.interimResults = false;
-    // Several guesses: children's speech is often heard as a similar sound first
-    recognition.maxAlternatives = 5;
-
     setListeningForId(item.id);
-    // Answered once per try: a result, an error, or (when the recognizer stops without either) nothing heard
-    let answered = false;
-    const finish = () => {
-      clearTimeout(listenTimer.current);
-      setListeningForId(null);
-    };
+    setMicReady(false);
+    setHeardNote(null);
+    cancelListening.current = listenOnce({
+      lang: 'zh-TW',
+      isMatch: async heard => {
+        const toPinyin = await loadPinyin().catch(() => null);
+        if (!toPinyin) return heard.some(t => t.includes(item.character));
+        return gameMode === 'zhuyin' ? saidZhuyin(item.character, heard, toPinyin) : saidWord(item.character, heard, toPinyin);
+      },
+      onReady: () => setMicReady(true),
+      onOutcome: outcome => {
+        setListeningForId(null);
+        setHeardNote({ id: item.id, text: describeOutcome(outcome) });
+        answer(item, outcome);
+      },
+    });
+  };
 
-    recognition.onresult = async (event: any) => {
-      if (answered) return;
-      answered = true;
-      const transcripts: string[] = Array.from(event.results[0] as ArrayLike<{ transcript: string }>).map(alt => alt.transcript);
-      const toPinyin = await loadPinyin().catch(() => null);
-      const isMatch = toPinyin
-        ? (gameMode === 'zhuyin' ? saidZhuyin(item.character, transcripts, toPinyin) : saidWord(item.character, transcripts, toPinyin))
-        : transcripts.some(t => t.includes(item.character));
-      if (isMatch) {
-        const level = help[item.id] || 0;
-        playSound('success');
-        onMatch(item.id, level);
-        showFeedback(praise(level, 'say'));
-      } else {
-        handleFailedTry(item, transcripts[0] || '');
-      }
-      finish();
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error('Speech error', event.error);
-      if (answered) return;
-      answered = true;
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setPermissionError(true);
-        showFeedback("請允許麥克風權限才能玩喔！");
-      } else if (event.error === 'no-speech' || event.error === 'no-match') {
-        handleFailedTry(item, '');
-      } else if (event.error !== 'aborted') {
-        showFeedback("發生錯誤，請再試一次！");
-      }
-      finish();
-    };
-
-    // Short sounds like ㄆ often end with no result and no error: still an answer for the child
-    recognition.onend = () => {
-      if (!answered) {
-        answered = true;
-        handleFailedTry(item, '');
-      }
-      finish();
-    };
-    // Some browsers keep listening: stop after a while so the try ends
-    clearTimeout(listenTimer.current);
-    listenTimer.current = setTimeout(() => { try { recognition.stop(); } catch (e) {} }, 8000);
-
-    try {
-      recognition.start();
-    } catch (e) {
-      console.error("Failed to start recognition", e);
-      answered = true;
-      finish();
+  /** Every try gets an answer, and every try that isn't right counts towards help (and the parent's pass). */
+  const answer = (item: WordItem, outcome: SpeechOutcome) => {
+    if (outcome.kind === 'match') {
+      const level = help[item.id] || 0;
+      playSound('success');
+      onMatch(item.id, level);
+      showFeedback(praise(level, 'say'));
+      return;
     }
+    if (outcome.kind === 'denied') setPermissionError(true);
+    handleFailedTry(item, outcome.kind === 'heard' ? outcome.heard[0] : '');
   };
 
   // Speech recognition often mishears children: after the model has been given, a parent can pass the card
@@ -195,7 +158,7 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
           >
             {isMe && (
               <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
-                <Mic size={14} /> 聽你說...
+                <Mic size={14} /> {micReady ? '請說！' : '準備中…'}
               </div>
             )}
 
@@ -235,9 +198,13 @@ export const SpeakingGameView: React.FC<SpeakingGameViewProps> = ({
                   disabled={isListening}
                   className={`flex-[2] flex items-center justify-center gap-1 text-white font-black text-xl py-[1.8vh] rounded-2xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
                 >
-                  <Mic size={24} /> {isMe ? '請說…' : '唸唸看'}
+                  <Mic size={24} /> {isMe ? (micReady ? '請說！' : '等一下…') : '唸唸看'}
                 </button>
               </div>
+            )}
+
+            {!current.matched && !isMe && heardNote?.id === current.id && (
+              <p className="text-xs text-gray-400 text-center leading-tight">{heardNote.text}</p>
             )}
 
             {!current.matched && level >= HELP_SHOW && (

@@ -9,6 +9,8 @@ import { HELP_SHOW, nextHelp, POINTS_WITH_HELP } from '../../services/scaffoldin
 import { praise } from '../Praise';
 import { LETTER_LEVELS, WORD_LEVELS } from '../../english/curriculum';
 import { speakHelp, useInstruction } from '../VoiceGuide';
+import { describeOutcome, SpeechOutcome } from '../../services/speechMatch';
+import { canListen, listenOnce } from '../../utils/listenOnce';
 
 interface EnglishSpeakGameViewProps {
   currentUser: UserProfile;
@@ -22,6 +24,10 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
   currentUser, items, onMatch, onHome, onRefresh
 }) => {
   const [listeningForId, setListeningForId] = useState<string | null>(null);
+  // The phone takes a moment to open the microphone: the child speaks when it says so
+  const [micReady, setMicReady] = useState(false);
+  // For parents: what the phone heard on the last try
+  const [heardNote, setHeardNote] = useState<{ id: string; text: string } | null>(null);
   // Listening to the model is part of this game; failed tries count as help
   const [help, setHelp] = useState<Record<string, number>>({});
   const instruction = (items[0]?.kind === 'letter' ? LETTER_LEVELS : WORD_LEVELS)[3].instruction;
@@ -29,13 +35,8 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
   const [permissionError, setPermissionError] = useState(false);
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [feedback, showFeedback] = useFeedback();
-  const recognitionRef = useRef<any>(null);
-
-  const listenTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useEffect(() => () => {
-    recognitionRef.current?.abort?.();
-    clearTimeout(listenTimer.current);
-  }, []);
+  const cancelListening = useRef<() => void>(() => {});
+  useEffect(() => () => cancelListening.current(), []);
 
   /** Every try gets an answer: heard something else, or heard nothing (then louder). Each counts towards help. */
   const failedTry = (item: EnglishRoundItem, heard: string) => {
@@ -49,79 +50,39 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
 
   const startListening = (item: EnglishRoundItem) => {
     setPermissionError(false);
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    if (!canListen()) {
       alert('你的瀏覽器不支援語音功能喔，請用 Chrome 試試看！');
       return;
     }
 
     stopEnglishSpeech();
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition;
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 5;
-
     setListeningForId(item.id);
-    // Answered once per try: a result, an error, or (when the recognizer stops without either) nothing heard
-    let answered = false;
-    const finish = () => {
-      clearTimeout(listenTimer.current);
-      setListeningForId(null);
-    };
+    setMicReady(false);
+    setHeardNote(null);
+    cancelListening.current = listenOnce({
+      lang: 'en-US',
+      isMatch: heard => isSpeechMatch(heard, item.keyword),
+      onReady: () => setMicReady(true),
+      onOutcome: outcome => {
+        setListeningForId(null);
+        setHeardNote({ id: item.id, text: describeOutcome(outcome) });
+        answer(item, outcome);
+      },
+    });
+  };
 
-    recognition.onresult = (event: any) => {
-      if (answered) return;
-      answered = true;
-      const result = event.results[0];
-      const transcripts: string[] = [];
-      for (let i = 0; i < result.length; i++) transcripts.push(result[i].transcript);
-
-      if (isSpeechMatch(transcripts, item.keyword)) {
-        const level = help[item.id] || 0;
-        playSound('success');
-        speakPraise();
-        onMatch(item.id, level);
-        showFeedback(praise(level, 'say', { speak: false }));
-      } else {
-        failedTry(item, transcripts[0] || '');
-      }
-      finish();
-    };
-
-    recognition.onerror = (event: any) => {
-      if (answered) return;
-      answered = true;
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setPermissionError(true);
-        showFeedback('請允許麥克風權限才能玩喔！', 2500);
-      } else if (event.error === 'no-speech' || event.error === 'no-match') {
-        failedTry(item, '');
-      } else if (event.error !== 'aborted') {
-        showFeedback('發生錯誤，請再試一次！', 2000);
-      }
-      finish();
-    };
-
-    // Recognizers sometimes stop with no result and no error: still an answer for the child
-    recognition.onend = () => {
-      if (!answered) {
-        answered = true;
-        failedTry(item, '');
-      }
-      finish();
-    };
-    // Some browsers keep listening: stop after a while so the try ends
-    clearTimeout(listenTimer.current);
-    listenTimer.current = setTimeout(() => { try { recognition.stop(); } catch (e) {} }, 8000);
-
-    try {
-      recognition.start();
-    } catch (e) {
-      console.error('Failed to start recognition', e);
-      answered = true;
-      finish();
+  /** Every try gets an answer, and every try that isn't right counts towards help (and the effort pass). */
+  const answer = (item: EnglishRoundItem, outcome: SpeechOutcome) => {
+    if (outcome.kind === 'match') {
+      const level = help[item.id] || 0;
+      playSound('success');
+      speakPraise();
+      onMatch(item.id, level);
+      showFeedback(praise(level, 'say', { speak: false }));
+      return;
     }
+    if (outcome.kind === 'denied') setPermissionError(true);
+    failedTry(item, outcome.kind === 'heard' ? outcome.heard[0] : '');
   };
 
   const handleEffortPass = (item: EnglishRoundItem) => {
@@ -162,7 +123,7 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
           >
             {isMe && (
               <div className="absolute -top-4 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold animate-bounce flex items-center gap-2">
-                <Mic size={14} /> 聽你說...
+                <Mic size={14} /> {micReady ? '請說！' : '準備中…'}
               </div>
             )}
 
@@ -188,9 +149,13 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
                   disabled={isListening}
                   className={`flex-[2] flex items-center justify-center gap-1 text-white font-black text-xl py-[1.8vh] rounded-2xl shadow-md transition active:scale-95 disabled:opacity-60 ${isMe ? 'bg-red-500 animate-pulse' : 'bg-purple-500 hover:bg-purple-600'}`}
                 >
-                  <Mic size={24} /> {isMe ? '請說…' : '說說看'}
+                  <Mic size={24} /> {isMe ? (micReady ? '請說！' : '等一下…') : '說說看'}
                 </button>
               </div>
+            )}
+
+            {!current.matched && !isMe && heardNote?.id === current.id && (
+              <p className="text-xs text-gray-400 text-center leading-tight">{heardNote.text}</p>
             )}
 
             {!current.matched && fails >= HELP_SHOW && (

@@ -55,6 +55,31 @@ export const saidZhuyin = (symbol: string, transcripts: string[], toPinyin: ToPi
   });
 };
 
+/** How one try at the microphone ended (utils/listenOnce.ts). */
+export type SpeechOutcome =
+  | { kind: 'match'; heard: string[] }
+  | { kind: 'heard'; heard: string[] }
+  | { kind: 'silent'; micOpened: boolean; soundHeard: boolean; error?: string }
+  | { kind: 'denied'; error: string }
+  | { kind: 'error'; error: string };
+
+/** For parents, in small print under the card: what the phone made of the child's voice. */
+export const describeOutcome = (outcome: SpeechOutcome): string => {
+  switch (outcome.kind) {
+    case 'match':
+    case 'heard':
+      return `手機聽到：${outcome.heard.slice(0, 3).join('、')}`;
+    case 'silent': {
+      const text = !outcome.micOpened ? '手機的麥克風沒有開始收音' : outcome.soundHeard ? '手機有聽到聲音，但認不出字' : '手機沒有聽到聲音';
+      return outcome.error ? `${text}（${outcome.error}）` : text;
+    }
+    case 'denied':
+      return outcome.error === 'service-not-allowed' ? '這個瀏覽器不讓網頁用語音辨識（service-not-allowed）' : '沒有麥克風權限（not-allowed）';
+    case 'error':
+      return outcome.error === 'unsupported' ? '這個瀏覽器沒有語音辨識' : `語音辨識出了問題（${outcome.error}）`;
+  }
+};
+
 /** A word: its characters, or the same sounds in the same order, somewhere in what was heard. */
 export const saidWord = (word: string, transcripts: string[], toPinyin: ToPinyin): boolean => {
   const target = hanSyllables(word, toPinyin);
