@@ -3,6 +3,7 @@ import { BookOpen, Gift, Languages, Settings2 } from 'lucide-react';
 import { Lesson, StudyFocus, UserProfile } from '../types';
 import { COMPANIONS } from '../services/companions';
 import { studyFor } from '../services/wordSources';
+import { lessonNumber, lessonShelves } from '../services/lessonShelf';
 import { playSound } from '../utils/sound';
 
 interface ParentSettingsPanelProps {
@@ -59,7 +60,11 @@ export const ParentSettingsPanel: React.FC<ParentSettingsPanelProps> = ({ curren
               onChange={e => setFocus({ kind: 'lesson', lessonId: e.target.value })}
               className="flex-1 min-w-[10rem] bg-white border-2 border-gray-200 rounded-xl px-2 py-1 font-bold text-slate-700"
             >
-              {lessons.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
+              {lessonShelves(lessons).filter(shelf => shelf.lessons.length).map(shelf => (
+                <optgroup key={shelf.key} label={shelf.label}>
+                  {shelf.lessons.map(l => <option key={l.id} value={l.id}>{[lessonNumber(l), l.title].filter(Boolean).join(' ')}</option>)}
+                </optgroup>
+              ))}
             </select>
           ))}
           {option('all', '所有課文的字（自由練習）', () => setFocus({ kind: 'all' }))}

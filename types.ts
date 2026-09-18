@@ -17,9 +17,15 @@ export interface GameLevel {
   theme: string;
 }
 
+/** 上學期 / 下學期 */
+export type Term = 'up' | 'down';
+
 export interface Lesson {
   id: string;
   title: string;
+  grade?: number; // 1–6: which year's textbook it is from (none: 其他課文)
+  term?: Term;
+  order?: number; // 第幾課
   content: string; // The full text/story
   vocabulary: string[]; // List of specific words to learn from this lesson
   customImages?: Record<string, string>; // Optional: Map 'Word' -> 'Image URL'
