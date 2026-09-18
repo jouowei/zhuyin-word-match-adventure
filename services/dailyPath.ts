@@ -1,4 +1,4 @@
-import { WordStat } from '../types';
+import { UserProfile, WordStat } from '../types';
 import { getZhuyinSymbol } from '../zhuyin/symbols';
 import { getWordReading } from './moedict';
 import { reviewSchedule, skillTotal, statKey, todayKey } from './learningStats';
@@ -173,6 +173,37 @@ export const pathTotals = (path: DailyPath): StationResult =>
   path.stations
     .filter(s => s.kind !== 'learn' && s.kind !== 'story' && s.result)
     .reduce((sum, s) => ({ onOwn: sum.onOwn + s.result!.onOwn, total: sum.total + s.result!.total }), { onOwn: 0, total: 0 });
+
+/** The level the child picked at the current station. */
+export const chooseLevel = (path: DailyPath, level: number): DailyPath => ({
+  ...path,
+  stations: path.stations.map((s, i) => (i === path.current ? { ...s, chosen: level } : s)),
+});
+
+/** Today's path, not finished yet: coming back to it continues where the child left off. */
+export const unfinishedToday = (path: DailyPath | null, now = Date.now()): path is DailyPath =>
+  !!path && path.date === todayKey(now) && path.stations[path.current]?.kind !== 'summary';
+
+/**
+ * A station is done: its result is kept and the path moves on. Reaching the summary marks today's adventure as done,
+ * and the first adventure finished each day gives a free gacha spin, a reward the child sees today.
+ */
+export const completeStation = (
+  path: DailyPath, result: StationResult, user: Pick<UserProfile, 'freeSpins' | 'lastFreeSpinDate'> | null,
+): { path: DailyPath; userChanges?: Partial<UserProfile> } => {
+  const stations = path.stations.map((s, i) => (i === path.current ? { ...s, result } : s));
+  const next: DailyPath = { ...path, stations, current: path.current + 1 };
+  if (next.stations[next.current]?.kind !== 'summary' || !user) return { path: next };
+  const gift = user.lastFreeSpinDate !== next.date;
+  if (gift) next.gift = true;
+  return {
+    path: next,
+    userChanges: {
+      ...(next.language === 'en' ? { lastEnglishPath: next.date } : { lastDailyPath: next.date }),
+      ...(gift ? { freeSpins: (user.freeSpins || 0) + 1, lastFreeSpinDate: next.date } : {}),
+    },
+  };
+};
 
 /** Fewer than this many tone answers on own: the 媽麻馬罵 comparison stays open. */
 export const TONE_SUPPORT_UNTIL = 8;

@@ -1,5 +1,5 @@
 import { EnglishRoundItem, EnglishUnit, EnglishWord, WordStat } from '../types';
-import { ENGLISH_UNITS } from '../english/curriculum';
+import { ENGLISH_UNITS, LETTER_LEVELS, RHYME_LEVEL, WORD_LEVELS } from '../english/curriculum';
 import { getLetter, LETTERS } from '../english/letters';
 import { hasRhymeFamilies } from '../english/families';
 import { englishStatKey, reviewSchedule, todayKey } from './learningStats';
@@ -166,4 +166,19 @@ export const buildEnglishLearnCards = (options: {
     if (word && partnerWord) cards.push({ item: wordItem(word, `enlearn-${stamp}-${index}`), partner: wordItem(partnerWord, `enlearn-${stamp}-${index}-p`) });
   });
   return cards;
+};
+
+/** 認識新朋友 at an English path station: partners the child already knows come first. */
+export const englishStationLearnCards = (station: Station, unit: EnglishUnit, stats: Record<string, WordStat> | undefined) => {
+  const kind = station.englishKind || unit.kind;
+  const all = kind === 'letters' ? LETTERS.map(l => l.lower) : ALL_ENGLISH_WORDS.map(w => w.word);
+  const known = all.filter(text => (stats?.[keyOf(kind)(text)]?.box ?? 0) >= 1);
+  return buildEnglishLearnCards({ kind, newItems: station.words, candidates: [...known, ...itemsOf({ ...unit, kind }), ...all], units: [unit] });
+};
+
+/** How an English level is shown as a choice on the adventure map. */
+export const englishLevelInfo = (kind: EnglishUnit['kind'], level: number) => {
+  const levels = kind === 'letters' ? LETTER_LEVELS : [...WORD_LEVELS, RHYME_LEVEL];
+  const info = levels.find(l => l.level === level) || levels[0];
+  return { emoji: info.emoji, title: info.title, desc: info.desc, instruction: info.instruction };
 };
