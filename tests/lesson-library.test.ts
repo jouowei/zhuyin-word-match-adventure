@@ -27,6 +27,9 @@ check('一上 stays short', LIBRARY_LESSONS.filter(l => l.grade === 1 && l.term 
 
 const missing = LIBRARY_LESSONS.flatMap(l => l.vocabulary.filter(w => !l.content.includes(w)).map(w => `${l.title}:${w}`));
 check('every vocabulary word is in its text (for 課文尋寶)', missing.length === 0, missing);
+const badTextReadings = LIBRARY_LESSONS.flatMap(l => Object.entries(l.textReadings || {})
+  .filter(([phrase, reading]) => !l.content.includes(phrase) || reading.split(' ').length !== [...phrase].length).map(([phrase]) => `${l.title}:${phrase}`));
+check('text readings: in the text, one syllable a character', badTextReadings.length === 0, badTextReadings);
 
 const pages = LIBRARY_LESSONS.flatMap(l => splitLessonPages(l.content));
 check('pages never start with a closing quote', pages.every(p => !p.startsWith('」')));
@@ -41,7 +44,7 @@ for (const entry of FONT_POLYPHONES_RAW.split('|')) {
 }
 const unchecked: string[] = [];
 for (const l of LIBRARY_LESSONS) {
-  const words = [...new Set(l.vocabulary)].sort((a, b) => b.length - a.length);
+  const words = [...new Set([...l.vocabulary, ...Object.keys(l.textReadings || {})])].sort((a, b) => b.length - a.length);
   const chars = [...l.content];
   for (let i = 0; i < chars.length;) {
     const word = isHan(chars[i]) && words.find(w => chars.slice(i, i + [...w].length).join('') === w);

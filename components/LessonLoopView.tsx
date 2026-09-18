@@ -47,7 +47,7 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
     Promise.all(words.map(word => getWordReading(word, { context: lesson.vocabulary, override: lesson.zhuyinOverrides?.[word] })))
       .then(readings => {
         if (cancelled) return;
-        setVocabReadings(Object.fromEntries(readings.filter(r => r.zhuyin).map(r => [r.word, r.zhuyin])));
+        setVocabReadings({ ...Object.fromEntries(readings.filter(r => r.zhuyin).map(r => [r.word, r.zhuyin])), ...lesson.textReadings });
         setWordAudio(Object.fromEntries(readings.map(r => [r.word, r.audioUrl])));
       });
     return () => {

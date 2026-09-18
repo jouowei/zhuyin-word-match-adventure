@@ -28,10 +28,10 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
     Promise.all(words.map(word => getWordReading(word, { context: words, override: lesson.zhuyinOverrides?.[word] })))
       .then(readings => {
         if (cancelled) return;
-        setVocabReadings(Object.fromEntries(readings.filter(r => r.zhuyin).map(r => [r.word, r.zhuyin])));
+        setVocabReadings({ ...Object.fromEntries(readings.filter(r => r.zhuyin).map(r => [r.word, r.zhuyin])), ...lesson.textReadings });
       });
     return () => { cancelled = true; };
-  }, [lesson.id, lesson.vocabulary, lesson.zhuyinOverrides]);
+  }, [lesson.id, lesson.vocabulary, lesson.zhuyinOverrides, lesson.textReadings]);
 
   // Split content into pages
   // Pages: split by '===' when set, otherwise by 。

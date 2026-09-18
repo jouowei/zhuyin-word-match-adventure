@@ -30,6 +30,8 @@ export interface Lesson {
   vocabulary: string[]; // List of specific words to learn from this lesson
   customImages?: Record<string, string>; // Optional: Map 'Word' -> 'Image URL'
   zhuyinOverrides?: Record<string, string>; // Optional: parent-chosen readings for polyphones, 'Word' -> 'ㄌㄜˋ'
+  // Readings of phrases in the text that aren't vocabulary (跑得 -> 'ㄆㄠˇ ˙ㄉㄜ'); only the text shown with zhuyin uses them
+  textReadings?: Record<string, string>;
 }
 
 export interface ShopItem {
