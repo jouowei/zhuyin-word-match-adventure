@@ -2,8 +2,8 @@ import { Lesson, Term } from '../types';
 
 /**
  * Lessons on shelves by school term, like the textbooks: 一年級上學期 … 六年級下學期.
- * Parents type the lessons from their own book (textbook texts are copyrighted, so none are bundled);
- * lessons without a grade go on their own shelf.
+ * Parents type the lessons from their own book (textbook texts are copyrighted, so none are bundled); the app has
+ * its own short texts for 一、二年級 (lessons/library.ts). Lessons without a grade go on their own shelf.
  */
 
 export const GRADES = [1, 2, 3, 4, 5, 6];

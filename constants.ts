@@ -1,5 +1,6 @@
 
 import { ShopItem, WordItem, RewardCard, Lesson } from "./types";
+import { LIBRARY_LESSONS } from "./lessons/library";
 
 export const INITIAL_WORD_SET: WordItem[] = [
   { id: '1', character: '日', zhuyin: 'ㄖˋ', emoji: '☀️', matched: false },
@@ -44,7 +45,9 @@ export const INITIAL_LESSONS: Lesson[] = [
     title: '第六課：外星人',
     content: '外星人，你住在哪個星球？ 我們這裡有的，你們那裡有沒有？ === 我們住的是地球，你們住在什麼球？ 有沒有青山？有沒有河流？',
     vocabulary: ['哪個','星球','外', '人', '住',  '球', '住',  '哪', '有', '我們', '地球', '地', '球', '青山', '河流', '河', '流']
-  }
+  },
+  // 一、二年級的短文 (written for this app)
+  ...LIBRARY_LESSONS,
 ];
 
 

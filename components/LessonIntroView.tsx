@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Lesson } from '../types';
 import { Play, Pause, Home, StopCircle, Gamepad2, ChevronLeft, ChevronRight, Volume2, Search } from 'lucide-react';
 import { splitLessonPages } from '../services/lessonText';
@@ -36,6 +36,32 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
   // Split content into pages
   // Pages: split by '===' when set, otherwise by 。
   const pages = useMemo(() => splitLessonPages(lesson.content), [lesson.content]);
+
+  // The whole page fits without scrolling: a long page gets smaller letters, down to a size still easy to read
+  const pageBox = useRef<HTMLDivElement>(null);
+  const pageText = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const fit = () => {
+      const box = pageBox.current;
+      const text = pageText.current;
+      if (!box || !text) return;
+      let size = window.innerWidth >= 768 ? 36 : 30;
+      text.style.fontSize = `${size}px`;
+      while (size > 18 && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1)) {
+        size -= 2;
+        text.style.fontSize = `${size}px`;
+      }
+    };
+    fit();
+    // Again once the zhuyin font and the polyphone table have loaded, and when the phone turns
+    const later = setTimeout(fit, 400);
+    document.fonts?.ready.then(fit).catch(() => {});
+    window.addEventListener('resize', fit);
+    return () => {
+      clearTimeout(later);
+      window.removeEventListener('resize', fit);
+    };
+  }, [currentPage, pages, vocabReadings]);
 
   // Reset page when lesson changes
   useEffect(() => {
@@ -170,7 +196,7 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
     return lines.map((line, idx) => (
       <div
         key={idx}
-        className="lesson-text-line text-3xl md:text-4xl text-gray-800 text-center leading-relaxed animate-pop mb-0 md:mb-4 last:mb-0 flex justify-center"
+        className="lesson-text-line text-gray-800 text-center leading-relaxed animate-pop mb-0 md:mb-4 last:mb-0 flex justify-center"
       >
         <ZhuyinText text={line} readings={readingsForSentence(line, vocabReadings)} />
       </div>
@@ -211,8 +237,8 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
           >
             <ChevronLeft size={32} />
           </button>
-          <div className="flex-1 min-w-0 h-full overflow-auto flex">
-            <div className="m-auto py-4 flex flex-row-reverse flex-wrap md:flex-nowrap md:flex-col items-center justify-center gap-6 md:gap-0">
+          <div ref={pageBox} className="flex-1 min-w-0 h-full overflow-auto flex">
+            <div ref={pageText} className="m-auto py-4 flex flex-row-reverse flex-wrap md:flex-nowrap md:flex-col items-center justify-center gap-[0.75em] md:gap-0">
               {renderPageLines(pages[currentPage])}
             </div>
           </div>
