@@ -14,7 +14,21 @@ check('merged sounds', normalizeSyllable('zhi') === 'zi' && normalizeSyllable('s
 check('ㄆ heard as 婆 / 破 / 潑 / 噗', ['婆', '破', '潑', '噗'].every(t => saidZhuyin('ㄆ', [t], toPinyin)));
 check('ㄆ heard as the letter p or po', saidZhuyin('ㄆ', ['p'], toPinyin) && saidZhuyin('ㄆ', ['Po'], toPinyin));
 check('ㄆ written as ㄆ', saidZhuyin('ㄆ', ['ㄆ'], toPinyin));
-check('ㄆ is not ㄅ', !saidZhuyin('ㄆ', ['波'], toPinyin) && !saidZhuyin('ㄆ', ['b'], toPinyin));
+check('ㄆ is not ㄇ or ㄉ', !saidZhuyin('ㄆ', ['摸'], toPinyin) && !saidZhuyin('ㄆ', ['的'], toPinyin) && !saidZhuyin('ㄆ', ['m'], toPinyin));
+
+// Said on its own, a sound comes back as a neighbouring one: these count
+check('ㄨ heard as 福 (reported by a parent) / 呼 / 我', ['福', '呼', '我'].every(t => saidZhuyin('ㄨ', [t], toPinyin)));
+check('ㄈ heard as 屋', saidZhuyin('ㄈ', ['屋'], toPinyin));
+check('ㄅ and ㄆ mixed up', saidZhuyin('ㄆ', ['波'], toPinyin) && saidZhuyin('ㄅ', ['破'], toPinyin));
+check('the vowel after a consonant can be short: 他 for ㄊ, 那 for ㄋ, 八 for ㄅ', saidZhuyin('ㄊ', ['他'], toPinyin) && saidZhuyin('ㄋ', ['那'], toPinyin) && saidZhuyin('ㄅ', ['八'], toPinyin));
+check('ㄟ heard as 喂, ㄠ as 好', saidZhuyin('ㄟ', ['喂'], toPinyin) && saidZhuyin('ㄠ', ['好'], toPinyin));
+// ...but a clearly different sound doesn't
+const notThese: [string, string][] = [['ㄨ', '媽'], ['ㄨ', '一'], ['ㄅ', '的'], ['ㄇ', '你'], ['ㄚ', '一'], ['ㄧ', '啊'], ['ㄢ', '一'], ['ㄏ', '媽'], ['ㄐ', '字'], ['ㄙ', '雞'], ['ㄖ', '是'], ['ㄩ', '一']];
+const wronglyAccepted = notThese.filter(([symbol, heard]) => saidZhuyin(symbol, [heard], toPinyin));
+check('clearly different sounds are not accepted', wronglyAccepted.length === 0, wronglyAccepted);
+const everyday = '就在人要會說上來們中'.split('');
+const acceptedEveryday = everyday.filter(c => Object.keys(ZHUYIN_SAID).some(symbol => saidZhuyin(symbol, [c], toPinyin)));
+check('everyday words are not taken for a symbol', acceptedEveryday.length === 0, acceptedEveryday);
 check('any of the guesses counts', saidZhuyin('ㄇ', ['你好', '摸'], toPinyin));
 check('ㄓ said like ㄗ is fine', saidZhuyin('ㄓ', ['資'], toPinyin) && saidZhuyin('ㄕ', ['思'], toPinyin));
 check('ㄥ said like ㄣ is fine', saidZhuyin('ㄥ', ['恩'], toPinyin));

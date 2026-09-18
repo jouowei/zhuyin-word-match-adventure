@@ -33,13 +33,54 @@ export const ZHUYIN_SAID: Record<string, string[]> = {
   'ㄢ': ['an'], 'ㄣ': ['en', 'ng'], 'ㄤ': ['ang'], 'ㄥ': ['eng', 'ng'], 'ㄦ': ['er'], // and 嗯 for ㄣ, ㄥ
 };
 
+/**
+ * A sound said on its own has no words around it, so recognizers often write a neighbouring sound: ㄨ said by an adult
+ * came back as 福. These count too (the listening games are where children learn to tell them apart).
+ *
+ * Consonants: the child's sound starts right, or with one recognizers mix up with it (ㄅ/ㄆ, ㄉ/ㄊ, ㄍ/ㄎ, ㄈ/ㄏ/ㄨ,
+ * ㄋ/ㄌ, ㄐ/ㄑ/ㄒ, ㄗ/ㄘ), followed by a short vowel (他 for ㄊ, 那 for ㄋ).
+ */
+const CONSONANT: Record<string, string> = {
+  'ㄅ': 'b', 'ㄆ': 'p', 'ㄇ': 'm', 'ㄈ': 'f', 'ㄉ': 'd', 'ㄊ': 't', 'ㄋ': 'n', 'ㄌ': 'l',
+  'ㄍ': 'g', 'ㄎ': 'k', 'ㄏ': 'h', 'ㄐ': 'j', 'ㄑ': 'q', 'ㄒ': 'x',
+  'ㄓ': 'z', 'ㄔ': 'c', 'ㄕ': 's', 'ㄖ': 'r', 'ㄗ': 'z', 'ㄘ': 'c', 'ㄙ': 's',
+};
+const MIXED_UP: Record<string, string[]> = {
+  b: ['b', 'p'], p: ['p', 'b'], m: ['m'], f: ['f', 'h', 'w'],
+  d: ['d', 't'], t: ['t', 'd'], n: ['n', 'l'], l: ['l', 'n'],
+  g: ['g', 'k'], k: ['k', 'g', 'h'], h: ['h', 'f', 'k'],
+  j: ['j', 'q', 'x'], q: ['q', 'j', 'x'], x: ['x', 'j', 'q'],
+  z: ['z', 'c'], c: ['c', 'z'], s: ['s'], r: ['r', 'l'],
+};
+const SHORT_VOWELS = new Set(['a', 'o', 'e', 'u', 'i', 'v']);
+const splitSyllable = (syllable: string) => {
+  const [, initial = '', final = ''] = syllable.match(/^([bpmfdtnlgkhjqxrzcsyw]?)(.*)$/) || [];
+  return { initial, final };
+};
+/** Vowels: the neighbouring sounds recognizers write instead (福 or 呼 for ㄨ, 喂 for ㄟ). */
+export const ZHUYIN_NEAR: Record<string, string[]> = {
+  'ㄧ': ['ye'], 'ㄨ': ['fu', 'hu', 'wo'], 'ㄩ': ['yue'],
+  'ㄚ': ['ha', 'wa'], 'ㄛ': ['ou', 'bo'], 'ㄜ': ['he', 'er'], 'ㄝ': ['hei'],
+  'ㄞ': ['ei', 'ye', 'hai'], 'ㄟ': ['hei', 'wei', 'ye'], 'ㄠ': ['ou', 'hao'], 'ㄡ': ['o', 'ao', 'you'],
+  'ㄢ': ['ang', 'han'], 'ㄣ': ['hen'], 'ㄤ': ['an', 'hang'], 'ㄥ': ['hen'], 'ㄦ': ['e'],
+};
+/** Every sound that counts for a symbol said on its own. */
+const soundsLike = (symbol: string, syllable: string) => {
+  const exact = (ZHUYIN_SAID[symbol] || []).concat(ZHUYIN_NEAR[symbol] || []).map(normalizeSyllable);
+  if (exact.includes(syllable)) return true;
+  const consonant = CONSONANT[symbol];
+  if (!consonant) return false;
+  const { initial, final } = splitSyllable(syllable);
+  return MIXED_UP[consonant].includes(initial) && SHORT_VOWELS.has(final);
+};
+
 const latinOnly = (text: string) => /^[a-z\s]+$/i.test(text.trim());
 const hanSyllables = (text: string, toPinyin: ToPinyin) =>
   toPinyin(text.replace(/[^\p{Script=Han}]/gu, '')).map(normalizeSyllable).filter(Boolean);
 
 /** A zhuyin symbol, said on its own: any of the recognizer's guesses sounds like it. */
 export const saidZhuyin = (symbol: string, transcripts: string[], toPinyin: ToPinyin): boolean => {
-  const sounds = new Set((ZHUYIN_SAID[symbol] || []).map(normalizeSyllable));
+  const sounds = new Set((ZHUYIN_SAID[symbol] || []).concat(ZHUYIN_NEAR[symbol] || []).map(normalizeSyllable));
   const initial = (ZHUYIN_SAID[symbol] || [])[0]?.match(/^(zh|ch|sh|[bpmfdtnlgkhjqxrzcs])/)?.[1];
   return transcripts.some(raw => {
     const transcript = raw.trim();
@@ -51,7 +92,7 @@ export const saidZhuyin = (symbol: string, transcripts: string[], toPinyin: ToPi
       return [...sounds].some(s => latin.startsWith(s)) || (!!initial && latin[0] === initial[0] && latin.length <= 4);
     }
     // One short sound: the first syllables are enough (recognizers sometimes repeat or add a word)
-    return hanSyllables(transcript, toPinyin).slice(0, 3).some(s => sounds.has(s));
+    return hanSyllables(transcript, toPinyin).slice(0, 3).some(s => soundsLike(symbol, s));
   });
 };
 
