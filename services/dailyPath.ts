@@ -3,6 +3,7 @@ import { getZhuyinSymbol } from '../zhuyin/symbols';
 import { getWordReading } from './moedict';
 import { reviewSchedule, skillTotal, statKey, todayKey } from './learningStats';
 import { wordsInText } from './lessonText';
+import { journeyAfterAdventure } from './journey';
 
 /**
  * 今日冒險: a short session planned from what the child knows (about ten minutes).
@@ -42,6 +43,7 @@ export interface DailyPath {
   masteredToday: string[];
   startPoints: number;
   gift?: boolean;       // Finishing this path gave today's free gacha spin
+  journeyMoved?: boolean; // Finishing it moved the 環島冒險 on
 }
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
@@ -186,21 +188,26 @@ export const unfinishedToday = (path: DailyPath | null, now = Date.now()): path 
 
 /**
  * A station is done: its result is kept and the path moves on. Reaching the summary marks today's adventure as done,
- * and the first adventure finished each day gives a free gacha spin, a reward the child sees today.
+ * the first adventure finished each day gives a free gacha spin, a reward the child sees today, and the day's first
+ * adventure in each language moves the 環島冒險 on by one leg.
  */
 export const completeStation = (
-  path: DailyPath, result: StationResult, user: Pick<UserProfile, 'freeSpins' | 'lastFreeSpinDate'> | null,
+  path: DailyPath, result: StationResult,
+  user: Pick<UserProfile, 'freeSpins' | 'lastFreeSpinDate' | 'journeyLegs' | 'lastDailyPath' | 'lastEnglishPath'> | null,
 ): { path: DailyPath; userChanges?: Partial<UserProfile> } => {
   const stations = path.stations.map((s, i) => (i === path.current ? { ...s, result } : s));
   const next: DailyPath = { ...path, stations, current: path.current + 1 };
   if (next.stations[next.current]?.kind !== 'summary' || !user) return { path: next };
   const gift = user.lastFreeSpinDate !== next.date;
   if (gift) next.gift = true;
+  const journeyLegs = journeyAfterAdventure(user, next.language, next.date);
+  if (journeyLegs > (user.journeyLegs || 0)) next.journeyMoved = true;
   return {
     path: next,
     userChanges: {
       ...(next.language === 'en' ? { lastEnglishPath: next.date } : { lastDailyPath: next.date }),
       ...(gift ? { freeSpins: (user.freeSpins || 0) + 1, lastFreeSpinDate: next.date } : {}),
+      journeyLegs,
     },
   };
 };

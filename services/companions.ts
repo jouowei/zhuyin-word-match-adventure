@@ -29,18 +29,21 @@ export interface HomeSituation {
   stationsLeft: number;   // Today's Chinese adventure is under way: stations still to go (0 when not started)
   things: number;         // Things growing in the child's world
   greet: boolean;         // First time on the map in this visit: say hello
+  where?: { place: string; next: string; arrived?: boolean }; // 環島冒險: where the companion is (just arrived?) and goes next
 }
 
 /** What the companion says on the home map. */
 export const homeLine = (companion: Companion, s: HomeSituation): string => {
   const hello = s.greet ? `嗨，${s.name}！` : '';
+  const going = !s.where ? '' : s.where.arrived ? `，我們到了${s.where.place}` : `，往${s.where.next}前進了一段`;
   if (s.chineseDone && s.englishDone) {
-    return `${hello}今天的冒險都完成了，好厲害！${s.things ? '點點看你種的花和樹，' : ''}也可以去遊樂場玩喔！`;
+    return `${hello}今天的冒險都完成了${going}，好厲害！${s.things ? '點點看你種的花和樹，' : ''}也可以去遊樂場玩喔！`;
   }
-  if (s.chineseDone) return `${hello}今天的冒險完成了，遊樂場開門囉！想學英文的話，按英文冒險。`;
+  if (s.chineseDone) return `${hello}今天的冒險完成了${going}！遊樂場開門囉。想學英文的話，按英文冒險。`;
   if (s.stationsLeft > 0) return `${hello}我們繼續冒險吧！還有${chineseNumber(s.stationsLeft)}站，按出發！`;
-  if (s.englishDone) return `${hello}英文冒險完成了，遊樂場開門囉！要不要也去練${s.focus}？按出發！`;
-  return `${hello}我是${companion.name}。今天我們一起練${s.focus}，按出發！`;
+  if (s.englishDone) return `${hello}英文冒險完成了${going}！遊樂場開門囉。要不要也去練${s.focus}？按出發！`;
+  const here = s.where ? `我們在${s.where.place}，` : '';
+  return `${hello}我是${companion.name}。${here}今天一起練${s.focus}，按出發！`;
 };
 
 /** Tapping the companion: what it said, and what the world is for. */

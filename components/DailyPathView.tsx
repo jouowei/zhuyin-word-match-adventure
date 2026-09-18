@@ -6,6 +6,7 @@ import { gameInstruction, levelInfo } from '../services/instructions';
 import { companionOf, chineseNumber } from '../services/companions';
 import { englishStatKey, statKey } from '../services/learningStats';
 import { thingFor, WorldThing } from '../services/world';
+import { journeyPosition } from '../services/journey';
 import { playChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
 
@@ -36,6 +37,11 @@ export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser,
   const thingOf = (item: string) => thingFor(currentUser.wordStats, keyOf(item));
   const grown = path.masteredToday.map(thingOf).filter((t): t is WorldThing => !!t);
   const planted = path.newItems.filter(item => !path.masteredToday.includes(item)).map(thingOf).filter((t): t is WorldThing => !!t);
+  // 環島冒險: the day's first adventure moves the trip on (arriving somewhere new every two)
+  const journey = journeyPosition(currentUser.journeyLegs);
+  const journeyText = !path.journeyMoved ? ''
+    : journey.legs === 0 ? `我們到了${journey.place.name}！回家看看。`
+    : `往${journey.next.name}前進了一段，再一次冒險就到了！`;
 
   // Say where we are whenever a station opens (on a timer: React runs effects twice in development)
   useEffect(() => {
@@ -45,7 +51,7 @@ export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser,
       grown.length ? `${chineseNumber(grown.length)}個長大了` : '',
     ].filter(Boolean).join('，');
     const text = finished
-      ? `今天的冒險完成了！你自己答對了${totals.onOwn}題。${growth ? `${growth}。` : ''}${path.gift ? '送你一次免費轉蛋！去轉轉看吧！' : '休息一下，明天再來冒險吧！'}`
+      ? `今天的冒險完成了！你自己答對了${totals.onOwn}題。${growth ? `${growth}。` : ''}${journeyText}${path.gift ? '送你一次免費轉蛋！去轉轉看吧！' : '休息一下，明天再來冒險吧！'}`
       : stationIntro(station, path.current, english);
     const timer = setTimeout(() => {
       if (finished) playSound('cheer');
@@ -176,6 +182,13 @@ export const DailyPathView: React.FC<DailyPathViewProps> = ({ path, currentUser,
                 <p className="text-sm font-bold text-lime-700 mt-1">
                   {grown.length > 0 && `${grown.length} 個長大了`}{grown.length > 0 && planted.length > 0 && '・'}{planted.length > 0 && `種下 ${planted.length} 個新朋友`}
                 </p>
+              </div>
+            )}
+
+            {journeyText && (
+              <div className="w-full max-w-md flex items-center justify-center gap-2 bg-sky-50 border-4 border-sky-200 rounded-3xl px-3 py-2 font-black text-sky-800">
+                <span className="text-[clamp(1.5rem,6vh,2.25rem)] leading-none">{journey.legs === 0 ? journey.place.emoji : '🚢'}</span>
+                <span>{journeyText}</span>
               </div>
             )}
 

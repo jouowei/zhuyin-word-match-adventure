@@ -3,11 +3,16 @@ import { Check, Lock, Play } from 'lucide-react';
 import { UserProfile } from '../types';
 import { companionOf, companionTip, homeLine } from '../services/companions';
 import { worldThings } from '../services/world';
+import { journeyPosition, storyToShow } from '../services/journey';
 import { playChineseAudio } from '../utils/chineseAudio';
 import { WorldScene } from './WorldScene';
+import { JourneyMap } from './JourneyMap';
+import { StoryScene } from './StoryScene';
 
 // The companion says hello once per visit to the app, then only what's next
 let greeted = false;
+// The map or the garden, as the child last left it
+let lastView: 'map' | 'garden' = 'map';
 
 interface HomeViewProps {
   currentUser: UserProfile;
@@ -22,7 +27,8 @@ interface HomeViewProps {
   onRewards: () => void;
   onPlayground: () => void;
   onParent: () => void;
-  onSwitchPlayer: () => void;
+  onModes: () => void;                 // Back to choosing 環島冒險 or 練習課文 (and 換人玩)
+  onStorySeen: (step: number) => void; // The 環島 story up to this place has been shown
 }
 
 const say = (text: string) => playChineseAudio([{ text, rate: 0.95 }]);
@@ -47,23 +53,35 @@ const DockButton: React.FC<{
 /** Home: the child's world with the companion, who says what to do; one big button to set off. */
 export const HomeView: React.FC<HomeViewProps> = ({
   currentUser, focusName, focusBadge, chineseDone, englishDone, stationsLeft, rewardBadge,
-  onGo, onEnglish, onRewards, onPlayground, onParent, onSwitchPlayer,
+  onGo, onEnglish, onRewards, onPlayground, onParent, onModes, onStorySeen,
 }) => {
   const companion = companionOf(currentUser);
   const things = worldThings(currentUser.wordStats).length;
   const playgroundOpen = chineseDone || englishDone;
+  const journey = journeyPosition(currentUser.journeyLegs);
+  const [view, setView] = useState(lastView);
+  // A new page of the 環島 story comes first: the start of the trip, or a new place
+  const [story, setStory] = useState(() => storyToShow(currentUser));
   const [line] = useState(() => homeLine(companion, {
     name: currentUser.name, focus: focusName, chineseDone, englishDone, stationsLeft, things, greet: !greeted,
+    where: { place: journey.place.name, next: journey.next.name, arrived: journey.legs === 0 && (currentUser.journeyLegs || 0) > 0 },
   }));
 
-  // Said a moment after the screen opens (on a timer: React runs effects twice in development)
+  // Said a moment after the screen opens, once the story page is closed (on a timer: React runs effects twice in development)
   useEffect(() => {
+    if (story) return;
     const timer = setTimeout(() => {
       greeted = true;
       say(line);
     }, 500);
     return () => clearTimeout(timer);
-  }, [line]);
+  }, [line, story]);
+
+  const showView = (next: 'map' | 'garden') => {
+    lastView = next;
+    setView(next);
+    say(next === 'map' ? '環島地圖' : '你的花園：練過的字會長成花和樹');
+  };
 
   const openPlayground = () => {
     if (playgroundOpen) onPlayground();
@@ -72,11 +90,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
   return (
     <div className="h-[100dvh] flex flex-col bg-gradient-to-b from-sky-100 to-emerald-50 overflow-hidden select-none">
+      {story && (
+        <StoryScene
+          scene={story}
+          name={currentUser.name}
+          companion={companion}
+          onDone={() => { onStorySeen(journey.step); setStory(null); }}
+        />
+      )}
       <header className="shrink-0 flex items-center gap-2 px-3 pt-3 pb-2">
         <button
           type="button"
-          onClick={onSwitchPlayer}
-          aria-label="換人玩"
+          onClick={onModes}
+          aria-label="回到選擇"
           className="flex items-center gap-1.5 bg-white/80 rounded-full pl-1.5 pr-3 py-1 shadow-sm active:scale-95 transition"
         >
           <span className="text-3xl leading-none">{currentUser.avatar}</span>
@@ -101,13 +127,30 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </header>
 
       <main className="fit-screen-main flex-1 min-h-0 flex flex-col gap-3 px-3 pb-3">
-        <WorldScene
-          className="flex-1 min-h-[14rem]"
-          stats={currentUser.wordStats}
-          companion={companion}
-          line={line}
-          onCompanion={() => say(companionTip(line, things))}
-        />
+        <div className="relative flex-1 min-h-[14rem] flex flex-col">
+          {view === 'map' ? (
+            <JourneyMap
+              className="flex-1 min-h-0"
+              journeyLegs={currentUser.journeyLegs}
+              companion={companion}
+              line={line}
+              onCompanion={() => say(line)}
+            />
+          ) : (
+            <WorldScene
+              className="flex-1 min-h-0"
+              stats={currentUser.wordStats}
+              companion={companion}
+              line={line}
+              onCompanion={() => say(companionTip(line, things))}
+            />
+          )}
+          {/* The trip around Taiwan, or the child's garden of learned words */}
+          <div className="absolute right-2 bottom-2 z-30 flex bg-white/85 rounded-full p-1 shadow">
+            <button type="button" onClick={() => showView('map')} className={`px-3 py-1 rounded-full text-sm font-black ${view === 'map' ? 'bg-sky-500 text-white' : 'text-slate-500'}`}>🗺️ 地圖</button>
+            <button type="button" onClick={() => showView('garden')} className={`px-3 py-1 rounded-full text-sm font-black ${view === 'garden' ? 'bg-emerald-500 text-white' : 'text-slate-500'}`}>🌱 花園</button>
+          </div>
+        </div>
 
         <nav className="fit-screen-side shrink-0 flex flex-col gap-3">
           <button

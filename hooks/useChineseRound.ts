@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Confusion, GameState, WordItem } from '../types';
+import { Confusion, GameState, Lesson, WordItem } from '../types';
 import { INITIAL_WORD_SET } from '../constants';
 import { generateImageForWord, generateLevelData } from '../services/geminiService';
 import { buildFamilyRound, FamilyQuestion } from '../services/wordFamilies';
@@ -22,8 +22,9 @@ export const ROUND_END_PAUSE = 2000;
 export interface RoundPlan { words: string[]; focus: string[]; count: number; }
 
 /**
- * The Chinese games (levels 1–8) with what a parent chose for the child (the zhuyin symbols, a lesson or every lesson)
- * or with the words due for review (複習時間), played in the 遊樂場 or as a 今日冒險 station.
+ * The Chinese games (levels 1–8): in 環島冒險 with what a parent chose for the child (the zhuyin symbols, a lesson or
+ * every lesson) or the words due for review (複習時間), in the 遊樂場 or as a 今日冒險 station;
+ * in 練習課文 with the lesson the child picked.
  */
 export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   family: Family;
@@ -33,6 +34,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   onVictory: () => void;
 }) => {
   const [reviewMode, setReviewMode] = useState(false); // 複習時間 rounds use the words due for review from every lesson
+  const [practiceLesson, setPracticeLesson] = useState<Lesson | null>(null); // 練習課文: the lesson the child picked
   const [level, setLevel] = useState(1);
   const [words, setWords] = useState<WordItem[]>(INITIAL_WORD_SET);
   const [familyQuestions, setFamilyQuestions] = useState<FamilyQuestion[]>([]);   // 字的家族 round
@@ -44,7 +46,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   const tally = useRef(EMPTY_TALLY);
 
   const { currentUser, lessons } = family;
-  const focus = studyFor(currentUser?.studyFocus, lessons);
+  const focus = practiceLesson ? { gameMode: 'word' as const, activeLesson: practiceLesson } : studyFor(currentUser?.studyFocus, lessons);
   const { activeLesson } = focus;
   const modeFor = (review: boolean) => (review ? 'word' : focus.gameMode); // Review is for lesson words
   const gameMode = modeFor(reviewMode);
@@ -155,6 +157,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   return {
     gameMode,
     activeLesson,
+    practiceLesson, setPracticeLesson,
     reviewMode, setReviewMode,
     progressKey,
     level, words, familyQuestions, radicalQuestions,
@@ -166,7 +169,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
     },
     onMatch,
     onMistake,
-    /** Leaving a round: back to the adventure map in 今日冒險, else to the 遊樂場. */
+    /** Leaving a round: back to the adventure map in 今日冒險, to the lesson in 練習課文, else to the 遊樂場. */
     leave: () => {
       if (fromPath.current) {
         fromPath.current = false;
@@ -174,7 +177,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
         return;
       }
       setReviewMode(false);
-      screen.goTo(GameState.PLAYGROUND);
+      screen.goTo(practiceLesson ? GameState.LESSON_INTRO : GameState.PLAYGROUND);
     },
     /** 再玩一組: the same station again in 今日冒險, else a new round of the same level. */
     again: () => (fromPath.current ? path.replay(level) : start()),

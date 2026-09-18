@@ -25,6 +25,8 @@ import { LoginView } from './components/LoginView';
 import { HomeView } from './components/HomeView';
 import { CompanionPickView } from './components/CompanionPickView';
 import { PlaygroundTile, PlaygroundView } from './components/PlaygroundView';
+import { ModePickView } from './components/ModePickView';
+import { PracticeLessonsView } from './components/PracticeLessonsView';
 import { DifficultySelectView } from './components/DifficultySelectView';
 import { ChineseRoundView } from './components/ChineseRoundView';
 import { ShopView } from './components/ShopView';
@@ -54,8 +56,11 @@ import { EnglishUnitManagerView } from './components/english/EnglishUnitManagerV
  * - hooks/useChineseRound, hooks/useEnglishRound: the game rounds
  * - hooks/useReadingLoops: back to the lesson text or the English sentences
  * - hooks/useDailyPath: 今日冒險 and 今日英文冒險, which start the rounds above as stations
- * The child's side: home (the world and the companion) → today's adventure, then the 遊樂場 with every game.
- * The parent's side (家長專區, behind the password): what the child practises, lessons, English words, stars.
+ * After choosing a player, two ways to go:
+ * - 環島冒險, the learning game: home (the map around Taiwan, the garden, the companion) → today's adventure,
+ *   then the 遊樂場 with every game.
+ * - 練習課文: the child picks a lesson, hears it, finds its words and plays its word games.
+ * The parent's side (家長專區, behind the password): what the adventure practises, lessons, English words, stars.
  */
 export default function App() {
   const screen = useScreen();
@@ -85,11 +90,21 @@ export default function App() {
 
   // 家長專區 stays open while the parent moves between its pages, until back on the child's side
   const [parentUnlocked, setParentUnlocked] = useState(false);
+  const [parentBack, setParentBack] = useState<GameState>(GameState.MODE_PICK); // Where 家長專區 was opened from
   useEffect(() => {
-    if (screen.current === GameState.MENU || screen.current === GameState.LOGIN) setParentUnlocked(false);
+    if ([GameState.MENU, GameState.LOGIN, GameState.MODE_PICK].includes(screen.current)) setParentUnlocked(false);
   }, [screen.current]);
+  const openParent = () => {
+    setParentBack(screen.current);
+    screen.goTo(GameState.PARENT_REPORT);
+  };
 
-  const enterGame = (user: { companion?: string }) => screen.goTo(user.companion ? GameState.MENU : GameState.COMPANION_PICK);
+  // 練習課文 or 環島冒險 (which starts with choosing a companion)
+  const startAdventure = () => {
+    chinese.setPracticeLesson(null);
+    screen.goTo(currentUser?.companion ? GameState.MENU : GameState.COMPANION_PICK);
+  };
+  const practising = !!chinese.practiceLesson;
 
   // Check for API Key in URL
   useEffect(() => {
@@ -144,9 +159,32 @@ export default function App() {
       return (
         <LoginView
           users={family.users}
-          onLogin={(u) => { family.login(u); enterGame(u); }}
-          onCreateUser={(name, avatar) => { family.createUser(name, avatar); goTo(GameState.COMPANION_PICK); }}
+          onLogin={(u) => { family.login(u); goTo(GameState.MODE_PICK); }}
+          onCreateUser={(name, avatar) => { family.createUser(name, avatar); goTo(GameState.MODE_PICK); }}
           onDeleteUser={family.deleteUser}
+        />
+      );
+
+    case GameState.MODE_PICK:
+      if (!currentUser) return null;
+      return (
+        <ModePickView
+          currentUser={currentUser}
+          onAdventure={startAdventure}
+          onPractice={() => goTo(GameState.PRACTICE_LESSONS)}
+          onSwitchPlayer={() => { family.logout(); goTo(GameState.LOGIN); }}
+          onParent={openParent}
+        />
+      );
+
+    case GameState.PRACTICE_LESSONS:
+      if (!currentUser) return null;
+      return (
+        <PracticeLessonsView
+          currentUser={currentUser}
+          lessons={lessons}
+          onPick={lesson => { chinese.setReviewMode(false); chinese.setPracticeLesson(lesson); goTo(GameState.LESSON_INTRO); }}
+          onBack={() => { chinese.setPracticeLesson(null); goTo(GameState.MODE_PICK); }}
         />
       );
 
@@ -176,8 +214,9 @@ export default function App() {
           onEnglish={adventure.startEnglish}
           onRewards={() => { images.retryImages(); goTo(GameState.SHOP); }}
           onPlayground={() => goTo(GameState.PLAYGROUND)}
-          onParent={() => goTo(GameState.PARENT_REPORT)}
-          onSwitchPlayer={() => { family.logout(); goTo(GameState.LOGIN); }}
+          onParent={openParent}
+          onModes={() => goTo(GameState.MODE_PICK)}
+          onStorySeen={step => family.updateUser(currentUser.id, { journeySeen: step })}
         />
       );
     }
@@ -229,7 +268,7 @@ export default function App() {
         <LessonIntroView
            lesson={activeLesson}
            onStartGame={() => goTo(GameState.DIFFICULTY_SELECT)}
-           onBack={() => goTo(GameState.PLAYGROUND)}
+           onBack={() => goTo(practising ? GameState.PRACTICE_LESSONS : GameState.PLAYGROUND)}
            onFindWords={() => loops.startLessonFind(activeLesson)}
         />
       );
@@ -259,7 +298,7 @@ export default function App() {
           lessons={lessons}
           englishUnits={family.englishUnits}
           activeLesson={activeLesson}
-          onBack={() => goTo(GameState.MENU)}
+          onBack={() => goTo(parentBack)}
           unlocked={parentUnlocked}
           onUnlock={() => setParentUnlocked(true)}
           onUpdateUser={family.updateUser}
@@ -282,7 +321,7 @@ export default function App() {
           onSelect={level => chinese.start(level)}
           onBack={() => {
             chinese.setReviewMode(false);
-            goTo(GameState.PLAYGROUND);
+            goTo(practising ? GameState.LESSON_INTRO : GameState.PLAYGROUND);
           }}
           activeLesson={chinese.reviewMode ? null : activeLesson}
           gameMode={chinese.gameMode}
@@ -369,7 +408,8 @@ export default function App() {
       }
       return (
         <VictoryView
-          onHome={() => { chinese.setReviewMode(false); goTo(GameState.PLAYGROUND); }}
+          homeLabel={practising ? '回課文' : '回遊樂場'}
+          onHome={() => { chinese.setReviewMode(false); goTo(practising ? GameState.LESSON_INTRO : GameState.PLAYGROUND); }}
           onReplay={() => chinese.start()}
         />
       );

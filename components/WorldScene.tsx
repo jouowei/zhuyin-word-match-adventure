@@ -1,11 +1,11 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Volume2 } from 'lucide-react';
 import { WordStat } from '../types';
 import { Companion } from '../services/companions';
 import { layoutWorld, PlacedThing, WorldThing, worldCounts, worldThings } from '../services/world';
 import { getWordReading } from '../services/moedict';
 import { playChineseAudio, playChineseWord, playZhuyinSymbol } from '../utils/chineseAudio';
 import { speakEnglish, speakLetterName } from '../utils/englishSpeech';
+import { CompanionBubble } from './CompanionBubble';
 
 /** Says what a thing in the world stands for: the zhuyin symbol, the word, or the English letter or word. */
 const sayThing = async (thing: WorldThing) => {
@@ -80,24 +80,7 @@ export const WorldScene: React.FC<WorldSceneProps> = ({ stats, companion, line, 
       <span className="absolute left-[38%] top-[6%] text-[min(9vw,3rem)] opacity-90 animate-float-slow select-none" aria-hidden>☁️</span>
 
       {/* The companion on the hill, and what it says */}
-      <div className="absolute inset-x-0 top-0 h-[40%] flex items-end gap-2 px-[4%] pb-1 z-20">
-        <button
-          type="button"
-          onClick={onCompanion}
-          aria-label={`${companion.name}說話`}
-          className="shrink-0 text-[min(22vw,16vh,8rem)] leading-none animate-bob drop-shadow-lg active:scale-90 transition-transform"
-        >
-          {companion.emoji}
-        </button>
-        <button
-          type="button"
-          onClick={onCompanion}
-          className={`relative mb-[6%] flex-1 text-left rounded-3xl border-4 px-3 py-2 shadow-md ${companion.bubble}`}
-        >
-          <span className="block text-[clamp(0.85rem,min(3.8vw,4.2vh),1.35rem)] font-black text-slate-700 leading-snug line-clamp-3 pr-6">{line}</span>
-          <Volume2 size={18} className="absolute right-2 bottom-2 text-slate-400" />
-        </button>
-      </div>
+      <CompanionBubble companion={companion} line={line} onTap={onCompanion} className="absolute inset-x-0 top-0 h-[40%] z-20" />
 
       {/* Ground */}
       <div className="absolute inset-x-0 bottom-0 h-[62%]">

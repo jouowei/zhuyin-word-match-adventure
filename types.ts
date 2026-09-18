@@ -76,6 +76,8 @@ export interface UserProfile {
   lastFreeSpinDate?: string;                  // Date a finished adventure last gave a free spin (one a day)
   companion?: CompanionId;                    // Chosen once, can be changed in 家長專區
   studyFocus?: StudyFocus;                    // Set in 家長專區; the zhuyin symbols until then
+  journeyLegs?: number;                       // 環島冒險: legs travelled (the day's first finished adventure per language)
+  journeySeen?: number;                       // Last place (step) whose arrival story was shown; unset: not started
 }
 
 /** What happened on one day, for the parent report. */
@@ -170,5 +172,7 @@ export enum GameState {
   ENGLISH_SENTENCES = 'ENGLISH_SENTENCES',       // English sentences: listen, or find words in them
   PARENT_REPORT = 'PARENT_REPORT',               // 家長專區: weekly report and play-together ideas
   COMPANION_PICK = 'COMPANION_PICK',             // Choosing an adventure companion
+  MODE_PICK = 'MODE_PICK',                       // After choosing a player: 環島冒險 or 練習課文
+  PRACTICE_LESSONS = 'PRACTICE_LESSONS',         // 練習課文: the child picks a lesson
   PLAYGROUND = 'PLAYGROUND'                      // 遊樂場: every game to choose from, open once today's adventure is done
 }
