@@ -31,7 +31,21 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
   const [feedback, showFeedback] = useFeedback();
   const recognitionRef = useRef<any>(null);
 
-  useEffect(() => () => recognitionRef.current?.abort?.(), []);
+  const listenTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => {
+    recognitionRef.current?.abort?.();
+    clearTimeout(listenTimer.current);
+  }, []);
+
+  /** Every try gets an answer: heard something else, or heard nothing (then louder). Each counts towards help. */
+  const failedTry = (item: EnglishRoundItem, heard: string) => {
+    playSound('error');
+    const level = nextHelp(help[item.id] || 0);
+    setHelp(prev => ({ ...prev, [item.id]: level }));
+    showFeedback(heard ? `聽起來像：${heard}，再試一次！` : '沒聽清楚，再大聲說一次！', 2500);
+    // Model again, slower each time
+    speakHelp([{ text: level === 1 ? '再聽一次，換你說' : '慢慢聽，換你說' }, { text: item.keyword, lang: 'en', rate: level === 1 ? 0.75 : 0.45 }]);
+  };
 
   const startListening = (item: EnglishRoundItem) => {
     setPermissionError(false);
@@ -49,8 +63,16 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
     recognition.maxAlternatives = 5;
 
     setListeningForId(item.id);
+    // Answered once per try: a result, an error, or (when the recognizer stops without either) nothing heard
+    let answered = false;
+    const finish = () => {
+      clearTimeout(listenTimer.current);
+      setListeningForId(null);
+    };
 
     recognition.onresult = (event: any) => {
+      if (answered) return;
+      answered = true;
       const result = event.results[0];
       const transcripts: string[] = [];
       for (let i = 0; i < result.length; i++) transcripts.push(result[i].transcript);
@@ -62,34 +84,43 @@ export const EnglishSpeakGameView: React.FC<EnglishSpeakGameViewProps> = ({
         onMatch(item.id, level);
         showFeedback(praise(level, 'say', { speak: false }));
       } else {
-        playSound('error');
-        const level = nextHelp(help[item.id] || 0);
-        setHelp(prev => ({ ...prev, [item.id]: level }));
-        showFeedback(`聽起來像：${transcripts[0] || '...'}，再試一次！`, 2500);
-        // Model again, slower each time
-        speakHelp([{ text: level === 1 ? '再聽一次，換你說' : '慢慢聽，換你說' }, { text: item.keyword, lang: 'en', rate: level === 1 ? 0.75 : 0.45 }]);
+        failedTry(item, transcripts[0] || '');
       }
+      finish();
     };
 
     recognition.onerror = (event: any) => {
+      if (answered) return;
+      answered = true;
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         setPermissionError(true);
         showFeedback('請允許麥克風權限才能玩喔！', 2500);
-      } else if (event.error === 'no-speech') {
-        showFeedback('沒聽到聲音，大聲一點！', 2000);
+      } else if (event.error === 'no-speech' || event.error === 'no-match') {
+        failedTry(item, '');
       } else if (event.error !== 'aborted') {
         showFeedback('發生錯誤，請再試一次！', 2000);
       }
-      setListeningForId(null);
+      finish();
     };
 
-    recognition.onend = () => setListeningForId(null);
+    // Recognizers sometimes stop with no result and no error: still an answer for the child
+    recognition.onend = () => {
+      if (!answered) {
+        answered = true;
+        failedTry(item, '');
+      }
+      finish();
+    };
+    // Some browsers keep listening: stop after a while so the try ends
+    clearTimeout(listenTimer.current);
+    listenTimer.current = setTimeout(() => { try { recognition.stop(); } catch (e) {} }, 8000);
 
     try {
       recognition.start();
     } catch (e) {
       console.error('Failed to start recognition', e);
-      setListeningForId(null);
+      answered = true;
+      finish();
     }
   };
 
