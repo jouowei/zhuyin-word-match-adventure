@@ -14,9 +14,11 @@ interface LessonManagerViewProps {
   onUpdateLessons: (lessons: Lesson[]) => void;
   onBack: () => void;
   progress?: Record<string, number[]>; // Lesson id -> completed game levels
+  backLabel?: string;
+  title?: string;
 }
 
-export const LessonManagerView: React.FC<LessonManagerViewProps> = ({ lessons, onSelectLesson, onUpdateLessons, onBack, progress }) => {
+export const LessonManagerView: React.FC<LessonManagerViewProps> = ({ lessons, onSelectLesson, onUpdateLessons, onBack, progress, backLabel = '回首頁', title: heading = '選擇要學習的課文' }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   
@@ -492,10 +494,10 @@ export const LessonManagerView: React.FC<LessonManagerViewProps> = ({ lessons, o
             onClick={onBack} 
             className="px-5 py-2 bg-white rounded-full shadow-md text-gray-500 hover:bg-gray-100 font-bold flex items-center gap-2 transform transition active:scale-95"
           >
-             <Home size={20} /> 回首頁
+             <Home size={20} /> {backLabel}
           </button>
           <h1 className="text-2xl font-black text-indigo-900 flex items-center gap-2">
-             <BookOpen className="text-indigo-500" /> 選擇要學習的課文
+             <BookOpen className="text-indigo-500" /> {heading}
           </h1>
           <div className="w-10"></div>
        </div>

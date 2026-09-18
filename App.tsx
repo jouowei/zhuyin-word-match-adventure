@@ -4,6 +4,7 @@ import { GameState, RewardCard } from './types';
 import { englishStatKey, masteredCount, reviewWords, statKey, todayKey } from './services/learningStats';
 import { englishSentenceWords } from './services/englishPath';
 import { buyCard, claimMilestoneCard, milestonesAvailable } from './services/rewards';
+import { focusName, studyFor } from './services/wordSources';
 import { playSound } from './utils/sound';
 import { useScreen } from './hooks/useScreen';
 import { useFamilyData } from './hooks/useFamilyData';
@@ -21,7 +22,9 @@ import { PraiseBurst } from './components/Praise';
 
 // View Components
 import { LoginView } from './components/LoginView';
-import { MenuView } from './components/MenuView';
+import { HomeView } from './components/HomeView';
+import { CompanionPickView } from './components/CompanionPickView';
+import { PlaygroundTile, PlaygroundView } from './components/PlaygroundView';
 import { DifficultySelectView } from './components/DifficultySelectView';
 import { ChineseRoundView } from './components/ChineseRoundView';
 import { ShopView } from './components/ShopView';
@@ -51,6 +54,8 @@ import { EnglishUnitManagerView } from './components/english/EnglishUnitManagerV
  * - hooks/useChineseRound, hooks/useEnglishRound: the game rounds
  * - hooks/useReadingLoops: back to the lesson text or the English sentences
  * - hooks/useDailyPath: 今日冒險 and 今日英文冒險, which start the rounds above as stations
+ * The child's side: home (the world and the companion) → today's adventure, then the 遊樂場 with every game.
+ * The parent's side (家長專區, behind the password): what the child practises, lessons, English words, stars.
  */
 export default function App() {
   const screen = useScreen();
@@ -77,6 +82,14 @@ export default function App() {
   const adventure = useDailyPath({ family, screen, answers, chinese, english, loops });
 
   const { currentUser, lessons } = family;
+
+  // 家長專區 stays open while the parent moves between its pages, until back on the child's side
+  const [parentUnlocked, setParentUnlocked] = useState(false);
+  useEffect(() => {
+    if (screen.current === GameState.MENU || screen.current === GameState.LOGIN) setParentUnlocked(false);
+  }, [screen.current]);
+
+  const enterGame = (user: { companion?: string }) => screen.goTo(user.companion ? GameState.MENU : GameState.COMPANION_PICK);
 
   // Check for API Key in URL
   useEffect(() => {
@@ -131,55 +144,68 @@ export default function App() {
       return (
         <LoginView
           users={family.users}
-          onLogin={(u) => { family.login(u); goTo(GameState.MENU); }}
-          onCreateUser={(name, avatar) => { family.createUser(name, avatar); goTo(GameState.MENU); }}
+          onLogin={(u) => { family.login(u); enterGame(u); }}
+          onCreateUser={(name, avatar) => { family.createUser(name, avatar); goTo(GameState.COMPANION_PICK); }}
           onDeleteUser={family.deleteUser}
         />
       );
 
-    case GameState.MENU:
-      return currentUser ? (
-        <MenuView
+    case GameState.COMPANION_PICK:
+      if (!currentUser) return null;
+      return (
+        <CompanionPickView
           currentUser={currentUser}
-          currentVocabulary={[]} // Not used anymore
-          activeLesson={activeLesson}
-          onStart={() => {
-            chinese.setGameMode('word');
-            goTo(GameState.DIFFICULTY_SELECT);
-          }}
-          onZhuyinMode={() => {
-            chinese.setGameMode('zhuyin');
-            chinese.setActiveLesson(null);
-            goTo(GameState.ZHUYIN_INTRO);
-          }}
-          onEnglishMode={() => goTo(GameState.ENGLISH_HUB)}
-          reviewCount={reviewWords(currentUser.wordStats).filter(w => lessons.some(l => l.vocabulary.includes(w))).length}
-          masteredCount={masteredCount(currentUser.wordStats)}
-          onReviewMode={() => {
-            chinese.setGameMode('word');
-            chinese.setReviewMode(true);
-            goTo(GameState.DIFFICULTY_SELECT);
-          }}
-          lessonProgress={activeLesson ? currentUser.zhuyinProgress?.[activeLesson.id] || [] : []}
-          onLessonMode={() => {
-            chinese.setGameMode('word');
-            goTo(GameState.LESSON_SELECT);
-          }}
-          onReviewLesson={() => goTo(GameState.LESSON_INTRO)}
-          onExitLesson={() => chinese.setActiveLesson(null)}
-          onShop={() => {
-            images.retryImages();
-            goTo(GameState.SHOP);
-          }}
-          onLeaderboard={() => goTo(GameState.LEADERBOARD)}
-          onParentReport={() => goTo(GameState.PARENT_REPORT)}
-          milestonesAvailable={milestonesAvailable(currentUser)}
-          onSettings={() => {}} // Disabled
-          onLogout={() => { family.logout(); goTo(GameState.LOGIN); }}
-          onUpdateUser={family.updateUser}
-          isGenerating={screen.busy}
+          onPick={id => { family.updateUser(currentUser.id, { companion: id }); goTo(GameState.MENU); }}
         />
-      ) : null;
+      );
+
+    case GameState.MENU: {
+      if (!currentUser) return null;
+      const focus = studyFor(currentUser.studyFocus, lessons);
+      const milestones = milestonesAvailable(currentUser);
+      return (
+        <HomeView
+          currentUser={currentUser}
+          focusName={focusName(focus)}
+          focusBadge={focus.gameMode === 'zhuyin' ? 'ㄅㄆㄇ' : focus.activeLesson ? focus.activeLesson.title : '全部課文'}
+          chineseDone={currentUser.lastDailyPath === todayKey()}
+          englishDone={currentUser.lastEnglishPath === todayKey()}
+          stationsLeft={adventure.chineseStationsLeft()}
+          rewardBadge={currentUser.freeSpins ? '免費轉蛋' : milestones > 0 ? '可以選卡' : ''}
+          onGo={() => { chinese.setReviewMode(false); adventure.start(); }}
+          onEnglish={adventure.startEnglish}
+          onRewards={() => { images.retryImages(); goTo(GameState.SHOP); }}
+          onPlayground={() => goTo(GameState.PLAYGROUND)}
+          onParent={() => goTo(GameState.PARENT_REPORT)}
+          onSwitchPlayer={() => { family.logout(); goTo(GameState.LOGIN); }}
+        />
+      );
+    }
+
+    case GameState.PLAYGROUND: {
+      if (!currentUser) return null;
+      const reviewCount = reviewWords(currentUser.wordStats).filter(w => lessons.some(l => l.vocabulary.includes(w))).length;
+      const zhuyin = studyFor(currentUser.studyFocus, lessons).gameMode === 'zhuyin';
+      const tiles: (PlaygroundTile | false)[] = [
+        {
+          id: 'chinese', emoji: '🎮', label: zhuyin ? '注音遊戲' : '國字遊戲', color: 'bg-indigo-400 text-white',
+          say: zhuyin ? '注音遊戲：選一個遊戲，練習注音符號。' : '國字遊戲：選一個遊戲，練習課文的字。',
+          onOpen: () => { chinese.setReviewMode(false); goTo(GameState.DIFFICULTY_SELECT); },
+        },
+        reviewCount > 0 && {
+          id: 'review', emoji: '🔁', label: `複習 ${reviewCount} 個字`, color: 'bg-orange-400 text-white',
+          say: `複習時間：有${reviewCount}個字要再練習一次。`,
+          onOpen: () => { chinese.setReviewMode(true); goTo(GameState.DIFFICULTY_SELECT); },
+        },
+        activeLesson
+          ? { id: 'lesson', emoji: '📖', label: '聽課文', color: 'bg-sky-400 text-white', say: `聽課文：${activeLesson.title}`, onOpen: () => goTo(GameState.LESSON_INTRO) }
+          : { id: 'zhuyin-chart', emoji: 'ㄅ', label: '注音表', color: 'bg-sky-400 text-white', say: '注音表：點每個注音，聽它怎麼唸。', onOpen: () => goTo(GameState.ZHUYIN_INTRO) },
+        { id: 'english', emoji: '🔤', label: '英文遊戲', color: 'bg-pink-400 text-white', say: '英文遊戲：選一個英文單元來玩。', onOpen: () => goTo(GameState.ENGLISH_HUB) },
+        { id: 'alphabet', emoji: '🔠', label: '字母表', color: 'bg-rose-300 text-rose-900', say: '字母表：點每個字母，聽它怎麼唸。', onOpen: () => goTo(GameState.ENGLISH_ALPHABET) },
+        { id: 'leaderboard', emoji: '🏆', label: '榮譽榜', color: 'bg-amber-300 text-amber-900', say: '榮譽榜：看看大家得到幾顆星星。', onOpen: () => goTo(GameState.LEADERBOARD) },
+      ];
+      return <PlaygroundView currentUser={currentUser} tiles={tiles.filter((t): t is PlaygroundTile => !!t)} onHome={() => goTo(GameState.MENU)} />;
+    }
 
     case GameState.LESSON_SELECT:
       return (
@@ -187,11 +213,13 @@ export default function App() {
            lessons={lessons}
            progress={currentUser?.zhuyinProgress}
            onSelectLesson={(lesson) => {
-              chinese.setActiveLesson(lesson);
-              goTo(GameState.LESSON_INTRO);
+              if (currentUser) family.updateUser(currentUser.id, { studyFocus: { kind: 'lesson', lessonId: lesson.id } });
+              goTo(GameState.PARENT_REPORT);
            }}
            onUpdateLessons={family.setLessons}
-           onBack={() => goTo(GameState.MENU)}
+           onBack={() => goTo(GameState.PARENT_REPORT)}
+           backLabel="回家長專區"
+           title="課文（點一課，設為孩子正在學的）"
         />
       );
 
@@ -201,7 +229,7 @@ export default function App() {
         <LessonIntroView
            lesson={activeLesson}
            onStartGame={() => goTo(GameState.DIFFICULTY_SELECT)}
-           onBack={() => goTo(GameState.MENU)} // Back to Menu (Lesson Dashboard)
+           onBack={() => goTo(GameState.PLAYGROUND)}
            onFindWords={() => loops.startLessonFind(activeLesson)}
         />
       );
@@ -226,13 +254,26 @@ export default function App() {
 
     case GameState.PARENT_REPORT:
       if (!currentUser) return null;
-      return <ParentReportView currentUser={currentUser} lessons={lessons} englishUnits={family.englishUnits} activeLesson={activeLesson} onBack={() => goTo(GameState.MENU)} />;
+      return (
+        <ParentReportView
+          currentUser={currentUser}
+          lessons={lessons}
+          englishUnits={family.englishUnits}
+          activeLesson={activeLesson}
+          onBack={() => goTo(GameState.MENU)}
+          unlocked={parentUnlocked}
+          onUnlock={() => setParentUnlocked(true)}
+          onUpdateUser={family.updateUser}
+          onManageLessons={() => goTo(GameState.LESSON_SELECT)}
+          onManageEnglish={() => goTo(GameState.ENGLISH_MANAGER)}
+        />
+      );
 
     case GameState.ZHUYIN_INTRO:
       return (
         <ZhuyinIntroView
            onStartGame={() => goTo(GameState.DIFFICULTY_SELECT)}
-           onBack={() => goTo(GameState.MENU)}
+           onBack={() => goTo(GameState.PLAYGROUND)}
         />
       );
 
@@ -241,19 +282,13 @@ export default function App() {
         <DifficultySelectView
           onSelect={level => chinese.start(level)}
           onBack={() => {
-            if (chinese.gameMode === 'zhuyin') {
-              goTo(GameState.ZHUYIN_INTRO);
-            } else {
-              chinese.setReviewMode(false);
-              goTo(activeLesson && !chinese.reviewMode ? GameState.LESSON_INTRO : GameState.MENU);
-            }
+            chinese.setReviewMode(false);
+            goTo(GameState.PLAYGROUND);
           }}
           activeLesson={chinese.reviewMode ? null : activeLesson}
           gameMode={chinese.gameMode}
           reviewMode={chinese.reviewMode}
           completedLevels={chinese.progressKey ? currentUser?.zhuyinProgress?.[chinese.progressKey] || [] : []}
-          onDailyPath={adventure.start}
-          dailyDone={currentUser?.lastDailyPath === todayKey()}
         />
       );
 
@@ -265,7 +300,7 @@ export default function App() {
           path={dailyPath}
           currentUser={currentUser}
           onStart={adventure.launchStation}
-          onHome={() => goTo(dailyPath.language === 'en' ? GameState.ENGLISH_HUB : GameState.MENU)}
+          onHome={() => goTo(GameState.MENU)}
           onShop={() => goTo(GameState.SHOP)}
           optionInfo={dailyPath.language === 'en' ? adventure.englishOptionInfo : undefined}
         />
@@ -321,7 +356,7 @@ export default function App() {
       );
 
     case GameState.LEADERBOARD:
-      return <LeaderboardView users={family.users} onBack={() => goTo(GameState.MENU)} />;
+      return <LeaderboardView users={family.users} onBack={() => goTo(GameState.PLAYGROUND)} />;
 
     case GameState.VICTORY:
       if (victoryFrom === 'english') {
@@ -334,7 +369,7 @@ export default function App() {
       }
       return (
         <VictoryView
-          onHome={() => { chinese.setReviewMode(false); goTo(GameState.MENU); }}
+          onHome={() => { chinese.setReviewMode(false); goTo(GameState.PLAYGROUND); }}
           onReplay={() => chinese.start()}
         />
       );
@@ -345,24 +380,21 @@ export default function App() {
         <EnglishHubView
           currentUser={currentUser}
           customUnits={family.englishUnits}
-          onBack={() => goTo(GameState.MENU)}
+          onBack={() => goTo(GameState.PLAYGROUND)}
           onOpenUnit={english.openUnit}
-          onDailyPath={adventure.startEnglish}
-          dailyDone={currentUser.lastEnglishPath === todayKey()}
           onAlphabet={() => goTo(GameState.ENGLISH_ALPHABET)}
-          onManageCustom={() => goTo(GameState.ENGLISH_MANAGER)}
         />
       );
 
     case GameState.ENGLISH_ALPHABET:
-      return <AlphabetChartView onBack={english.goToHub} />;
+      return <AlphabetChartView onBack={() => goTo(GameState.PLAYGROUND)} />;
 
     case GameState.ENGLISH_MANAGER:
       return (
         <EnglishUnitManagerView
           units={family.englishUnits}
           onSaveUnits={family.setEnglishUnits}
-          onBack={english.goToHub}
+          onBack={() => goTo(GameState.PARENT_REPORT)}
         />
       );
 

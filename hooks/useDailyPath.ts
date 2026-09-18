@@ -9,7 +9,7 @@ import {
 import { buildLearnCards, LearnCard } from '../services/learnItems';
 import { englishStatKey, statKey } from '../services/learningStats';
 import { EMPTY_TALLY, tallyOf } from '../services/answers';
-import { lessonAssets, pathSource } from '../services/wordSources';
+import { lessonAssets, pathSource, studyFor } from '../services/wordSources';
 import { Family } from './useFamilyData';
 import { Answers } from './useAnswers';
 import { Screen } from './useScreen';
@@ -35,7 +35,8 @@ export const useDailyPath = ({ family, screen, answers, chinese, english, loops 
   const [englishLearnCards, setEnglishLearnCards] = useState<EnglishLearnCard[]>([]);
 
   const { currentUser } = family;
-  const study = { gameMode: chinese.gameMode, activeLesson: chinese.activeLesson, lessons: family.lessons };
+  // The Chinese adventure practises what a parent chose (review rounds in the 遊樂場 don't change it)
+  const study = { ...studyFor(currentUser?.studyFocus, family.lessons), lessons: family.lessons };
 
   const setPath = (path: DailyPath | null) => {
     pathRef.current = path;
@@ -173,6 +174,12 @@ export const useDailyPath = ({ family, screen, answers, chinese, english, loops 
     startEnglish,
     launchStation,
     finishStation,
+    /** Stations still to go in today's Chinese adventure with what the parent chose (0 when not started or finished). */
+    chineseStationsLeft: () => {
+      if (!unfinishedToday(dailyPath) || dailyPath.language === 'en') return 0;
+      if (dailyPath.label !== pathSource(study).label || dailyPath.gameMode !== study.gameMode) return 0;
+      return dailyPath.stations.filter(s => s.kind !== 'summary').length - dailyPath.current;
+    },
     /** Learned during one of today's rounds: shown in today's results. */
     noteMastered: (label: string) => {
       const path = pathRef.current;

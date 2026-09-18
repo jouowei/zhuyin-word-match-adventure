@@ -93,6 +93,40 @@
         animation: spin-slow 10s linear infinite;
       }
 
+      /* The companion breathes; things in the world sway, and jump when tapped */
+      @keyframes bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6%); }
+      }
+      @keyframes sway {
+        0%, 100% { transform: rotate(-4deg); }
+        50% { transform: rotate(4deg); }
+      }
+      @keyframes hop {
+        0%, 100% { transform: translateY(0) scale(1); }
+        40% { transform: translateY(-35%) scale(1.25); }
+      }
+      .animate-bob { animation: bob 2.4s ease-in-out infinite; }
+      .animate-sway { animation: sway 4s ease-in-out infinite; transform-origin: 50% 100%; }
+      .animate-hop { animation: hop 0.6s ease-out; transform-origin: 50% 100%; }
+      /* The button to press next: grows a little instead of fading, so it never looks switched off */
+      @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.04); }
+      }
+      .animate-breathe { animation: breathe 1.8s ease-in-out infinite; }
+
+      /* Child screens fit one screen: side by side on tablets and phones held sideways
+         (!important: Tailwind's own styles are added after these and would win) */
+      @media (orientation: landscape) and (min-width: 600px) {
+        .fit-screen-main { flex-direction: row !important; }
+        .fit-screen-side { width: min(20rem, 38%) !important; justify-content: center !important; }
+      }
+      /* Things that can go on phones held sideways, when there is no room */
+      @media (max-height: 480px) {
+        .hide-on-short-screen { display: none !important; }
+      }
+
       /* English: Andika is a literacy font with kid-friendly single-story a and g */
       .font-english {
         font-family: 'Andika', 'Zen Maru Gothic', sans-serif;

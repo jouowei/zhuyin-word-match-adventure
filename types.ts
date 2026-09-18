@@ -52,6 +52,12 @@ export interface ParentLockRecord {
   hint?: string;
 }
 
+/** The adventure companion the child picked; it talks and leads the way on the home map. */
+export type CompanionId = 'fox' | 'bear' | 'dragon' | 'bunny';
+
+/** What the Chinese adventure practises, chosen by a parent: the zhuyin symbols, one lesson, or every lesson. */
+export type StudyFocus = { kind: 'zhuyin' } | { kind: 'lesson'; lessonId: string } | { kind: 'all' };
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -68,6 +74,8 @@ export interface UserProfile {
   milestoneClaims?: number;                   // Free cards already chosen for every 10 items learned
   freeSpins?: number;                         // Free gacha spins waiting to be used
   lastFreeSpinDate?: string;                  // Date a finished adventure last gave a free spin (one a day)
+  companion?: CompanionId;                    // Chosen once, can be changed in 家長專區
+  studyFocus?: StudyFocus;                    // Set in 家長專區; the zhuyin symbols until then
 }
 
 /** What happened on one day, for the parent report. */
@@ -160,5 +168,7 @@ export enum GameState {
   LESSON_LOOP = 'LESSON_LOOP',                   // Listen to the whole lesson, or find its words back in the text
   ENGLISH_LEARN = 'ENGLISH_LEARN',               // English 認識新朋友
   ENGLISH_SENTENCES = 'ENGLISH_SENTENCES',       // English sentences: listen, or find words in them
-  PARENT_REPORT = 'PARENT_REPORT'                // 家長專區: weekly report and play-together ideas
+  PARENT_REPORT = 'PARENT_REPORT',               // 家長專區: weekly report and play-together ideas
+  COMPANION_PICK = 'COMPANION_PICK',             // Choosing an adventure companion
+  PLAYGROUND = 'PLAYGROUND'                      // 遊樂場: every game to choose from, open once today's adventure is done
 }

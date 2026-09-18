@@ -195,8 +195,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, onLogin, onCreateUs
         </div>
       </div>
       
-      <p className="absolute bottom-4 text-indigo-900/70 text-sm font-bold text-center w-full z-10 drop-shadow-sm">
+      <p className="absolute bottom-2 text-indigo-900/70 text-sm font-bold text-center w-full z-10 drop-shadow-sm px-4">
          進度會自動儲存在這台裝置上 💾
+         <span className="block text-[10px] font-normal text-indigo-900/60 mt-0.5">
+           錄音與注音：教育部（CC BY 4.0、經萌典 CC BY-ND 3.0 TW）・英文語音：Kokoro-82M・筆畫：Make Me a Hanzi
+         </span>
       </p>
 
       {/* Delete: parent password, then confirm */}

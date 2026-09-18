@@ -1,4 +1,4 @@
-import { Lesson, WordStat } from '../types';
+import { Lesson, StudyFocus, WordStat } from '../types';
 import { INITIAL_LESSONS, ZHUYIN_VOCABULARY } from '../constants';
 import { FREE_PRACTICE_PROGRESS_KEY, reviewWords, ZHUYIN_PROGRESS_KEY } from './learningStats';
 import { wordsInText } from './lessonText';
@@ -12,6 +12,20 @@ export interface ChineseStudy {
   activeLesson: Lesson | null; // None: free practice with every lesson's words
   lessons: Lesson[];
 }
+
+/** What a parent chose for this child's Chinese adventure (a removed lesson falls back to the zhuyin symbols). */
+export const studyFor = (focus: StudyFocus | undefined, lessons: Lesson[]): Pick<ChineseStudy, 'gameMode' | 'activeLesson'> => {
+  if (focus?.kind === 'lesson') {
+    const lesson = lessons.find(l => l.id === focus.lessonId);
+    if (lesson) return { gameMode: 'word', activeLesson: lesson };
+  }
+  if (focus?.kind === 'all') return { gameMode: 'word', activeLesson: null };
+  return { gameMode: 'zhuyin', activeLesson: null };
+};
+
+/** The focus as said by the companion: 今天我們一起練… */
+export const focusName = ({ gameMode, activeLesson }: Pick<ChineseStudy, 'gameMode' | 'activeLesson'>) =>
+  gameMode === 'zhuyin' ? '注音符號' : activeLesson ? activeLesson.title : '所有課文的字';
 
 /** Saved lessons, plus built-in lessons added to the app since they were saved. */
 export const withDefaultLessons = (saved: Lesson[] | null): Lesson[] => {

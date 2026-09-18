@@ -10,9 +10,9 @@ interface EnglishHubViewProps {
   onBack: () => void;
   onOpenUnit: (unit: EnglishUnit) => void;
   onAlphabet: () => void;
-  onManageCustom: () => void;
-  onDailyPath: () => void;
-  dailyDone: boolean; // Today's 今日英文冒險 is finished
+  onManageCustom?: () => void; // Parents only: shown when given
+  onDailyPath?: () => void;     // 今日英文冒險 starts from the home map in 2.1
+  dailyDone?: boolean;          // Today's 今日英文冒險 is finished
 }
 
 export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
@@ -20,7 +20,9 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
 }) => {
   const progress = currentUser.englishProgress || {};
   const recommendedId = getRecommendedUnitId(progress);
-  useInstruction('english-hub', '這是英文大冒險。按綠色的今日英文冒險，一站一站學英文。點喇叭，可以聽聽每個按鈕是什麼。');
+  useInstruction('english-hub', onDailyPath
+    ? '這是英文大冒險。按綠色的今日英文冒險，一站一站學英文。點喇叭，可以聽聽每個按鈕是什麼。'
+    : '這是英文遊樂場。選一個單元來玩，點喇叭可以聽聽看是什麼。');
 
   // "字母 Aa – Ee" is said as "字母 A 到 E"
   const spokenTitle = (title: string) => title.replace(/([A-Z])[a-z]\s*–\s*([A-Z])[a-z]/g, '$1 到 $2');
@@ -63,7 +65,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
             onClick={onBack}
             className="px-5 py-2 bg-white rounded-xl shadow-md text-gray-600 font-bold flex items-center gap-2 hover:bg-gray-50 transition active:scale-95"
           >
-            <Home size={24} /> 回首頁
+            <Home size={24} /> {onDailyPath ? '回首頁' : '回遊樂場'}
           </button>
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
             <span className="text-2xl">{currentUser.avatar}</span>
@@ -78,6 +80,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
           <p className="font-english text-2xl font-bold text-sky-500 -mt-1">English Adventure</p>
           <p className="text-gray-500 mt-2">從 ABC 開始，一站一站學會發音、字母和單字！</p>
 
+          {onDailyPath && (
           <div className="relative mt-5">
           <button
             onClick={onDailyPath}
@@ -92,6 +95,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
           </button>
           <SpeakButton text="今日英文冒險：複習、認識新朋友、練習和挑戰，大約十分鐘。" className="absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3 mt-3">
             <div className="relative">
@@ -104,6 +108,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
               </button>
               <SpeakButton text="字母表：點每個字母，聽它怎麼唸。" className="absolute top-1 left-1 w-9 h-9" size={18} />
             </div>
+            {onManageCustom && (
             <button
               onClick={onManageCustom}
               className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg flex flex-col items-center gap-1 transition active:scale-95"
@@ -111,6 +116,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
               <Settings2 size={30} />
               <span>家長：自訂單字</span>
             </button>
+            )}
           </div>
         </div>
 
@@ -135,7 +141,7 @@ export const EnglishHubView: React.FC<EnglishHubViewProps> = ({
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                 {units.map(renderUnitCard)}
-                {stage.id === 5 && (
+                {stage.id === 5 && onManageCustom && (
                   <button
                     onClick={onManageCustom}
                     className="rounded-2xl border-4 border-dashed border-orange-200 text-orange-400 hover:bg-white flex flex-col items-center justify-center p-4 font-bold transition"

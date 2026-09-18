@@ -6,6 +6,7 @@ import { CHINESE_PREFIXES, ENGLISH_PREFIXES, masteredCount, reviewSchedule, star
 import { confusionLabel, ENGLISH_TIPS, GENERAL_TIPS, readingPrompts, tipForConfusion } from '../services/parentTips';
 import { ParentPasswordSetup, ParentUnlock } from './ParentLock';
 import { OfflineModePanel } from './OfflineModePanel';
+import { ParentSettingsPanel } from './ParentSettingsPanel';
 
 interface ParentReportViewProps {
   currentUser: UserProfile;
@@ -13,6 +14,11 @@ interface ParentReportViewProps {
   englishUnits: EnglishUnit[];
   activeLesson: Lesson | null;
   onBack: () => void;
+  unlocked: boolean;        // The password was entered on this visit to 家長專區
+  onUnlock: () => void;
+  onUpdateUser: (userId: string, updates: Partial<UserProfile>) => void;
+  onManageLessons: () => void;
+  onManageEnglish: () => void;
 }
 
 const percent = (rate: number | null) => (rate === null ? '—' : `${Math.round(rate * 100)}%`);
@@ -29,8 +35,9 @@ const Trend: React.FC<{ now: number | null; before: number | null }> = ({ now, b
 
 const itemLabel = (key: string) => key.replace(/^(w|zy|el|ew):/, '');
 
-export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser, lessons, englishUnits, activeLesson, onBack }) => {
-  const [unlocked, setUnlocked] = useState(false);
+export const ParentReportView: React.FC<ParentReportViewProps> = ({
+  currentUser, lessons, englishUnits, activeLesson, onBack, unlocked, onUnlock, onUpdateUser, onManageLessons, onManageEnglish,
+}) => {
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
   const readableLessons = lessons.filter(l => l.content?.trim());
@@ -56,7 +63,7 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser,
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center gap-4">
-          <ParentUnlock subtitle="請輸入家長密碼（和「實體任務兌換」相同）" onUnlock={() => setUnlocked(true)} />
+          <ParentUnlock subtitle="請輸入家長密碼" onUnlock={onUnlock} />
           <button onClick={onBack} className="text-gray-400 text-sm underline">回首頁</button>
         </div>
       </div>
@@ -80,6 +87,16 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser,
           <p className="text-gray-500 mt-1">
             玩了 {week.daysPlayed} 天，大約 {week.minutes} 分鐘（上週 {lastWeek.daysPlayed} 天、{lastWeek.minutes} 分鐘）
           </p>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow p-5">
+          <ParentSettingsPanel
+            currentUser={currentUser}
+            lessons={lessons}
+            onUpdateUser={onUpdateUser}
+            onManageLessons={onManageLessons}
+            onManageEnglish={onManageEnglish}
+          />
         </div>
 
         {/* The three numbers that show whether the scaffolding works */}
@@ -264,7 +281,7 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser,
             <div className="max-w-sm mx-auto">
               <ParentPasswordSetup
                 title="更改家長密碼"
-                intro="新密碼會同時用在「家長專區」和「實體任務兌換」。"
+                intro="新密碼用來打開「家長專區」。"
                 onDone={() => { setChangingPassword(false); setPasswordChanged(true); }}
                 onSkip={() => setChangingPassword(false)}
                 skipLabel="取消"
@@ -285,6 +302,10 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({ currentUser,
 
         <p className="text-[11px] text-gray-400 text-center">
           依據：Wood, Bruner &amp; Ross (1976) 鷹架理論；Cepeda et al. (2008) 間隔練習；Whitehurst et al. (1988) 對話式共讀；Takeuchi &amp; Stevens (2011) 親子共用媒體。
+        </p>
+        <p className="text-[11px] text-gray-400 text-center">
+          國語錄音與注音：教育部《國語注音符號手冊》開放部件（CC BY 4.0）、教育部《國語辭典簡編本》經萌典提供（CC BY-ND 3.0 TW）<br />
+          英文語音：Kokoro-82M 產生（Apache-2.0）・國字筆畫：Make Me a Hanzi / hanzi-writer-data（Arphic Public License）
         </p>
       </div>
     </div>

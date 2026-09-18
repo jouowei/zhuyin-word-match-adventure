@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Confusion, GameState, Lesson, WordItem } from '../types';
+import { Confusion, GameState, WordItem } from '../types';
 import { INITIAL_WORD_SET } from '../constants';
 import { generateImageForWord, generateLevelData } from '../services/geminiService';
 import { buildFamilyRound, FamilyQuestion } from '../services/wordFamilies';
@@ -8,7 +8,7 @@ import { buildSyllableRound } from '../services/zhuyinPractice';
 import { maxSymbolsFor } from '../services/dailyPath';
 import { addCompletedLevel, reviewSchedule, statKey } from '../services/learningStats';
 import { addToTally, chineseLevelRules, EMPTY_TALLY } from '../services/answers';
-import { ChineseMode, progressKeyFor, roundSource } from '../services/wordSources';
+import { progressKeyFor, roundSource, studyFor } from '../services/wordSources';
 import { playSound } from '../utils/sound';
 import { Family } from './useFamilyData';
 import { Answers } from './useAnswers';
@@ -22,8 +22,8 @@ export const ROUND_END_PAUSE = 2000;
 export interface RoundPlan { words: string[]; focus: string[]; count: number; }
 
 /**
- * The Chinese games (levels 1–8) with the zhuyin symbols, a lesson, every lesson (free practice) or 複習時間,
- * played on their own or as a 今日冒險 station.
+ * The Chinese games (levels 1–8) with what a parent chose for the child (the zhuyin symbols, a lesson or every lesson)
+ * or with the words due for review (複習時間), played in the 遊樂場 or as a 今日冒險 station.
  */
 export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   family: Family;
@@ -32,9 +32,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   path: PathLink;
   onVictory: () => void;
 }) => {
-  const [gameMode, setGameMode] = useState<ChineseMode>('word');
-  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
-  const [reviewMode, setReviewMode] = useState(false); // 複習時間 rounds use the words due for review as vocabulary
+  const [reviewMode, setReviewMode] = useState(false); // 複習時間 rounds use the words due for review from every lesson
   const [level, setLevel] = useState(1);
   const [words, setWords] = useState<WordItem[]>(INITIAL_WORD_SET);
   const [familyQuestions, setFamilyQuestions] = useState<FamilyQuestion[]>([]);   // 字的家族 round
@@ -46,6 +44,10 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   const tally = useRef(EMPTY_TALLY);
 
   const { currentUser, lessons } = family;
+  const focus = studyFor(currentUser?.studyFocus, lessons);
+  const { activeLesson } = focus;
+  const modeFor = (review: boolean) => (review ? 'word' : focus.gameMode); // Review is for lesson words
+  const gameMode = modeFor(reviewMode);
   const progressKey = progressKeyFor({ gameMode, activeLesson }, reviewMode);
 
   /** `plan`: a 今日冒險 round with its own words and size. */
@@ -53,10 +55,13 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
     fromPath.current = !!plan;
     setLevel(newLevel);
     const stats = currentUser?.wordStats;
-    const { words: available, customImages, zhuyinOverrides } = roundSource({ gameMode, activeLesson, lessons, reviewMode, stats });
+    // 今日冒險 rounds are never review rounds, even when started right after one
+    const review = !plan && reviewMode;
+    const gameMode = modeFor(review);
+    const { words: available, customImages, zhuyinOverrides } = roundSource({ gameMode, activeLesson, lessons, reviewMode: review, stats });
     const sourceWords = plan ? plan.words : available;
     if (sourceWords.length < 4) {
-      alert("目前課文裡的生字太少囉！請先去「課文模式」新增更多課文和生字 (至少4個) 才能開始遊戲。");
+      alert("目前課文裡的生字太少囉！請爸爸媽媽到「家長專區」新增課文和生字（至少 4 個）才能開始遊戲。");
       return;
     }
 
@@ -148,8 +153,8 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   };
 
   return {
-    gameMode, setGameMode,
-    activeLesson, setActiveLesson,
+    gameMode,
+    activeLesson,
     reviewMode, setReviewMode,
     progressKey,
     level, words, familyQuestions, radicalQuestions,
@@ -161,7 +166,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
     },
     onMatch,
     onMistake,
-    /** Leaving a round: back to the adventure map in 今日冒險, else to the menu. */
+    /** Leaving a round: back to the adventure map in 今日冒險, else to the 遊樂場. */
     leave: () => {
       if (fromPath.current) {
         fromPath.current = false;
@@ -169,7 +174,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
         return;
       }
       setReviewMode(false);
-      screen.goTo(GameState.MENU);
+      screen.goTo(GameState.PLAYGROUND);
     },
     /** 再玩一組: the same station again in 今日冒險, else a new round of the same level. */
     again: () => (fromPath.current ? path.replay(level) : start()),
