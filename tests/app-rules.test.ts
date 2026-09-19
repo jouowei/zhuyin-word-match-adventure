@@ -75,7 +75,8 @@ check('milestone claimed once', JSON.stringify(claimMilestoneCard(player({ wordS
 // --- Word sources ---
 const custom: Lesson = { id: 'mine', title: '我的課文', content: '小狗在草地上跑跑跳跳。', vocabulary: ['小狗', '草地', '跑跳', '上面'], customImages: { 小狗: 'dog.png' }, zhuyinOverrides: { 跑: 'ㄆㄠˇ' } };
 check('built-in lessons added to saved ones', withDefaultLessons([custom]).length === INITIAL_LESSONS.length + 1 && withDefaultLessons(null) === INITIAL_LESSONS);
-check('saved copy of a built-in lesson wins', withDefaultLessons([{ ...INITIAL_LESSONS[0], title: '改過' }]).filter(l => l.id === INITIAL_LESSONS[0].id).map(l => l.title).join() === '改過');
+check('a built-in lesson a parent changed stays theirs', withDefaultLessons([{ ...INITIAL_LESSONS[0], title: '改過', edited: true }]).filter(l => l.id === INITIAL_LESSONS[0].id).map(l => l.title).join() === '改過');
+check('an old saved copy of a built-in lesson follows the app\'s update', withDefaultLessons([{ ...INITIAL_LESSONS[0], title: '舊版' }]).filter(l => l.id === INITIAL_LESSONS[0].id).map(l => l.title).join() === INITIAL_LESSONS[0].title);
 const lessons = [custom, ...INITIAL_LESSONS];
 const lessonRound = roundSource({ gameMode: 'word', activeLesson: custom, lessons, reviewMode: false, stats: {} });
 check('lesson round: its words and pictures', lessonRound.words === custom.vocabulary && lessonRound.customImages.小狗 === 'dog.png');

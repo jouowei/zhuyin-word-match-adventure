@@ -47,7 +47,10 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
       if (!box || !text) return;
       let size = window.innerWidth >= 768 ? 36 : 30;
       text.style.fontSize = `${size}px`;
-      while (size > 18 && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1)) {
+      // On phones each phrase is one column: a phrase that breaks into a second column needs smaller letters too
+      const broken = () => window.innerWidth < 768
+        && [...text.querySelectorAll<HTMLElement>('.lesson-text-line .font-bpmf')].some(column => column.offsetWidth > size * 1.8);
+      while (size > 18 && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1 || broken())) {
         size -= 2;
         text.style.fontSize = `${size}px`;
       }
@@ -197,6 +200,7 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
       <div
         key={idx}
         className="lesson-text-line text-gray-800 text-center leading-relaxed animate-pop mb-0 md:mb-4 last:mb-0 flex justify-center"
+        style={lesson.picture ? { textShadow: '0 0 3px #fff, 0 0 8px #fff, 0 0 14px rgba(255,255,255,0.9)' } : undefined}
       >
         <ZhuyinText text={line} readings={readingsForSentence(line, vocabReadings)} />
       </div>
@@ -228,22 +232,35 @@ export const LessonIntroView: React.FC<LessonIntroViewProps> = ({ lesson, onStar
         </header>
 
         {/* The page, with the buttons to turn it at its sides */}
-        <div className="relative flex-1 min-h-0 bg-white rounded-3xl shadow-lg border-b-8 border-orange-200 flex items-center">
+        <div className="relative flex-1 min-h-0 bg-white rounded-3xl shadow-lg border-b-8 border-orange-200 flex items-center overflow-hidden">
+          {lesson.picture && (
+            // A soft picture at the foot of the page, fading out towards the words
+            <img
+              src={lesson.picture}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="absolute inset-x-0 bottom-0 w-full h-[48%] object-cover object-bottom opacity-70 pointer-events-none select-none"
+              style={{ maskImage: 'linear-gradient(to bottom, transparent, black 55%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 55%)' }}
+            />
+          )}
           <button
             onClick={() => changePage(-1)}
+            style={{ position: 'relative' }}
             disabled={currentPage === 0}
             aria-label="上一頁"
             className={`shrink-0 z-10 ml-1 p-2 rounded-full transition ${currentPage === 0 ? 'text-gray-200' : 'text-orange-500 hover:bg-orange-50 active:scale-90'}`}
           >
             <ChevronLeft size={32} />
           </button>
-          <div ref={pageBox} className="flex-1 min-w-0 h-full overflow-auto flex">
+          <div ref={pageBox} className="relative flex-1 min-w-0 h-full overflow-auto flex">
             <div ref={pageText} className="m-auto py-4 flex flex-row-reverse flex-wrap md:flex-nowrap md:flex-col items-center justify-center gap-[0.75em] md:gap-0">
               {renderPageLines(pages[currentPage])}
             </div>
           </div>
           <button
             onClick={() => changePage(1)}
+            style={{ position: 'relative' }}
             disabled={currentPage === pages.length - 1}
             aria-label="下一頁"
             className={`shrink-0 z-10 mr-1 p-2 rounded-full transition ${currentPage === pages.length - 1 ? 'text-gray-200' : 'text-orange-500 hover:bg-orange-50 active:scale-90'}`}

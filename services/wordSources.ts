@@ -27,10 +27,16 @@ export const studyFor = (focus: StudyFocus | undefined, lessons: Lesson[]): Pick
 export const focusName = ({ gameMode, activeLesson }: Pick<ChineseStudy, 'gameMode' | 'activeLesson'>) =>
   gameMode === 'zhuyin' ? '注音符號' : activeLesson ? activeLesson.title : '所有課文的字';
 
-/** Saved lessons, plus built-in lessons added to the app since they were saved. */
+/**
+ * Saved lessons, plus built-in lessons added to the app since they were saved. Saving writes every lesson, built-in
+ * ones too: a saved built-in lesson a parent never changed is replaced by the app's current one (its readings and
+ * picture may have been updated since); one a parent changed stays theirs.
+ */
 export const withDefaultLessons = (saved: Lesson[] | null): Lesson[] => {
   if (!saved) return INITIAL_LESSONS;
-  return [...saved, ...INITIAL_LESSONS.filter(lesson => !saved.some(l => l.id === lesson.id))];
+  const builtIn = new Map(INITIAL_LESSONS.map(lesson => [lesson.id, lesson]));
+  const kept = saved.map(lesson => (builtIn.has(lesson.id) && !lesson.edited ? builtIn.get(lesson.id)! : lesson));
+  return [...kept, ...INITIAL_LESSONS.filter(lesson => !saved.some(l => l.id === lesson.id))];
 };
 
 export const lessonWords = (lessons: Lesson[]) => Array.from(new Set(lessons.flatMap(l => l.vocabulary)));

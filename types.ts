@@ -32,6 +32,8 @@ export interface Lesson {
   zhuyinOverrides?: Record<string, string>; // Optional: parent-chosen readings for polyphones, 'Word' -> 'ㄌㄜˋ'
   // Readings of phrases in the text that aren't vocabulary (跑得 -> 'ㄆㄠˇ ˙ㄉㄜ'); only the text shown with zhuyin uses them
   textReadings?: Record<string, string>;
+  picture?: string; // A soft picture under the text on the lesson page (the app's own texts have one)
+  edited?: boolean; // A parent changed it: kept as theirs even when the app updates its built-in lessons
 }
 
 export interface ShopItem {

@@ -30,6 +30,8 @@ export const lesson = (
   const textReadings = { ...fixed(word => content.includes(word)), ...readings.textReadings };
   return {
     id: `lib-${id}`, grade, term, order, title, content, vocabulary,
+    // Drawn for each text (scripts/lesson-art)
+    picture: `/lesson-art/${id}.jpg`,
     ...(Object.keys(zhuyinOverrides).length && { zhuyinOverrides }),
     ...(Object.keys(textReadings).length && { textReadings }),
   };

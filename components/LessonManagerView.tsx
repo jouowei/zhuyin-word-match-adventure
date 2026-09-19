@@ -181,8 +181,13 @@ export const LessonManagerView: React.FC<LessonManagerViewProps> = ({ lessons, o
     });
 
     const lessonOrder = parseInt(order, 10);
+    const original = editId ? lessons.find(l => l.id === editId) : undefined;
     const newLesson: Lesson = {
       id: editId || `lesson-${Date.now()}`,
+      // A changed lesson stays the parent's, with the picture and text readings it came with
+      ...(original && { edited: true }),
+      ...(original?.picture && { picture: original.picture }),
+      ...(original?.textReadings && { textReadings: original.textReadings }),
       title: title.trim(),
       ...(grade ? { grade, term } : {}),
       ...(lessonOrder > 0 ? { order: lessonOrder } : {}),

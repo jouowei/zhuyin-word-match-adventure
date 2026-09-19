@@ -4,6 +4,7 @@ import { INITIAL_LESSONS } from '../constants.ts';
 import { lessonShelves } from '../services/lessonShelf.ts';
 import { splitLessonPages } from '../services/lessonText.ts';
 import { FONT_POLYPHONES_RAW } from '../zhuyin/fontPolyphones.ts';
+import { existsSync } from 'fs';
 
 let fails = 0;
 const check = (name: string, ok: boolean, extra?: unknown) => { console.log(ok ? 'PASS' : 'FAIL', name, extra === undefined ? '' : JSON.stringify(extra)); if (!ok) fails++; };
@@ -30,6 +31,9 @@ check('every vocabulary word is in its text (for 課文尋寶)', missing.length 
 const badTextReadings = LIBRARY_LESSONS.flatMap(l => Object.entries(l.textReadings || {})
   .filter(([phrase, reading]) => !l.content.includes(phrase) || reading.split(' ').length !== [...phrase].length).map(([phrase]) => `${l.title}:${phrase}`));
 check('text readings: in the text, one syllable a character', badTextReadings.length === 0, badTextReadings);
+
+const noPicture = LIBRARY_LESSONS.filter(l => !l.picture || !existsSync(`public${l.picture}`)).map(l => l.id);
+check('every text has its picture (public/lesson-art)', noPicture.length === 0, noPicture);
 
 const pages = LIBRARY_LESSONS.flatMap(l => splitLessonPages(l.content));
 check('pages never start with a closing quote', pages.every(p => !p.startsWith('」')));
