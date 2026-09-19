@@ -122,6 +122,12 @@
         .fit-screen-main { flex-direction: row !important; }
         .fit-screen-side { width: min(20rem, 38%) !important; justify-content: center !important; }
       }
+      /* 環島 story page on phones held sideways: the picture beside the words */
+      @media (orientation: landscape) and (max-height: 600px) {
+        .story-card { max-width: 42rem !important; }
+        .story-body { flex-direction: row !important; gap: 1rem !important; }
+        .story-picture { width: 48% !important; max-height: none !important; flex-shrink: 0 !important; }
+      }
       /* Things that can go on phones held sideways, when there is no room */
       @media (max-height: 480px) {
         .hide-on-short-screen { display: none !important; }

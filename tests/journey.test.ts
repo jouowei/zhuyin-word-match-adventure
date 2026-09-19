@@ -1,7 +1,8 @@
 // 環島冒險: where the companion is, when it moves on, and which story to show.
+import { existsSync } from 'fs';
 import {
   COAST_PATH, journeyAfterAdventure, journeyLine, journeyPosition, LEGS_PER_PLACE, MAP_HEIGHT, MAP_WIDTH, PLACES, project,
-  storyText, storyToShow,
+  storyPicture, storyText, storyToShow,
 } from '../services/journey.ts';
 import { completeStation, DailyPath } from '../services/dailyPath.ts';
 import { homeLine, COMPANIONS } from '../services/companions.ts';
@@ -15,6 +16,10 @@ check('starts and ends at 基隆港', PLACES[0].name === '基隆港' && PLACES.l
 check('every place has its own souvenir and friend', new Set(PLACES.map(p => p.souvenir.emoji)).size === PLACES.length && new Set(PLACES.map(p => p.friend.emoji)).size === PLACES.length);
 check('places are on the map', PLACES.every(p => { const { x, y } = project(p.lon, p.lat); return x > 0 && x < MAP_WIDTH && y > 0 && y < MAP_HEIGHT; }));
 const coast = COAST_PATH.match(/-?[\d.]+/g)!.map(Number);
+check('every story page has its picture', [...PLACES.map(p => `/journey/${p.id}.jpg`), '/journey/around.jpg'].every(src => existsSync(`public${src}`)));
+check('story pictures: the start, a place, a whole trip', storyPicture({ kind: 'start' }) === '/journey/keelung.jpg'
+  && storyPicture({ kind: 'arrive', place: PLACES[3], left: PLACES[2], lapDone: false }) === '/journey/miaoli.jpg'
+  && storyPicture({ kind: 'arrive', place: PLACES[0], left: PLACES[13], lapDone: true }) === '/journey/around.jpg');
 check('coast inside the map', coast.every((v, i) => v >= 0 && v <= (i % 2 ? MAP_HEIGHT : MAP_WIDTH)) && COAST_PATH.endsWith('Z'));
 
 // --- Position ---

@@ -106,6 +106,10 @@ export const storyText = (scene: NonNullable<JourneyStory>, name: string, compan
   return `${souvenir}${place.name}到了！${place.story}這裡的${place.friend.name}說：歡迎你們來！`;
 };
 
+/** The story page's watercolor (public/journey, scripts/lesson-art/journey.ts): the place, or 基隆港 after a whole trip. */
+export const storyPicture = (scene: NonNullable<JourneyStory>) =>
+  `/journey/${scene.kind === 'start' ? PLACES[0].id : scene.lapDone ? 'around' : scene.place.id}.jpg`;
+
 /** Where the companion is and what's next, for the home map. */
 export const journeyLine = (legsJourney: number | undefined) => {
   const { place, next, legsLeft } = journeyPosition(legsJourney);

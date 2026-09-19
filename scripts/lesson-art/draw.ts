@@ -1,15 +1,19 @@
 /**
  * Draws the lesson pictures with Gemini (gemini-3.1-flash-image-preview, 16:9) into a folder, three at a time.
  * Run: GEMINI_API_KEY=… npx tsx scripts/lesson-art/draw.ts <out folder> [lesson ids…]   (no ids: every lesson)
+ * With --journey first, the 環島 story pictures instead (journey.ts): draw.ts --journey <out folder> [place ids…]
  * Then look at each one (no writing in the picture, true to the text) and shrink them with shrink.ps1.
  */
 import { writeFileSync } from 'fs';
 import { GoogleGenAI } from '@google/genai';
 import { promptFor, SCENES } from './prompts.ts';
+import { JOURNEY_SCENES, journeyPromptFor } from './journey.ts';
 
-const [, , outDir, ...only] = process.argv;
+const journey = process.argv[2] === '--journey';
+const [outDir, ...only] = process.argv.slice(journey ? 3 : 2);
+const prompt = journey ? journeyPromptFor : promptFor;
 if (!outDir || !process.env.GEMINI_API_KEY) {
-  console.error('Usage: GEMINI_API_KEY=… npx tsx scripts/lesson-art/draw.ts <out folder> [lesson ids…]');
+  console.error('Usage: GEMINI_API_KEY=… npx tsx scripts/lesson-art/draw.ts [--journey] <out folder> [ids…]');
   process.exit(1);
 }
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -19,7 +23,7 @@ const draw = async (id: string) => {
     try {
       const response = await ai.models.generateContent({
         model: 'gemini-3.1-flash-image-preview',
-        contents: { parts: [{ text: promptFor(id) }] },
+        contents: { parts: [{ text: prompt(id) }] },
         config: { imageConfig: { aspectRatio: '16:9', imageSize: '1K' } },
       });
       const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData?.data);
@@ -36,5 +40,5 @@ const draw = async (id: string) => {
   console.error('FAILED', id);
 };
 
-const queue = only.length ? only : Object.keys(SCENES);
+const queue = only.length ? only : Object.keys(journey ? JOURNEY_SCENES : SCENES);
 await Promise.all([1, 2, 3].map(async () => { while (queue.length) await draw(queue.shift()!); }));
