@@ -7,6 +7,10 @@ import { playChineseAudio, playChineseWord, playZhuyinSymbol } from '../utils/ch
 import { speakEnglish, speakLetterName } from '../utils/englishSpeech';
 import { CompanionBubble } from './CompanionBubble';
 
+const SEED_LINE = '去冒險，種子就會發芽喔！';
+// Where the seeds of a new world sit: a little uneven, like sown by hand
+const SEEDS = [{ x: 14, y: 30 }, { x: 32, y: 48 }, { x: 50, y: 34 }, { x: 68, y: 50 }, { x: 86, y: 32 }];
+
 /** Says what a thing in the world stands for: the zhuyin symbol, the word, or the English letter or word. */
 const sayThing = async (thing: WorldThing) => {
   if (thing.kind === 'zhuyin') {
@@ -109,9 +113,35 @@ export const WorldScene: React.FC<WorldSceneProps> = ({ stats, companion, line, 
             );
           })}
           {placed.length === 0 && (
-            <p className="absolute inset-0 flex items-center justify-center text-center text-green-900/60 font-bold text-sm px-6">
-              學會的字會在這裡長出來 🌱
-            </p>
+            // A new world: seeds waiting in the ground, so it doesn't look empty or broken
+            <>
+              {SEEDS.map((seed, i) => {
+                const isTapped = tapped?.key === `seed-${i}`;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    aria-label="種子"
+                    onClick={() => {
+                      setTapped({ key: `seed-${i}`, at: Date.now() });
+                      playChineseAudio([{ text: SEED_LINE, rate: 0.95 }]);
+                    }}
+                    className="absolute -translate-x-1/2 w-[15%] max-w-[4.5rem] aspect-[2/1]"
+                    style={{ left: `${seed.x}%`, bottom: `${seed.y}%` }}
+                  >
+                    <span className="absolute inset-x-0 bottom-0 h-full rounded-t-full bg-amber-800/60" aria-hidden />
+                    <span
+                      key={isTapped ? tapped!.at : 'still'}
+                      className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/3 w-[28%] aspect-[3/4] rounded-[50%] bg-amber-950/80 ${isTapped ? 'animate-hop' : ''}`}
+                      aria-hidden
+                    />
+                  </button>
+                );
+              })}
+              <p className="absolute inset-x-0 top-[4%] text-center text-green-900/75 font-black text-sm px-6 pointer-events-none">
+                {SEED_LINE}
+              </p>
+            </>
           )}
         </div>
       </div>

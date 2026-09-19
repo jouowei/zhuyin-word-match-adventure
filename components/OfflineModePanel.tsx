@@ -99,7 +99,7 @@ export const OfflineModePanel: React.FC<OfflineModePanelProps> = ({ lessons, eng
       {phase === 'idle' && !state.enabled && (
         <>
           <p className="text-sm text-gray-600">
-            沒有網路也能玩（例如搭車、出遊）。開啟前要先把音檔、字型和筆順資料全部下載到這台裝置，下載完成才算開啟。
+            沒有網路也能玩（例如搭車、出遊）。開啟前要先把音檔、字型和筆順資料全部下載到這臺裝置，下載完成才算開啟。
             建議先把遊戲「加到主畫面」再下載。
           </p>
           <button onClick={prepare} className="self-start px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold flex items-center gap-2">
@@ -149,7 +149,7 @@ export const OfflineModePanel: React.FC<OfflineModePanelProps> = ({ lessons, eng
       {phase === 'idle' && state.enabled && (
         <>
           <p className="text-sm text-gray-600">
-            這台裝置已下載 {state.files} 個檔案{state.at && `（${new Date(state.at).toLocaleDateString('zh-TW')}）`}，沒有網路也能玩。
+            這臺裝置已下載 {state.files} 個檔案{state.at && `（${new Date(state.at).toLocaleDateString('zh-TW')}）`}，沒有網路也能玩。
             AI 產生圖片、查詢新的詞語需要網路。
           </p>
           {needsUpdate && (

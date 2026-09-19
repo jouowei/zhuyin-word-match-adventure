@@ -19,11 +19,11 @@ check('coast inside the map', coast.every((v, i) => v >= 0 && v <= (i % 2 ? MAP_
 
 // --- Position ---
 const start = journeyPosition(undefined);
-check('start: at 基隆港, two legs to 台北', start.place.id === 'keelung' && start.next.id === 'taipei' && start.legsLeft === LEGS_PER_PLACE && start.visited === 0);
+check('start: at 基隆港, two legs to 臺北', start.place.id === 'keelung' && start.next.id === 'taipei' && start.legsLeft === LEGS_PER_PLACE && start.visited === 0);
 const one = journeyPosition(1);
 check('one leg: still at 基隆港, one to go', one.place.id === 'keelung' && one.legs === 1 && one.legsLeft === 1);
 const two = journeyPosition(2);
-check('two legs: at 台北, 基隆港 visited', two.place.id === 'taipei' && two.step === 1 && two.visited === 1);
+check('two legs: at 臺北, 基隆港 visited', two.place.id === 'taipei' && two.step === 1 && two.visited === 1);
 const lap = journeyPosition(PLACES.length * LEGS_PER_PLACE);
 check('a full lap: back at 基隆港, lap 1', lap.place.id === 'keelung' && lap.lap === 1 && lap.visited === 0);
 const last = journeyPosition(PLACES.length * LEGS_PER_PLACE - 1);
@@ -54,7 +54,7 @@ check('the story: souvenir from the last place, the new place and its friend', t
 const lapScene = storyToShow({ journeyLegs: PLACES.length * LEGS_PER_PLACE, journeySeen: PLACES.length - 1 });
 check('back at the start: a lap done', lapScene?.kind === 'arrive' && lapScene.lapDone && storyText(lapScene, '小安', '小狐狸').includes('環島一圈完成了'));
 check('start story names the first place', storyText({ kind: 'start' }, '小安', '小狐狸').includes('基隆港'));
-check('where we are', journeyLine(1) === '我們在基隆港，再完成一次冒險，就到台北！', journeyLine(1));
+check('where we are', journeyLine(1) === '我們在基隆港，再完成一次冒險，就到臺北！', journeyLine(1));
 
 // --- The companion says where it is ---
 const line = homeLine(COMPANIONS[0], { name: '小安', focus: '注音符號', chineseDone: false, englishDone: false, stationsLeft: 0, things: 0, greet: false, where: { place: '日月潭', next: '阿里山' } });

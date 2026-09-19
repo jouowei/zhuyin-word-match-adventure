@@ -30,7 +30,7 @@ export const ParentPasswordSetup: React.FC<ParentPasswordSetupProps> = ({
     if (password.length < MIN_PASSWORD_LENGTH) return setError(`密碼至少要 ${MIN_PASSWORD_LENGTH} 個字`);
     if (password !== again) return setError('兩次輸入的密碼不一樣');
     if (hint.trim() && hint.includes(password)) return setError('提示裡不能直接寫出密碼');
-    if (!setParentPassword(password, hint)) return setError('這台裝置無法儲存密碼（可能是無痕模式）');
+    if (!setParentPassword(password, hint)) return setError('這臺裝置無法儲存密碼（可能是無痕模式）');
     playSound('success');
     onDone();
   };

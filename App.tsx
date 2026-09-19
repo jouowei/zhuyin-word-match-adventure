@@ -161,7 +161,6 @@ export default function App() {
           users={family.users}
           onLogin={(u) => { family.login(u); goTo(GameState.MODE_PICK); }}
           onCreateUser={(name, avatar) => { family.createUser(name, avatar); goTo(GameState.MODE_PICK); }}
-          onDeleteUser={family.deleteUser}
         />
       );
 
@@ -304,6 +303,11 @@ export default function App() {
           onUpdateUser={family.updateUser}
           onManageLessons={() => goTo(GameState.LESSON_SELECT)}
           onManageEnglish={() => goTo(GameState.ENGLISH_MANAGER)}
+          onDeletePlayer={() => {
+            family.deleteUser(currentUser.id);
+            family.logout();
+            goTo(GameState.LOGIN);
+          }}
         />
       );
 

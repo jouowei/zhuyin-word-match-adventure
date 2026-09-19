@@ -52,7 +52,7 @@ export const ModePickView: React.FC<{
           </span>
           <span className="text-[clamp(1.8rem,8vw,2.6rem)] font-black leading-tight">環島冒險</span>
           <span className="text-[clamp(0.95rem,4vw,1.2rem)] font-bold opacity-95">
-            {currentUser.journeySeen === undefined ? '玩遊戲學認字，一起環遊台灣' : `玩遊戲學認字・現在在${place.name}`}
+            {currentUser.journeySeen === undefined ? '玩遊戲學認字，一起環遊臺灣' : `玩遊戲學認字・現在在${place.name}`}
           </span>
         </button>
 

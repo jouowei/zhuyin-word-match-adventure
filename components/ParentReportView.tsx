@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowLeft, KeyRound, TrendingUp, TrendingDown, Minus, Lightbulb, BookOpen, Calendar } from 'lucide-react';
+import { ArrowLeft, KeyRound, TrendingUp, TrendingDown, Minus, Lightbulb, BookOpen, Calendar, Trash2 } from 'lucide-react';
 import { EnglishUnit, Lesson, UserProfile } from '../types';
 import { summarizeWeek } from '../services/activityLog';
 import { CHINESE_PREFIXES, ENGLISH_PREFIXES, masteredCount, reviewSchedule, startOfDay } from '../services/learningStats';
@@ -19,6 +19,7 @@ interface ParentReportViewProps {
   onUpdateUser: (userId: string, updates: Partial<UserProfile>) => void;
   onManageLessons: () => void;
   onManageEnglish: () => void;
+  onDeletePlayer: () => void; // This player and all their progress, after the parent confirms
 }
 
 const percent = (rate: number | null) => (rate === null ? '—' : `${Math.round(rate * 100)}%`);
@@ -36,8 +37,9 @@ const Trend: React.FC<{ now: number | null; before: number | null }> = ({ now, b
 const itemLabel = (key: string) => key.replace(/^(w|zy|el|ew):/, '');
 
 export const ParentReportView: React.FC<ParentReportViewProps> = ({
-  currentUser, lessons, englishUnits, activeLesson, onBack, unlocked, onUnlock, onUpdateUser, onManageLessons, onManageEnglish,
+  currentUser, lessons, englishUnits, activeLesson, onBack, unlocked, onUnlock, onUpdateUser, onManageLessons, onManageEnglish, onDeletePlayer,
 }) => {
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
   const readableLessons = lessons.filter(l => l.content?.trim());
@@ -300,12 +302,39 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({
           )}
         </div>
 
+        {/* Deleting a player lives here, behind the parent password, not on the children's start screen */}
+        <div className="bg-white rounded-3xl shadow p-5">
+          {confirmingDelete ? (
+            <div className="flex flex-col items-center text-center gap-3">
+              <h2 className="text-xl font-black text-slate-800">刪除 {currentUser.avatar} {currentUser.name}？</h2>
+              <p className="text-sm text-gray-500 font-bold">{currentUser.name}的星星、卡片、環島進度和學習紀錄都會消失，無法復原。</p>
+              <div className="flex gap-3 w-full max-w-xs">
+                <button onClick={() => setConfirmingDelete(false)} className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl">取消</button>
+                <button onClick={onDeletePlayer} className="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl flex items-center justify-center gap-2">
+                  <Trash2 size={18} /> 確認刪除
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 className="font-black text-slate-700 flex items-center gap-2"><Trash2 className="text-red-400" size={20} /> 刪除角色</h2>
+                <p className="text-sm text-gray-500">把{currentUser.name}和所有進度從這臺裝置刪除。</p>
+              </div>
+              <button onClick={() => setConfirmingDelete(true)} className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold">
+                刪除{currentUser.name}
+              </button>
+            </div>
+          )}
+        </div>
+
         <p className="text-[11px] text-gray-400 text-center">
           依據：Wood, Bruner &amp; Ross (1976) 鷹架理論；Cepeda et al. (2008) 間隔練習；Whitehurst et al. (1988) 對話式共讀；Takeuchi &amp; Stevens (2011) 親子共用媒體。
         </p>
         <p className="text-[11px] text-gray-400 text-center">
           國語錄音與注音：教育部《國語注音符號手冊》開放部件（CC BY 4.0）、教育部《國語辭典簡編本》經萌典提供（CC BY-ND 3.0 TW）<br />
-          英文語音：Kokoro-82M 產生（Apache-2.0）・國字筆畫：Make Me a Hanzi / hanzi-writer-data（Arphic Public License）
+          英文語音：Kokoro-82M 產生（Apache-2.0）・國字筆畫：Make Me a Hanzi / hanzi-writer-data（Arphic Public License）<br />
+          內建課文為本遊戲原創・課文插圖由 Gemini 繪製
         </p>
       </div>
     </div>
