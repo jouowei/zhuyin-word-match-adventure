@@ -1,4 +1,4 @@
-// The app's own texts, 一上 to 六下: four a term, growing longer, and shown with the right zhuyin.
+// The app's own texts, 一上 to 六下: six a term, growing longer, and shown with the right zhuyin.
 import { LIBRARY_LESSONS } from '../lessons/library.ts';
 import { INITIAL_LESSONS } from '../constants.ts';
 import { lessonShelves } from '../services/lessonShelf.ts';
@@ -14,7 +14,7 @@ check('built in, next to the family\'s own lessons', LIBRARY_LESSONS.every(l => 
 check('ids are unique', new Set(INITIAL_LESSONS.map(l => l.id)).size === INITIAL_LESSONS.length);
 
 const shelves = lessonShelves(LIBRARY_LESSONS).filter(s => s.lessons.length);
-check('four lessons a term, 一上 to 六下', shelves.length === 12 && shelves.every(s => s.grade && s.lessons.map(l => l.order).join('') === '1234'),
+check('six lessons a term, 一上 to 六下', shelves.length === 12 && shelves.every(s => s.grade && s.lessons.map(l => l.order).join('') === '123456'),
   shelves.map(s => `${s.label}:${s.lessons.length}`));
 
 const average = (grade: number, term: string) => {
@@ -39,7 +39,8 @@ check('a page is short enough to read on a phone (36 characters at most)', longP
 // Characters with more than one reading, outside the vocabulary words, must be read the common way (the font's
 // default). Each of these was checked in its sentence; a new one needs checking, or a vocabulary word around it.
 const READ_THE_COMMON_WAY = new Set([...'了家說的有和會給聽一呱好個大把放過幾冒吧跑們嗎啊可上包吃風要些頭看哈色各地身從幅車太不朵句那紅呢' +
-  '著都還沒麼比長阿覺雨字少落排中乾請涼什六午抓南遠種讀扁噴正當喔騎伯百轉空倒間累更圈日葉洞淡石齊鳥喝淺掃查洗分卡提哇哪藏強胖切華磨難台員重兒行告蓋湯蝦咬差滑副衝朝養平傳背為嚇同塞折龜']);
+  '著都還沒麼比長阿覺雨字少落排中乾請涼什六午抓南遠種讀扁噴正當喔騎伯百轉空倒間累更圈日葉洞淡石齊鳥喝淺掃查洗分卡提哇哪藏強胖切華磨難台員重兒行告蓋湯蝦咬差滑副衝朝養平傳背為嚇同塞折龜' +
+  '衣王答歪漲度錢擋作女']);
 const table = new Map<string, string[]>();
 for (const entry of FONT_POLYPHONES_RAW.split('|')) {
   const [char] = [...entry];

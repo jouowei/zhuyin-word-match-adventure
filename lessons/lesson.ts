@@ -1,13 +1,18 @@
 import { Lesson } from '../types';
 
 /**
- * Everyday words the font would read wrongly (their second syllable is light), fixed wherever they appear in a text.
+ * Readings used wherever these words appear, in a text and in its vocabulary:
+ * - everyday words whose second syllable is light, which the font would read in full (爸爸, 名字, 房子, 覺得…)
+ * - words 萌典 doesn't have, or lists only as a variant character (曬, 阿嬤, 哪裡)
  */
-const LIGHT: Record<string, string> = {
-  爸爸: 'ㄅㄚˋ ˙ㄅㄚ', 媽媽: 'ㄇㄚ ˙ㄇㄚ', 奶奶: 'ㄋㄞˇ ˙ㄋㄞ', 寶寶: 'ㄅㄠˇ ˙ㄅㄠ', 謝謝: 'ㄒㄧㄝˋ ˙ㄒㄧㄝ',
-  早上: 'ㄗㄠˇ ˙ㄕㄤ', 晚上: 'ㄨㄢˇ ˙ㄕㄤ', 名字: 'ㄇㄧㄥˊ ˙ㄗ', 覺得: 'ㄐㄩㄝˊ ˙ㄉㄜ',
+const FIXED: Record<string, string> = {
+  爸爸: 'ㄅㄚˋ ˙ㄅㄚ', 媽媽: 'ㄇㄚ ˙ㄇㄚ', 奶奶: 'ㄋㄞˇ ˙ㄋㄞ', 爺爺: 'ㄧㄝˊ ˙ㄧㄝ', 哥哥: 'ㄍㄜ ˙ㄍㄜ', 姐姐: 'ㄐㄧㄝˇ ˙ㄐㄧㄝ',
+  弟弟: 'ㄉㄧˋ ˙ㄉㄧ', 妹妹: 'ㄇㄟˋ ˙ㄇㄟ', 叔叔: 'ㄕㄨˊ ˙ㄕㄨ', 伯伯: 'ㄅㄛˊ ˙ㄅㄛ', 寶寶: 'ㄅㄠˇ ˙ㄅㄠ', 謝謝: 'ㄒㄧㄝˋ ˙ㄒㄧㄝ',
+  桌子: 'ㄓㄨㄛ ˙ㄗ', 本子: 'ㄅㄣˇ ˙ㄗ', 杯子: 'ㄅㄟ ˙ㄗ', 村子: 'ㄘㄨㄣ ˙ㄗ',
+  早上: 'ㄗㄠˇ ˙ㄕㄤ', 晚上: 'ㄨㄢˇ ˙ㄕㄤ', 名字: 'ㄇㄧㄥˊ ˙ㄗ', 覺得: 'ㄐㄩㄝˊ ˙ㄉㄜ', 哪裡: 'ㄋㄚˇ ˙ㄌㄧ',
   房子: 'ㄈㄤˊ ˙ㄗ', 屋子: 'ㄨ ˙ㄗ', 車子: 'ㄔㄜ ˙ㄗ', 繩子: 'ㄕㄥˊ ˙ㄗ', 攤子: 'ㄊㄢ ˙ㄗ', 金子: 'ㄐㄧㄣ ˙ㄗ',
   一下子: 'ㄧ ㄒㄧㄚˋ ˙ㄗ',
+  曬: 'ㄕㄞˋ', 曬場: 'ㄕㄞˋ ㄔㄤˊ', 阿嬤: 'ㄚ ㄇㄚ', 蟎: 'ㄇㄢˇ',
 };
 
 /**
@@ -20,13 +25,12 @@ export const lesson = (
   readings: { zhuyinOverrides?: Record<string, string>; textReadings?: Record<string, string> } = {},
 ): Lesson => {
   const content = pages.join('===\n');
-  const textReadings = {
-    ...Object.fromEntries(Object.entries(LIGHT).filter(([word]) => content.includes(word))),
-    ...readings.textReadings,
-  };
+  const fixed = (keep: (word: string) => boolean) => Object.fromEntries(Object.entries(FIXED).filter(([word]) => keep(word)));
+  const zhuyinOverrides = { ...fixed(word => vocabulary.includes(word)), ...readings.zhuyinOverrides };
+  const textReadings = { ...fixed(word => content.includes(word)), ...readings.textReadings };
   return {
     id: `lib-${id}`, grade, term, order, title, content, vocabulary,
-    ...(readings.zhuyinOverrides && { zhuyinOverrides: readings.zhuyinOverrides }),
+    ...(Object.keys(zhuyinOverrides).length && { zhuyinOverrides }),
     ...(Object.keys(textReadings).length && { textReadings }),
   };
 };
