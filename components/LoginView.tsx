@@ -4,6 +4,7 @@ import { Plus, Key, Gamepad2, Sparkles } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { companionOf } from '../services/companions';
 import { journeyPosition } from '../services/journey';
+import { WHATS_NEW_VERSION, WhatsNewDialog, whatsNewSeen } from './WhatsNewDialog';
 
 interface LoginViewProps {
   users: UserProfile[];
@@ -22,6 +23,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, onLogin, onCreateUs
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserAvatar, setNewUserAvatar] = useState('🐯');
+  const [showNews, setShowNews] = useState(() => !whatsNewSeen());
 
   const avatars = ['🐯', '🐰', '🐼', '🦊', '🦁', '🐸', '🦄', '🦖'];
 
@@ -176,8 +178,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, onLogin, onCreateUs
 
       <p className="absolute bottom-2 text-indigo-900/70 text-sm font-bold text-center w-full z-10 drop-shadow-sm px-4">
          進度會自動儲存在這臺裝置上 💾
+         <button onClick={() => setShowNews(true)} className="ml-2 underline underline-offset-2 hover:text-indigo-900">
+           {WHATS_NEW_VERSION} 版新功能
+         </button>
       </p>
 
+      {showNews && <WhatsNewDialog returning={users.length > 0} onClose={() => setShowNews(false)} />}
     </div>
   );
 };
