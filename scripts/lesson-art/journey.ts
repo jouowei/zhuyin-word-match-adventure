@@ -27,6 +27,12 @@ export const JOURNEY_SCENES: Record<string, string> = {
   yilan: 'The coast of Yilan, Taiwan: Guishan Island (Turtle Island) out at sea, shaped like a turtle swimming; a sandy beach, green mountains along the coast, soft steam rising from a small wooden hot spring pool among the trees. In the front a little turtle on the sand, looking out to sea.',
   jiufen: 'Jiufen old street on a mountainside in northern Taiwan: narrow stone steps between old wooden tea houses, many red lanterns hanging along the eaves, the sea far below. In the front a little cat sitting on the stone steps. Every sign and lantern is blank.',
   around: 'Back at Keelung harbor at the end of a trip around Taiwan: the harbor with ships under a big soft rainbow, colorful bunting flags along the pier, a few balloons floating up, a small lighthouse, a joyful welcome-home mood. In the front a little seagull flapping its wings happily.',
+  // The start screen's cover (LoginView): the title goes on the sky, the players' cards over the middle
+  'cover-tall': 'The cover of a picture book about a trip around Taiwan, tall. The top third is a pale, calm sky with two small kites and one small hot air balloon far away. In the middle: gentle green hills, a tiny red train on a track along a hillside, rice fields, and a small white lighthouse by a calm blue sea on the right. The bottom third: a meadow with small wildflowers and a winding path starting at the bottom edge and leading into the picture, like the beginning of a journey. No animals.',
+  'cover-wide': 'The cover of a picture book about a trip around Taiwan, wide. The top part is a pale, calm sky with two small kites and one small hot air balloon far away. Below: gentle green hills, a tiny red train on a track along a hillside on the left, rice fields, a small white lighthouse by a calm blue sea on the right, and in the front a meadow with small wildflowers and a winding path leading into the picture, like the beginning of a journey. No animals.',
 };
+
+/** Pictures that aren't 16:9. */
+export const JOURNEY_ASPECT: Record<string, string> = { 'cover-tall': '9:16' };
 
 export const journeyPromptFor = (id: string) => `${JOURNEY_STYLE} Scene: ${JOURNEY_SCENES[id]}`;

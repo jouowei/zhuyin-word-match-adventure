@@ -7,7 +7,7 @@
 import { writeFileSync } from 'fs';
 import { GoogleGenAI } from '@google/genai';
 import { promptFor, SCENES } from './prompts.ts';
-import { JOURNEY_SCENES, journeyPromptFor } from './journey.ts';
+import { JOURNEY_ASPECT, JOURNEY_SCENES, journeyPromptFor } from './journey.ts';
 
 const journey = process.argv[2] === '--journey';
 const [outDir, ...only] = process.argv.slice(journey ? 3 : 2);
@@ -24,7 +24,7 @@ const draw = async (id: string) => {
       const response = await ai.models.generateContent({
         model: 'gemini-3.1-flash-image-preview',
         contents: { parts: [{ text: prompt(id) }] },
-        config: { imageConfig: { aspectRatio: '16:9', imageSize: '1K' } },
+        config: { imageConfig: { aspectRatio: (journey && JOURNEY_ASPECT[id]) || '16:9', imageSize: '1K' } },
       });
       const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData?.data);
       if (part?.inlineData?.data) {
