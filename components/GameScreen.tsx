@@ -3,6 +3,8 @@ import { Home, RefreshCw, Star, Volume2 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { playChineseAudio } from '../utils/chineseAudio';
 import { instructionStep } from './VoiceGuide';
+import { useOwnRun } from '../hooks/useOwnRun';
+import { OWN_RUN_GOAL, ownRunStars } from '../services/streak';
 
 interface GameScreenProps {
   currentUser: UserProfile;
@@ -23,7 +25,9 @@ interface GameScreenProps {
  */
 export const GameScreen: React.FC<GameScreenProps> = ({
   currentUser, title, instruction, onHome, onRefresh, feedback, accent = 'text-slate-700', wide = false, children,
-}) => (
+}) => {
+  const stars = ownRunStars(useOwnRun()); // 一次就答對: filled stars towards the companion's cheer
+  return (
   <div className="h-[100dvh] flex flex-col overflow-hidden select-none">
     <div className={`flex-1 min-h-0 w-full ${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto flex flex-col gap-2 px-3 pt-2 pb-3`}>
       <header className="shrink-0 flex items-center gap-2">
@@ -47,6 +51,16 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         <div className="shrink-0 h-11 flex items-center gap-1 bg-yellow-100 border-2 border-yellow-300 rounded-full px-3 font-black text-yellow-800">
           <Star size={18} className="fill-yellow-400 text-yellow-500" /> {currentUser.points}
         </div>
+        {/* Answers in a row without help: three in a row and the companion cheers */}
+        <div className="shrink-0 h-11 flex items-center gap-0.5 px-2" aria-label={`自己答對 ${stars} 題`}>
+          {Array.from({ length: OWN_RUN_GOAL }, (_, i) => (
+            <Star
+              key={i}
+              size={16}
+              className={i < stars ? 'fill-amber-400 text-amber-500 animate-pop' : 'text-gray-300'}
+            />
+          ))}
+        </div>
         {onRefresh && (
           <button
             type="button"
@@ -69,3 +83,4 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     )}
   </div>
 );
+};

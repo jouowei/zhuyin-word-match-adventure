@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Volume2, X } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { GuessChoice, RadicalCard, RadicalQuestion } from '../services/radicals';
-import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp, needsOneMoreTry, ONE_MORE_TRY } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio, playGuidance, sayAfterAnswer } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
-import { speakHelp, withInstruction } from './VoiceGuide';
+import { ListenChip, speakHelp, withInstruction } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { GameScreen } from './GameScreen';
 import { heightShare, useViewportHeight } from '../hooks/useViewportHeight';
 import { RadicalGlyph } from './RadicalGlyph';
@@ -17,6 +18,7 @@ interface RadicalGameViewProps {
   currentWords: WordItem[];      // One per component; matched when both steps are done
   questions: RadicalQuestion[];
   onMatch: (id: string, helpLevel: number) => void;
+  onAskAgain?: (id: string) => boolean; // Asks this item once more instead of finishing it (亂猜不會比較快)
   onMistake: (id: string) => void;
   onHome: () => void;
   onRefresh: () => void;
@@ -29,7 +31,7 @@ const charSound = (card: { char: string; audioUrl?: string }): AudioStep => ({ u
  * Discover, then apply: find the characters that share a component (their pictures show what they have in common),
  * hear the rule (氵 is usually about water), then find the one new character that fits the meaning.
  */
-export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, currentWords, questions, onMatch, onMistake, onHome, onRefresh }) => {
+export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, currentWords, questions, onMatch, onAskAgain, onMistake, onHome, onRefresh }) => {
   const current = currentWords.find(w => !w.matched);
   const question = questions.find(q => q.item.id === current?.id);
   const instruction = gameInstruction(8, 'word');
@@ -38,6 +40,8 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
   const cardSize = heightShare(screenHeight, 0.11, 40, 88);
   const guessSize = heightShare(screenHeight, 0.13, 60, 96);
 
+  // 聽完才能按: the characters wait while the question or the help is being said
+  const locked = useAnswerLock(currentUser);
   const [phase, setPhase] = useState<'find' | 'rule' | 'guess' | 'done'>('find');
   const [found, setFound] = useState<string[]>([]);
   const [wrong, setWrong] = useState<string[]>([]);
@@ -69,7 +73,7 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
     setGuessWrong([]);
     setFeedback(null);
     const name = question.group.name;
-    later(() => playChineseAudio(withInstruction('game-radical', instruction, [zh(`紅色的是「${name}」。哪些字裡面有「${name}」？`)])), 400);
+    later(() => playGuidance(withInstruction('game-radical', instruction, [zh(`紅色的是「${name}」。哪些字裡面有「${name}」？`)])), 400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question?.item.id]);
 
@@ -79,7 +83,18 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
   const matchedCount = currentWords.filter(w => w.matched).length;
   const askGuess = () => [zh(`這裡有三個新的字。哪一個字，和「${group.meaning}」有關係？`)];
 
+  /** 亂猜不會比較快: an item that took two or more tries comes back at the end of the round before it counts. */
+  const finish = (helpLevel: number) => {
+    if (needsOneMoreTry(helpLevel) && onAskAgain?.(current.id)) {
+      sayAfterAnswer([{ text: ONE_MORE_TRY, rate: 0.95 }]);
+      setFeedback(ONE_MORE_TRY);
+      return;
+    }
+    onMatch(current.id, helpLevel);
+  };
+
   const choose = (card: RadicalCard) => {
+    if (locked) return;
     if (phase !== 'find' || found.includes(card.char) || wrong.includes(card.char) || hidden.includes(card.char)) return;
     if (card.member) {
       playSound('success');
@@ -95,7 +110,7 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
         [...members.map(m => ({ ...charSound(m), pause: 300 })), zh(`都有「${group.name}」。有「${group.name}」的字，常常和「${group.meaning}」有關係`)],
         () => later(() => {
           setPhase('guess');
-          playChineseAudio(askGuess());
+          playGuidance(askGuess());
         }, 600),
       );
       return;
@@ -117,14 +132,14 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
   };
 
   const guess = (choice: GuessChoice) => {
-    if (phase !== 'guess' || guessWrong.includes(choice.char)) return;
+    if (locked || phase !== 'guess' || guessWrong.includes(choice.char)) return;
     if (choice.correct) {
       setPhase('done');
       playSound('success');
       const help = Math.max(findHelp, guessHelp);
       setFeedback(praise(help, 'look'));
       playChineseAudio([charSound(choice), zh(`${choice.gloss}。你看，它也有「${group.name}」！`)]);
-      later(() => onMatch(current.id, help), 4200);
+      later(() => finish(help), 4200);
       return;
     }
     playSound('error');
@@ -174,7 +189,8 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
       </div>
 
       {(phase === 'find' || phase === 'rule') && (
-        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3">
+        <div className={`relative flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3 transition-opacity ${locked ? 'opacity-50' : ''}`}>
+          <ListenChip show={locked} />
           {question.cards.map(card => {
             const isFound = found.includes(card.char);
             const isWrong = wrong.includes(card.char);
@@ -215,12 +231,13 @@ export const RadicalGameView: React.FC<RadicalGameViewProps> = ({ currentUser, c
         <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-indigo-200 p-3 flex flex-col items-center justify-center gap-[2vh] animate-pop">
           <div className="flex items-center gap-2">
             <p className="text-[clamp(1rem,2.8vh,1.25rem)] font-bold text-gray-600 text-center">哪一個字和 {group.meaningEmoji}「{group.meaning}」有關係？</p>
-            <button onClick={() => playChineseAudio(askGuess())} className="p-2 rounded-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 active:scale-90" aria-label="再聽一次">
+            <button onClick={() => playGuidance(askGuess())} className="p-2 rounded-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 active:scale-90" aria-label="再聽一次">
               <Volume2 size={20} />
             </button>
           </div>
           {/* No zhuyin or sound before answering: the component is the clue, not the reading */}
-          <div className="grid grid-cols-3 gap-3 w-full">
+          <div className={`relative grid grid-cols-3 gap-3 w-full transition-opacity ${locked ? 'opacity-50' : ''}`}>
+            <ListenChip show={locked} />
             {question.guessChoices.map(choice => {
               const isWrong = guessWrong.includes(choice.char);
               const isRight = phase === 'done' && choice.correct;

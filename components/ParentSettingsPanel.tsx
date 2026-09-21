@@ -80,6 +80,24 @@ export const ParentSettingsPanel: React.FC<ParentSettingsPanelProps> = ({ curren
       </section>
 
       <section>
+        <h2 className="font-black text-slate-700 mb-1">玩的方式</h2>
+        <label className="flex items-start gap-3 bg-gray-50 rounded-2xl p-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={currentUser.listenFirst !== false}
+            onChange={e => onUpdateUser(currentUser.id, { listenFirst: e.target.checked })}
+            className="mt-1 w-5 h-5 accent-indigo-500"
+          />
+          <span>
+            <span className="font-bold text-slate-700">聽完才能按</span>
+            <span className="block text-sm text-gray-500">
+              題目和提示唸完以前，選項先不能按（會出現「👂 聽完再按」）。這是為了讓孩子聽完再想，不要一直亂按。
+            </span>
+          </span>
+        </label>
+      </section>
+
+      <section>
         <h2 className="font-black text-slate-700 mb-2">冒險夥伴</h2>
         <div className="flex flex-wrap gap-2">
           {COMPANIONS.map(c => (

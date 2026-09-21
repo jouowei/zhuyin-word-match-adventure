@@ -6,11 +6,12 @@ import { HighlightedKeyword, useFeedback } from './shared';
 import { GameScreen } from '../GameScreen';
 import { Ear, MousePointerClick, Volume2 } from 'lucide-react';
 import { playSound } from '../../utils/sound';
-import { speakEnglish, speakLetterName } from '../../utils/englishSpeech';
-import { AudioStep } from '../../utils/chineseAudio';
+import { speakEnglish } from '../../utils/englishSpeech';
+import { AudioStep, playGuidance } from '../../utils/chineseAudio';
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
 import { praise } from '../Praise';
-import { speakHelp, useInstruction } from '../VoiceGuide';
+import { ListenChip, speakHelp, useInstruction } from '../VoiceGuide';
+import { useAnswerLock } from '../../hooks/useAnswerLock';
 
 interface EnglishMatchGameViewProps {
   currentUser: UserProfile;
@@ -36,6 +37,8 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
   const [hiddenAnswers, setHiddenAnswers] = useState<Record<string, string[]>>({});
   const [triedAnswers, setTriedAnswers] = useState<Record<string, string[]>>({});
   const [feedback, showFeedback] = useFeedback();
+  // 聽完才能按: the answers wait while the word or the help is being said
+  const locked = useAnswerLock(currentUser);
 
   const isLetters = unit.kind === 'letters';
   const isListening = level === 2;
@@ -61,9 +64,9 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
   // What an answer shows: a letter, a word or its picture
   const answerSound = (item: EnglishRoundItem): AudioStep => ({ text: isLetters ? letterName(item) : item.keyword, lang: 'en' });
 
+  // The question: the answers wait until it has been said
   const speakPrompt = (item: EnglishRoundItem) => {
-    if (isLetters && !isListening) speakLetterName(item.text);
-    else speakEnglish(item.keyword);
+    playGuidance([{ ...promptSound(item), rate: isLetters && !isListening ? 0.75 : 0.8 }]);
   };
 
   const handlePromptClick = (item: EnglishRoundItem) => {
@@ -78,7 +81,7 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
   };
 
   const handleAnswerClick = (target: EnglishRoundItem) => {
-    if (!selectedId || target.matched) return;
+    if (locked || !selectedId || target.matched) return;
     const selected = byId(selectedId);
     if (!selected || hiddenAnswers[selected.id]?.includes(target.id)) return;
 
@@ -249,7 +252,8 @@ export const EnglishMatchGameView: React.FC<EnglishMatchGameViewProps> = ({
         <div className="min-h-0 flex flex-col gap-[1.5vh]">
           {items.map(item => <div key={item.id} className="flex-1 min-h-0">{renderPrompt(item)}</div>)}
         </div>
-        <div className="min-h-0 flex flex-col gap-[1.5vh]">
+        <div className={`relative min-h-0 flex flex-col gap-[1.5vh] transition-opacity ${locked ? 'opacity-50' : ''}`}>
+          <ListenChip show={locked} />
           {answers.map(a => <div key={`slot-${a.id}`} className="flex-1 min-h-0">{renderAnswer(byId(a.id) || a)}</div>)}
         </div>
       </div>

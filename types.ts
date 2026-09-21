@@ -88,6 +88,7 @@ export interface UserProfile {
   studyFocus?: StudyFocus;                    // Set in 家長專區; the zhuyin symbols until then
   journeyLegs?: number;                       // 環島冒險: legs travelled (the day's first finished adventure per language)
   journeySeen?: number;                       // Last place (step) whose arrival story was shown; unset: not started
+  listenFirst?: boolean;                      // 聽完才能按 (default on): answers are locked while a question or hint is spoken
 }
 
 /** What happened on one day, for the parent report. */
@@ -95,6 +96,7 @@ export interface DayActivity {
   onOwn: number;            // Answers without help
   helped: number;           // Answers that needed help
   mistakes: number;
+  fastWrong: number;        // ...of those, answered so soon after the last answer that nothing was heard or thought about
   reviewTried: number;      // Items that came back after a gap (review box 1+)
   reviewRemembered: number; // ...and were answered without help
   newItems: number;

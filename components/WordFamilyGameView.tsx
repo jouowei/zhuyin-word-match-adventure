@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Volume2, X } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
 import { FamilyQuestion, FamilyWord } from '../services/wordFamilies';
-import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp, needsOneMoreTry, ONE_MORE_TRY } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio, playGuidance, sayAfterAnswer } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
-import { speakHelp, withInstruction } from './VoiceGuide';
+import { ListenChip, speakHelp, withInstruction } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { GameScreen } from './GameScreen';
 import { ZhuyinText } from './ZhuyinText';
 
@@ -16,6 +17,7 @@ interface WordFamilyGameViewProps {
   currentWords: WordItem[];      // One per question; matched when the family is complete
   questions: FamilyQuestion[];
   onMatch: (id: string, helpLevel: number) => void;
+  onAskAgain?: (id: string) => boolean; // Asks this item once more instead of finishing it (亂猜不會比較快)
   onMistake: (id: string) => void;
   onHome: () => void;
   onRefresh: () => void;
@@ -36,7 +38,7 @@ const FamilyWordText: React.FC<{ word: FamilyWord; head: string }> = ({ word, he
 };
 
 export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
-  currentUser, currentWords, questions, onMatch, onMistake, onHome, onRefresh
+  currentUser, currentWords, questions, onMatch, onAskAgain, onMistake, onHome, onRefresh
 }) => {
   const current = currentWords.find(w => !w.matched);
   const question = questions.find(q => q.item.id === current?.id);
@@ -48,6 +50,8 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
   const [help, setHelp] = useState(0);
   const [done, setDone] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  // 聽完才能按: the words wait while the question or the help is being said
+  const locked = useAnswerLock(currentUser);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
 
@@ -71,7 +75,7 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
     setHelp(0);
     setDone(false);
     setFeedback(null);
-    later(() => playChineseAudio(withInstruction('game-family', instruction, askSteps())), 400);
+    later(() => playGuidance(withInstruction('game-family', instruction, askSteps())), 400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question?.item.id]);
 
@@ -81,8 +85,18 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
   const members = question.words.filter(w => w.member);
   const matchedCount = currentWords.filter(w => w.matched).length;
 
+  /** 亂猜不會比較快: an item that took two or more tries comes back at the end of the round before it counts. */
+  const finish = (helpLevel: number) => {
+    if (needsOneMoreTry(helpLevel) && onAskAgain?.(current.id)) {
+      sayAfterAnswer([{ text: ONE_MORE_TRY, rate: 0.95 }]);
+      setFeedback(ONE_MORE_TRY);
+      return;
+    }
+    onMatch(current.id, helpLevel);
+  };
+
   const choose = (w: FamilyWord) => {
-    if (done || found.includes(w.word) || wrong.includes(w.word) || hidden.includes(w.word)) return;
+    if (locked || done || found.includes(w.word) || wrong.includes(w.word) || hidden.includes(w.word)) return;
     if (w.member) {
       playSound('success');
       const nowFound = [...found, w.word];
@@ -95,7 +109,7 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
       setDone(true);
       setFeedback(praise(help, 'listen'));
       playChineseAudio([...members.map(m => ({ ...wordSound(m), pause: 350 })), { text: '裡面都有' }, headSound()]);
-      later(() => onMatch(current.id, help), 3200);
+      later(() => finish(help), 3200);
       return;
     }
     playSound('error');
@@ -137,7 +151,7 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
           {question.item.zhuyin
             ? <ZhuyinText text={head} readings={[question.item.zhuyin]} className="text-[clamp(2.75rem,9vh,4.5rem)] text-red-500" />
             : <span className="font-kai text-[clamp(2.75rem,9vh,4.5rem)] text-red-500">{head}</span>}
-          <button onClick={() => playChineseAudio(askSteps())} className="p-3 rounded-full bg-green-100 text-green-700 hover:bg-green-200 active:scale-90 transition" aria-label="再聽一次">
+          <button onClick={() => playGuidance(askSteps())} className="p-3 rounded-full bg-green-100 text-green-700 hover:bg-green-200 active:scale-90 transition" aria-label="再聽一次">
             <Volume2 size={28} />
           </button>
         </div>
@@ -145,7 +159,8 @@ export const WordFamilyGameView: React.FC<WordFamilyGameViewProps> = ({
           哪些詞裡面有「<span className="text-red-500">{head}</span>」？找出 {members.length} 個（找到 {found.length} 個）
         </p>
 
-        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3 w-full">
+        <div className={`relative flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3 w-full transition-opacity ${locked ? 'opacity-50' : ''}`}>
+          <ListenChip show={locked} />
           {question.words.map(w => {
             const isFound = found.includes(w.word);
             const isWrong = wrong.includes(w.word);

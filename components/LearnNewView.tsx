@@ -2,12 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { praise } from './Praise';
 import { ArrowRight, Volume2 } from 'lucide-react';
 import { UserProfile, WordItem } from '../types';
-import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
 import { hasPicture } from '../utils/wordPicture';
 import { LearnCard } from '../services/learnItems';
 import { HELP_RETRY, HELP_SHOW } from '../services/scaffolding';
-import { speakHelp } from './VoiceGuide';
+import { ListenChip, speakHelp } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { ZhuyinText } from './ZhuyinText';
 import { GameScreen } from './GameScreen';
 
@@ -30,6 +31,8 @@ export const LearnNewView: React.FC<LearnNewViewProps> = ({ currentUser, cards, 
   const [help, setHelp] = useState(0);
   const [solved, setSolved] = useState(false);
   const [shakeId, setShakeId] = useState<string | null>(null);
+  // 聽完才能按: the two choices wait while the question or the help is being said
+  const locked = useAnswerLock(currentUser);
   const results = useRef<{ character: string; helped: boolean }[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
@@ -64,7 +67,7 @@ export const LearnNewView: React.FC<LearnNewViewProps> = ({ currentUser, cards, 
     if (!card || phase === 'finished') return;
     const timer = setTimeout(() => {
       if (phase === 'watch') playChineseAudio([{ text: index === 0 ? '這是新朋友' : '再認識一個新朋友' }, ...introSteps(card.item)]);
-      else playChineseAudio([{ text: '換你試試看，哪一個是' }, sound(card.item), { text: '？' }]);
+      else playGuidance([{ text: '換你試試看，哪一個是' }, sound(card.item), { text: '？' }]);
     }, 400);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +83,7 @@ export const LearnNewView: React.FC<LearnNewViewProps> = ({ currentUser, cards, 
   }, [phase]);
 
   const choose = (choice: WordItem) => {
-    if (!card || solved) return;
+    if (locked || !card || solved) return;
     if (choice.id === card.item.id) {
       setSolved(true);
       playSound('success');
@@ -184,14 +187,15 @@ export const LearnNewView: React.FC<LearnNewViewProps> = ({ currentUser, cards, 
       {phase === 'try' && card && (
         <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-[2vh] animate-pop">
           <button
-            onClick={() => playChineseAudio([sound(card.item)])}
+            onClick={() => playGuidance([sound(card.item)])}
             className="shrink-0 w-[clamp(4rem,12vh,6rem)] h-[clamp(4rem,12vh,6rem)] rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-600 flex items-center justify-center shadow-inner transition active:scale-95"
             aria-label="再聽一次"
           >
             <Volume2 size={48} />
           </button>
           <p className="shrink-0 text-[clamp(1.1rem,3.2vh,1.25rem)] font-bold text-gray-600">哪一個是剛剛聽到的？</p>
-          <div className="min-h-0 grid grid-cols-2 gap-4 w-full">
+          <div className={`relative min-h-0 grid grid-cols-2 gap-4 w-full transition-opacity ${locked ? 'opacity-50' : ''}`}>
+            <ListenChip show={locked} />
             {choices.map(choice => (
               <button
                 key={choice.id}

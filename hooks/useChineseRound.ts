@@ -37,6 +37,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
   const [practiceLesson, setPracticeLesson] = useState<Lesson | null>(null); // 練習課文: the lesson the child picked
   const [level, setLevel] = useState(1);
   const [words, setWords] = useState<WordItem[]>(INITIAL_WORD_SET);
+  const askedAgain = useRef<Set<string>>(new Set()); // Items already asked one more time this round
   const [familyQuestions, setFamilyQuestions] = useState<FamilyQuestion[]>([]);   // 字的家族 round
   const [radicalQuestions, setRadicalQuestions] = useState<RadicalQuestion[]>([]); // 部件偵探 round
   // Latest round for callbacks fired from timers inside game views
@@ -96,6 +97,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
         items = await generateLevelData(newLevel, sourceWords, customImages, gameMode, zhuyinOverrides, schedule, plan ? { count: plan.count, ordered: true } : undefined);
       }
       tally.current = EMPTY_TALLY;
+      askedAgain.current = new Set();
       wordsRef.current = items;
       setWords(items);
       screen.goTo(GameState.PLAYING);
@@ -114,6 +116,17 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
     } finally {
       screen.setBusy(false);
     }
+  };
+
+  /** 亂猜不會比較快: puts the item at the end of the round for one more go. False when it has already come back. */
+  const askAgain = (id: string) => {
+    const target = wordsRef.current.find(item => item.id === id);
+    if (!target || target.matched || askedAgain.current.has(id)) return false;
+    askedAgain.current.add(id);
+    const updated = [...wordsRef.current.filter(item => item.id !== id), target];
+    wordsRef.current = updated;
+    setWords(updated);
+    return true;
   };
 
   const onMatch = (id: string, helpLevel = 0) => {
@@ -168,6 +181,7 @@ export const useChineseRound = ({ family, screen, answers, path, onVictory }: {
       start(newLevel, plan);
     },
     onMatch,
+    askAgain,
     onMistake,
     /** Leaving a round: back to the adventure map in 今日冒險, to the lesson in 練習課文, else to the 遊樂場. */
     leave: () => {

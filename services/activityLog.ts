@@ -7,7 +7,10 @@ type Activity = Record<string, DayActivity> | undefined;
 const ACTIVE_GAP_MS = 2 * 60 * 1000;
 const KEEP_DAYS = 60;
 
-const emptyDay = (): DayActivity => ({ onOwn: 0, helped: 0, mistakes: 0, reviewTried: 0, reviewRemembered: 0, newItems: 0, mastered: 0, seconds: 0 });
+const emptyDay = (): DayActivity => ({ onOwn: 0, helped: 0, mistakes: 0, fastWrong: 0, reviewTried: 0, reviewRemembered: 0, newItems: 0, mastered: 0, seconds: 0 });
+
+/** A wrong answer this soon after the last one was tapped without listening or thinking (亂按). */
+export const FAST_WRONG_MS = 1500;
 
 const withDay = (activity: Activity, now: number, change: (day: DayActivity) => DayActivity): Record<string, DayActivity> => {
   const key = todayKey(now);
@@ -54,10 +57,12 @@ export const logMistake = (activity: Activity, now: number, options: { review: b
       const key = confusionKey(options.confusion);
       confusions[key] = (confusions[key] || 0) + 1;
     }
+    const fast = day.lastAt !== undefined && now - day.lastAt < FAST_WRONG_MS;
     return {
       ...addActiveTime(day, now),
       ...(options.english ? { english: englishPart(day, { mistakes: 1 }) } : {}),
       mistakes: day.mistakes + 1,
+      fastWrong: (day.fastWrong || 0) + (fast ? 1 : 0),
       reviewTried: day.reviewTried + (options.review ? 1 : 0),
       confusions,
     };
@@ -77,6 +82,9 @@ export interface WeekSummary {
   reviewRate: number | null;
   newItems: number;
   mastered: number;
+  mistakes: number;
+  fastWrong: number;            // Wrong answers tapped without listening
+  fastWrongRate: number | null; // ...as a share of all wrong answers (null when there were none)
   confusions: { key: string; count: number }[]; // Most frequent first
   english: { onOwn: number; helped: number; onOwnRate: number | null };
 }
@@ -91,6 +99,8 @@ export const summarizeWeek = (activity: Activity, now = Date.now(), endDaysAgo =
   const onOwn = sum(d => d.onOwn);
   const helped = sum(d => d.helped);
   const reviewTried = sum(d => d.reviewTried);
+  const mistakes = sum(d => d.mistakes);
+  const fastWrong = sum(d => d.fastWrong || 0);
   const confusionTotals: Record<string, number> = {};
   days.forEach(d => Object.entries(d.activity.confusions || {}).forEach(([key, count]) => {
     confusionTotals[key] = (confusionTotals[key] || 0) + count;
@@ -102,6 +112,9 @@ export const summarizeWeek = (activity: Activity, now = Date.now(), endDaysAgo =
     onOwn,
     helped,
     onOwnRate: onOwn + helped > 0 ? onOwn / (onOwn + helped) : null,
+    mistakes,
+    fastWrong,
+    fastWrongRate: mistakes > 0 ? fastWrong / mistakes : null,
     reviewTried,
     reviewRate: reviewTried > 0 ? sum(d => d.reviewRemembered) / reviewTried : null,
     newItems: sum(d => d.newItems),

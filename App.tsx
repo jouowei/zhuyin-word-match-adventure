@@ -19,6 +19,7 @@ import { CelebrationBanner, useCelebration } from './components/Celebration';
 import { BrowserNotice } from './components/BrowserNotice';
 import { OfflineNotice } from './components/OfflineNotice';
 import { PraiseBurst } from './components/Praise';
+import { StreakCheer } from './components/StreakCheer';
 
 // View Components
 import { LoginView } from './components/LoginView';
@@ -147,6 +148,7 @@ export default function App() {
       <BrowserNotice />
       <OfflineNotice />
       <PraiseBurst />
+      <StreakCheer />
       <CelebrationBanner celebration={celebration} />
     </>
   );
@@ -372,6 +374,7 @@ export default function App() {
           familyQuestions={chinese.familyQuestions}
           radicalQuestions={chinese.radicalQuestions}
           onMatch={chinese.onMatch}
+          onAskAgain={chinese.askAgain}
           onMistake={chinese.onMistake}
           onHome={chinese.leave}
           onRefresh={chinese.again}

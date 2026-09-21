@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowLeft, KeyRound, TrendingUp, TrendingDown, Minus, Lightbulb, BookOpen, Calendar, Trash2 } from 'lucide-react';
+import { ArrowLeft, KeyRound, TrendingUp, TrendingDown, Minus, Lightbulb, BookOpen, Calendar, MousePointerClick, Trash2 } from 'lucide-react';
 import { EnglishUnit, Lesson, UserProfile } from '../types';
 import { summarizeWeek } from '../services/activityLog';
 import { CHINESE_PREFIXES, ENGLISH_PREFIXES, masteredCount, reviewSchedule, startOfDay } from '../services/learningStats';
@@ -122,6 +122,24 @@ export const ParentReportView: React.FC<ParentReportViewProps> = ({
             <p className="text-xs text-gray-400 mt-2">「學會」是隔 1 天、再隔 3 天都自己答對。</p>
           </div>
         </div>
+
+        {/* 亂按: wrong answers tapped before the question or the hint had been heard */}
+        {week.fastWrong > 0 && (
+          <div className="bg-white rounded-2xl shadow p-4">
+            <h2 className="font-black text-slate-700 flex items-center gap-2 mb-1">
+              <MousePointerClick className="text-rose-400" size={20} /> 沒聽完就按
+            </h2>
+            <p className="text-sm text-gray-600">
+              這週答錯 {week.mistakes} 次，其中 <span className="font-black text-rose-500">{week.fastWrong} 次</span>
+              是在前一次作答後一秒多就按下去的（{percent(week.fastWrongRate)}），通常表示還沒聽完題目或提示。
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              {(week.fastWrongRate ?? 0) >= 0.3
+                ? '比例偏高。可以陪玩幾次，提醒孩子「先聽完，再想一下」；家長專區的「聽完才能按」也會在唸完以前先不讓孩子按。'
+                : '比例不高，孩子大多有聽完再作答。'}
+            </p>
+          </div>
+        )}
 
         {/* Seven days */}
         <div className="bg-white rounded-3xl shadow p-5">

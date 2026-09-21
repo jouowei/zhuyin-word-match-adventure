@@ -5,7 +5,8 @@ import { lessonAssets, lessonFindWords, pathSource, progressKeyFor, roundSource,
 import { chooseLevel, completeStation, DailyPath, unfinishedToday } from '../services/dailyPath.ts';
 import { englishLevelInfo, englishStationLearnCards } from '../services/englishPath.ts';
 import { startOfDay, todayKey } from '../services/learningStats.ts';
-import { MASTERY_BONUS, POINTS_ON_OWN, POINTS_WITH_HELP } from '../services/scaffolding.ts';
+import { HELP_NARROW, HELP_RETRY, MASTERY_BONUS, needsOneMoreTry, POINTS_ON_OWN, POINTS_WITH_HELP } from '../services/scaffolding.ts';
+import { endOwnRun, noteOwnAnswer, ownRun, ownRunStars, OWN_RUN_GOAL } from '../services/streak.ts';
 import { ENGLISH_UNITS } from '../english/curriculum.ts';
 import { INITIAL_LESSONS, REWARD_CARDS, ZHUYIN_VOCABULARY } from '../constants.ts';
 import { Lesson, UserProfile } from '../types.ts';
@@ -125,6 +126,15 @@ const station = { kind: 'learn' as const, emoji: '', title: '', words: letters.l
 const cards = englishStationLearnCards(station, letters, {});
 check('English learn cards: one per new letter with a partner', cards.length === 2 && cards.every(c => c.partner.text !== c.item.text), cards.map(c => `${c.item.text}/${c.partner.text}`));
 check('English level info', englishLevelInfo('letters', 3).title === '字母描寫' && englishLevelInfo('words', 5).title === '押韻家族' && englishLevelInfo('words', 9).title === '看圖找單字');
+
+// 亂猜不會比較快, and 一次就答對看得見
+check('one more try only after two or more wrong tries', !needsOneMoreTry(0) && !needsOneMoreTry(HELP_RETRY) && needsOneMoreTry(HELP_NARROW));
+endOwnRun();
+check('the run grows with answers given alone', [noteOwnAnswer(true), noteOwnAnswer(true)].every(cheer => !cheer) && ownRun() === 2 && ownRunStars() === 2);
+check('every third one cheers', noteOwnAnswer(true) === true && ownRun() === OWN_RUN_GOAL && ownRunStars() === 0);
+check('help ends the run', noteOwnAnswer(false) === false && ownRun() === 0);
+noteOwnAnswer(true); endOwnRun();
+check('a mistake ends it too', ownRun() === 0);
 
 console.log(fails ? `${fails} FAILED` : 'ALL PASSED');
 if (fails) process.exitCode = 1;

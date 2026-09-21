@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
-import { AudioStep, playChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance } from '../utils/chineseAudio';
 
 // Instructions are spoken because five-year-olds can't read them yet.
 // Each game says its instruction once per visit to the app; the button repeats it any time.
@@ -20,7 +20,7 @@ export const useInstruction = (key: string, text: string, enabled = true) => {
   useEffect(() => {
     if (!enabled || alreadySaid.has(key)) return;
     // Marked when it actually plays, so React's double-run of effects in development doesn't swallow it
-    const timer = setTimeout(() => playChineseAudio(withInstruction(key, text)), 500);
+    const timer = setTimeout(() => playGuidance(withInstruction(key, text)), 500);
     return () => clearTimeout(timer);
   }, [key, text, enabled]);
 };
@@ -53,5 +53,15 @@ export const SpeakButton: React.FC<{ text: string; className?: string; size?: nu
   </button>
 );
 
+/**
+ * 聽完才能按 (hooks/useAnswerLock): covers the choices while the question or the hint is spoken, so a child who
+ * taps fast hears it first. Put it in a `relative` box around the choices, which are dimmed at the same time.
+ */
+export const ListenChip: React.FC<{ show: boolean }> = ({ show }) => show ? (
+  <div className="absolute inset-0 z-20 flex items-center justify-center" aria-hidden>
+    <span className="bg-white/90 text-slate-600 font-black rounded-full px-4 py-2 shadow">👂 聽完再按</span>
+  </div>
+) : null;
+
 /** Help that appears on a hint level: speaks, and the caller highlights or hides choices. */
-export const speakHelp = (steps: AudioStep[]) => playChineseAudio(steps.map(step => (step.url || step.lang ? step : { ...step, rate: step.rate ?? 0.95 })));
+export const speakHelp = (steps: AudioStep[]) => playGuidance(steps.map(step => (step.url || step.lang ? step : { ...step, rate: step.rate ?? 0.95 })));

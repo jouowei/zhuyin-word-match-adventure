@@ -32,6 +32,13 @@ const ON_OWN: Record<PraiseKind, string> = {
 export const correctMessage = (helpLevel: number, kind: PraiseKind) =>
   helpLevel === 0 ? `${ON_OWN[kind]} +${POINTS_ON_OWN}分` : `完成了！ +${POINTS_WITH_HELP}分`;
 
+/**
+ * 亂猜不會比較快: guessing through the choices is the fastest way out when every try narrows them down, so an item
+ * the child needed two or more tries for is asked once more, at the end of the round, before it counts.
+ */
+export const needsOneMoreTry = (helpLevel: number) => helpLevel >= HELP_NARROW;
+export const ONE_MORE_TRY = '這題等一下再考一次喔！';
+
 /** Wrong choices to hide at HELP_NARROW: all but one, keeping one the child hasn't tried yet when possible. */
 export const choicesToHide = <T,>(wrong: T[], tried: T[] = []): T[] => {
   const untried = wrong.filter(item => !tried.includes(item));

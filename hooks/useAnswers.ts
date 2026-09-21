@@ -1,5 +1,8 @@
 import { Confusion, Skill, UserProfile } from '../types';
 import { applyAnswer, applyIntroduced, applyMistake } from '../services/answers';
+import { endOwnRun, noteOwnAnswer } from '../services/streak';
+import { companionOf } from '../services/companions';
+import { cheerOwnRun } from '../components/StreakCheer';
 import { MASTERY_BONUS } from '../services/scaffolding';
 import { Family } from './useFamilyData';
 
@@ -23,6 +26,8 @@ export const useAnswers = ({ family, celebrate, onMasteredInPath }: {
     const before = family.latestPlayer();
     if (!before) return;
     const now = Date.now();
+    // 一次就答對看得見: three in a row without help and the companion comes out to cheer
+    if (noteOwnAnswer(answer.helpLevel === 0)) cheerOwnRun(companionOf(before).emoji);
     if (applyAnswer(before, { ...answer, now }).mastered) {
       celebrate(`學會了「${answer.label}」！ +${MASTERY_BONUS}分`);
       if (answer.inPath) onMasteredInPath(answer.label);
@@ -33,6 +38,7 @@ export const useAnswers = ({ family, celebrate, onMasteredInPath }: {
   /** `tracksMemory` is false for tasks that don't show what the child remembers; the mistake still goes into the parent report. */
   const recordMistake = (key: string, confusion?: Confusion, tracksMemory = true) => {
     const now = Date.now();
+    endOwnRun();
     family.updatePlayer(u => applyMistake(u, { key, confusion, tracksMemory, now }));
   };
 

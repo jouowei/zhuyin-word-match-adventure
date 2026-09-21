@@ -6,12 +6,13 @@ import { ImageSlot } from './ImageSlot';
 import { WritingOverlay } from './WritingOverlay';
 import { ZhuyinTraceOverlay } from './ZhuyinTraceOverlay';
 import { playSound } from '../utils/sound';
-import { AudioStep, playChineseAudio, preloadChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance, preloadChineseAudio, sayAfterAnswer, stopChineseAudio } from '../utils/chineseAudio';
 import { canPlayPictureRound } from '../utils/wordPicture';
-import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, needsOneMoreTry, nextHelp, ONE_MORE_TRY } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { speakHelp, useInstruction } from './VoiceGuide';
+import { ListenChip, speakHelp, useInstruction } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { GameScreen } from './GameScreen';
 
 interface GameViewProps {
@@ -19,6 +20,7 @@ interface GameViewProps {
   currentDifficulty: number;
   currentWords: WordItem[];
   onMatch: (id: string, helpLevel: number) => void;
+  onAskAgain?: (id: string) => boolean; // Asks this item once more instead of finishing it (亂猜不會比較快)
   onMistake?: (id: string, confusion?: Confusion) => void;
   onHome: () => void;
   onRefresh: () => void;
@@ -27,7 +29,7 @@ interface GameViewProps {
 }
 
 export const GameView: React.FC<GameViewProps> = ({
-  currentUser, currentDifficulty, currentWords, onMatch, onMistake, onHome, onRefresh, gameMode = 'word', writeStage
+  currentUser, currentDifficulty, currentWords, onMatch, onAskAgain, onMistake, onHome, onRefresh, gameMode = 'word', writeStage
 }) => {
   const [slotOrder, setSlotOrder] = useState<string[]>([]);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -38,8 +40,10 @@ export const GameView: React.FC<GameViewProps> = ({
   const [hiddenSlots, setHiddenSlots] = useState<Record<string, string[]>>({});
   const [triedSlots, setTriedSlots] = useState<Record<string, string[]>>({});
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // 聽完才能按: while the word or the help is being said, the choices wait
+  const locked = useAnswerLock(currentUser);
 
-  const roundKey = currentWords.map(w => w.id).join('|');
+  const roundKey = currentWords.map(w => w.id).sort().join('|');
 
   useEffect(() => {
     // Shuffle the slots once per round, so they don't jump around after each match
@@ -88,15 +92,15 @@ export const GameView: React.FC<GameViewProps> = ({
       : { url: item.audioUrl, text: item.character };
 
   // 教育部 recordings, with speech synthesis as a fallback
-  const playItem = (item: WordItem, withExample = false) => {
+  const playItem = (item: WordItem, withExample = false, asQuestion = false) => {
     const steps: AudioStep[] = [cardSound(item)];
     if (withExample && item.exampleWord) steps.push({ url: item.exampleAudioUrl, text: item.exampleWord });
-    playChineseAudio(steps);
+    (asQuestion ? playGuidance : playChineseAudio)(steps);
   };
 
   const handleCardClick = (id: string) => {
     const item = currentWords.find(w => w.id === id);
-    if (item) playItem(item);
+    if (item) playItem(item, false, true); // The question: the choices wait until it has been said
     if (selectedCardId === id) {
       setSelectedCardId(null);
     } else {
@@ -106,7 +110,7 @@ export const GameView: React.FC<GameViewProps> = ({
   };
 
   const handleSlotClick = (targetItem: WordItem) => {
-    if (!selectedCardId) return;
+    if (!selectedCardId || locked) return;
     const selectedCard = currentWords.find(w => w.id === selectedCardId);
     if (!selectedCard || hiddenSlots[selectedCard.id]?.includes(targetItem.id)) return;
 
@@ -149,6 +153,16 @@ export const GameView: React.FC<GameViewProps> = ({
 
   const triggerMatch = (id: string, extraHelp = 0) => {
     const level = Math.max(help[id] || 0, extraHelp);
+    if (needsOneMoreTry(level) && onAskAgain?.(id)) {
+      // Guessed through the choices: the card goes back into the round, with its help cleared
+      setHelp(prev => ({ ...prev, [id]: 0 }));
+      setHiddenSlots(prev => ({ ...prev, [id]: [] }));
+      setTriedSlots(prev => ({ ...prev, [id]: [] }));
+      setSelectedCardId(null);
+      sayAfterAnswer([{ text: ONE_MORE_TRY, rate: 0.95 }]);
+      showFeedback(ONE_MORE_TRY, 2000);
+      return;
+    }
     onMatch(id, level);
     setSelectedCardId(null);
     showFeedback(praise(level, currentDifficulty === 2 ? 'listen' : currentDifficulty === 3 ? 'write' : 'look'), 1500);
@@ -222,7 +236,8 @@ export const GameView: React.FC<GameViewProps> = ({
           ))}
         </div>
 
-        <div className="min-h-0 flex flex-col gap-[1.5vh]">
+        <div className={`relative min-h-0 flex flex-col gap-[1.5vh] transition-opacity ${locked ? 'opacity-50' : ''}`}>
+          <ListenChip show={locked} />
           {slots.map((item) => (
             <div key={`slot-${item.id}`} className="flex-1 min-h-0">
               <ImageSlot

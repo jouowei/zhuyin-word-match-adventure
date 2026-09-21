@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, ThumbsUp, Volume2 } from 'lucide-react';
 import { EnglishUnit, UserProfile } from '../../types';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
-import { AudioStep, playChineseAudio, stopChineseAudio } from '../../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance, stopChineseAudio } from '../../utils/chineseAudio';
 import { playSound } from '../../utils/sound';
-import { speakHelp } from '../VoiceGuide';
+import { ListenChip, speakHelp } from '../VoiceGuide';
+import { useAnswerLock } from '../../hooks/useAnswerLock';
 import { GameScreen } from '../GameScreen';
 
 interface EnglishSentenceLoopViewProps {
@@ -41,6 +42,8 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
   const [found, setFound] = useState<Token | null>(null);
   const [shakeKey, setShakeKey] = useState<string | null>(null);
   const [speaking, setSpeaking] = useState<number | null>(null);
+  // 聽完才能按: the sentences wait while the word to find or the help is being said
+  const locked = useAnswerLock(currentUser);
   const results = useRef<{ word: string; helpLevel: number }[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
@@ -60,7 +63,7 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
       } else if (target) {
         setHelp(0);
         setFound(null);
-        playChineseAudio([zh(targetIndex === 0 ? '回到句子，找找看，' : '再找找看，'), en(target, 0.85), zh('在哪裡？')]);
+        playGuidance([zh(targetIndex === 0 ? '回到句子，找找看，' : '再找找看，'), en(target, 0.85), zh('在哪裡？')]);
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -79,7 +82,7 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
       else readSentence(token.sentence);
       return;
     }
-    if (!target || found) return;
+    if (locked || !target || found) return;
     if (isWord(token, target)) {
       setFound(token);
       playSound('success');
@@ -121,7 +124,7 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
           <div className="shrink-0 text-center">
             <p className="text-[clamp(1.05rem,3vh,1.25rem)] font-bold text-gray-700 flex flex-wrap items-center justify-center gap-2">
               找找看 <span className="font-english text-[clamp(1.6rem,5vh,1.875rem)] text-sky-600">{target}</span> 在哪裡？
-              <button onClick={() => playChineseAudio([en(target, 0.85)])} className="p-2 rounded-full bg-sky-100 text-sky-700 hover:bg-sky-200 active:scale-90" aria-label="再聽一次">
+              <button onClick={() => playGuidance([en(target, 0.85)])} className="p-2 rounded-full bg-sky-100 text-sky-700 hover:bg-sky-200 active:scale-90" aria-label="再聽一次">
                 <Volume2 size={20} />
               </button>
               <span className="text-sm text-gray-400">（{targetIndex + 1}/{targets.length}）</span>
@@ -130,7 +133,8 @@ export const EnglishSentenceLoopView: React.FC<EnglishSentenceLoopViewProps> = (
         )}
 
         {/* The sentences; many scroll inside their box so the buttons stay in view */}
-        <div className="flex-1 min-h-0 overflow-y-auto bg-white rounded-3xl shadow-xl border-b-8 border-sky-200 p-3 md:p-8 flex flex-col justify-center gap-2">
+        <div className={`relative flex-1 min-h-0 overflow-y-auto bg-white rounded-3xl shadow-xl border-b-8 border-sky-200 p-3 md:p-8 flex flex-col justify-center gap-2 transition-opacity ${locked ? 'opacity-50' : ''}`}>
+          <ListenChip show={locked} />
           {sentences.map((sentence, s) => {
             const inHelpSentence = mode === 'find' && help >= HELP_NARROW && s === targetSentence && !found;
             return (

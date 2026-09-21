@@ -2,16 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { WordItem, UserProfile, Confusion } from '../types';
 import { Volume2, CheckCircle2 } from 'lucide-react';
 import { playSound } from '../utils/sound';
-import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio, playGuidance, sayAfterAnswer } from '../utils/chineseAudio';
 import { hasPicture } from '../utils/wordPicture';
 import { getZhuyinSymbol } from '../zhuyin/symbols';
 import {
   buildSymbolTiles, formatSyllable, getToneReferences, parseSyllable, Tone, TONE_OPTIONS, toneHelpSteps,
 } from '../services/zhuyinPractice';
-import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp, needsOneMoreTry, ONE_MORE_TRY } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { speakHelp, withInstruction } from './VoiceGuide';
+import { ListenChip, speakHelp, withInstruction } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { GameScreen } from './GameScreen';
 import { ToneCurve } from './ToneCurve';
 import { ToneCompare } from './ToneCompare';
@@ -21,6 +22,7 @@ interface SyllableSpellGameViewProps {
   currentWords: WordItem[];
   gameMode: 'word' | 'zhuyin';
   onMatch: (id: string, helpLevel: number) => void;
+  onAskAgain?: (id: string) => boolean; // Asks this item once more instead of finishing it (亂猜不會比較快)
   onMistake: (id: string, confusion?: Confusion) => void;
   onHome: () => void;
   onRefresh: () => void;
@@ -43,7 +45,7 @@ const MEDIALS = 'ㄧㄨㄩ';
  * then spells it. Medial + final (ㄨㄚ in ㄍㄨㄚ) are shown and sounded as one unit, like 結合韻 in class.
  */
 export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
-  currentUser, currentWords, gameMode, onMatch, onMistake, onHome, onRefresh, blendFirst, toneSupport
+  currentUser, currentWords, gameMode, onMatch, onAskAgain, onMistake, onHome, onRefresh, blendFirst, toneSupport
 }) => {
   const current = currentWords.find(w => !w.matched);
   const target = current ? parseSyllable(current.zhuyin) : { symbols: [] as string[], tone: 1 as Tone };
@@ -81,8 +83,11 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
     target.symbols.map((symbol, i) => ({ ...symbolSound(symbol), pause: medialGroup && i === 1 ? 30 : 450 }));
 
   /** Plays steps where step `offset + i` is the sound of box i, lighting the box while it sounds. */
+  // 聽完才能按: the choices wait while the word or the help is being said
+  const locked = useAnswerLock(currentUser);
+
   const playLit = (steps: AudioStep[], offset: number) =>
-    playChineseAudio(steps, () => setSoundingBox(null), index => {
+    playGuidance(steps, () => setSoundingBox(null), index => {
       const box = index - offset;
       setSoundingBox(box >= 0 && box < target.symbols.length ? box : null);
     });
@@ -107,7 +112,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
         const steps = withInstruction('game-spell', instruction, [{ text: '先聽聽看，把聲音合起來' }, ...symbolSteps(), { text: '合起來，是哪一個字？' }]);
         playLit(steps, steps.length - target.symbols.length - 1);
       } else {
-        playChineseAudio(withInstruction('game-spell', instruction, [wordSound(current)]));
+        playGuidance(withInstruction('game-spell', instruction, [wordSound(current)]));
       }
     }, 400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,8 +144,18 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
   };
 
   // Blending is the supported first step, so its mistakes don't count against spelling the item
+  /** 亂猜不會比較快: an item that took two or more tries comes back at the end of the round before it counts. */
+  const finish = (helpLevel: number) => {
+    if (needsOneMoreTry(helpLevel) && onAskAgain?.(current.id)) {
+      sayAfterAnswer([{ text: ONE_MORE_TRY, rate: 0.95 }]);
+      setFeedback(ONE_MORE_TRY);
+      return;
+    }
+    onMatch(current.id, helpLevel);
+  };
+
   const handleBlendChoice = (choice: WordItem) => {
-    if (phase !== 'blend' || hidden.includes(choice.id)) return;
+    if (locked || phase !== 'blend' || hidden.includes(choice.id)) return;
     if (choice.id !== current.id) {
       shake(`blend-${choice.id}`);
       const level = nextHelp(stepHelp);
@@ -167,7 +182,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
   };
 
   const handleTile = (tile: Tile) => {
-    if (phase !== 'symbols' || tile.used || hidden.includes(tile.id)) return;
+    if (locked || phase !== 'symbols' || tile.used || hidden.includes(tile.id)) return;
     const expected = target.symbols[position];
     if (tile.symbol !== expected) {
       const level = mistake(`tile-${tile.id}`, tile.id, { kind: 'symbol', expected, chosen: tile.symbol });
@@ -199,7 +214,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
   };
 
   const handleTone = (tone: Tone) => {
-    if (phase !== 'tone' || hidden.includes(String(tone))) return;
+    if (locked || phase !== 'tone' || hidden.includes(String(tone))) return;
     if (tone !== target.tone) {
       const level = mistake(`tone-${tone}`, String(tone), { kind: 'tone', expected: TONE_OPTIONS[target.tone - 1].name, chosen: TONE_OPTIONS[tone - 1].name });
       if (level === HELP_NARROW) {
@@ -213,7 +228,7 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
     playSound('success');
     playChineseWord(current.character, current.audioUrl);
     setFeedback(praise(itemHelp, 'spell'));
-    later(() => onMatch(current.id, itemHelp), 1800);
+    later(() => finish(itemHelp), 1800);
   };
 
   const hintTile = phase === 'symbols' && stepHelp >= HELP_SHOW ? tiles.find(t => !t.used && t.symbol === target.symbols[position]) : undefined;
@@ -296,7 +311,8 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
         </div>
 
         {phase === 'blend' && (
-          <div className={`grid gap-3 w-full max-w-md ${blendChoices.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <div className={`relative grid gap-3 w-full max-w-md transition-opacity ${locked ? 'opacity-50' : ''} ${blendChoices.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <ListenChip show={locked} />
             {blendChoices.map(choice => (
               <div key={choice.id} className="relative">
                 <button
@@ -325,7 +341,8 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
         )}
 
         {phase === 'symbols' && (
-          <div className="flex flex-wrap justify-center gap-3 max-w-md">
+          <div className={`relative flex flex-wrap justify-center gap-3 max-w-md transition-opacity ${locked ? 'opacity-50' : ''}`}>
+            <ListenChip show={locked} />
             {tiles.map(tile => (
               <button
                 key={tile.id}
@@ -345,7 +362,8 @@ export const SyllableSpellGameView: React.FC<SyllableSpellGameViewProps> = ({
         {phase === 'tone' && (
           <>
             <ToneCompare references={toneReferences} open={compareOpen} onOpen={openCompare} hiddenFor={current.character} />
-            <div className="grid grid-cols-4 gap-3 w-full max-w-md">
+            <div className={`relative grid grid-cols-4 gap-3 w-full max-w-md transition-opacity ${locked ? 'opacity-50' : ''}`}>
+              <ListenChip show={locked} />
               {TONE_OPTIONS.slice(0, 4).map(option => (
                 <button
                   key={option.tone}

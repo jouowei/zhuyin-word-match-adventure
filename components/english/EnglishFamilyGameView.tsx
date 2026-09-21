@@ -5,9 +5,10 @@ import { RhymeCard, RhymeQuestion } from '../../english/families';
 import { RHYME_LEVEL } from '../../english/curriculum';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
 import { praise } from '../Praise';
-import { AudioStep, playChineseAudio, stopChineseAudio } from '../../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance, stopChineseAudio } from '../../utils/chineseAudio';
 import { playSound } from '../../utils/sound';
-import { speakHelp, withInstruction } from '../VoiceGuide';
+import { ListenChip, speakHelp, withInstruction } from '../VoiceGuide';
+import { useAnswerLock } from '../../hooks/useAnswerLock';
 import { useFeedback } from './shared';
 import { GameScreen } from '../GameScreen';
 
@@ -42,6 +43,8 @@ export const EnglishFamilyGameView: React.FC<EnglishFamilyGameViewProps> = ({ cu
   const [help, setHelp] = useState(0);
   const [done, setDone] = useState(false);
   const [feedback, showFeedback] = useFeedback();
+  // 聽完才能按: the pictures wait while the question or the help is being said
+  const locked = useAnswerLock(currentUser);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
 
@@ -59,7 +62,7 @@ export const EnglishFamilyGameView: React.FC<EnglishFamilyGameViewProps> = ({ cu
     setHidden([]);
     setHelp(0);
     setDone(false);
-    later(() => playChineseAudio(withInstruction('english-rhyme', instruction, askSteps())), 400);
+    later(() => playGuidance(withInstruction('english-rhyme', instruction, askSteps())), 400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question?.item.id]);
 
@@ -69,7 +72,7 @@ export const EnglishFamilyGameView: React.FC<EnglishFamilyGameViewProps> = ({ cu
   const matchedCount = items.filter(i => i.matched).length;
 
   const choose = (card: RhymeCard) => {
-    if (done || found.includes(card.word) || wrong.includes(card.word) || hidden.includes(card.word)) return;
+    if (locked || done || found.includes(card.word) || wrong.includes(card.word) || hidden.includes(card.word)) return;
     if (card.member) {
       playSound('success');
       const nowFound = [...found, card.word];
@@ -122,7 +125,7 @@ export const EnglishFamilyGameView: React.FC<EnglishFamilyGameViewProps> = ({ cu
         <div className="shrink-0 flex items-center gap-4">
           <span className="text-[clamp(2.5rem,8vh,3.75rem)] leading-none">{question.item.emoji}</span>
           <RimeWord word={head} rime={question.rime} className="text-[clamp(2.5rem,8vh,3.75rem)] text-gray-800" />
-          <button onClick={() => playChineseAudio(askSteps())} className="p-3 rounded-full bg-green-100 text-green-700 hover:bg-green-200 active:scale-90 transition" aria-label="再聽一次">
+          <button onClick={() => playGuidance(askSteps())} className="p-3 rounded-full bg-green-100 text-green-700 hover:bg-green-200 active:scale-90 transition" aria-label="再聽一次">
             <Volume2 size={28} />
           </button>
         </div>
@@ -130,7 +133,8 @@ export const EnglishFamilyGameView: React.FC<EnglishFamilyGameViewProps> = ({ cu
           找出和 <span className="font-english">{head}</span> 押韻的圖（找到 {found.length}/{members.length}）
         </p>
 
-        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3 w-full">
+        <div className={`relative flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3 w-full transition-opacity ${locked ? 'opacity-50' : ''}`}>
+          <ListenChip show={locked} />
           {question.cards.map(card => {
             const isFound = found.includes(card.word);
             const isWrong = wrong.includes(card.word);

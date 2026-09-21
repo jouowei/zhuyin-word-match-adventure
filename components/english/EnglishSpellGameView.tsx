@@ -7,11 +7,12 @@ import { Volume2, Snail, CheckCircle2 } from 'lucide-react';
 import { playSound } from '../../utils/sound';
 import { speakEnglish, speakLetterName, speakPraise } from '../../utils/englishSpeech';
 import { getLetter } from '../../english/letters';
-import { AudioStep, playChineseAudio } from '../../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance } from '../../utils/chineseAudio';
 import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../../services/scaffolding';
 import { praise } from '../Praise';
 import { WORD_LEVELS } from '../../english/curriculum';
-import { speakHelp, withInstruction } from '../VoiceGuide';
+import { ListenChip, speakHelp, withInstruction } from '../VoiceGuide';
+import { useAnswerLock } from '../../hooks/useAnswerLock';
 
 interface EnglishSpellGameViewProps {
   currentUser: UserProfile;
@@ -57,6 +58,8 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
   const [litUpTo, setLitUpTo] = useState<number | null>(null);
   const lightTimer = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const [feedback, showFeedback] = useFeedback();
+  // 聽完才能按: the choices wait while the word or the help is being said
+  const locked = useAnswerLock(currentUser);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => () => {
@@ -90,7 +93,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
     setBlendHidden([]);
     const timer = setTimeout(() => (blend
       ? playSlow(withInstruction('english-spell', instruction, [{ text: '慢慢聽，是哪一個？', rate: 0.95 }]))
-      : playChineseAudio(withInstruction('english-spell', instruction, [{ text: current.text, lang: 'en' }]))), 400);
+      : playGuidance(withInstruction('english-spell', instruction, [{ text: current.text, lang: 'en' }]))), 400);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.id]);
@@ -103,7 +106,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
     const word = current.text;
     clearInterval(lightTimer.current);
     setLitUpTo(null);
-    playChineseAudio([...before, { text: word, lang: 'en', rate: 0.35 }], () => {
+    playGuidance([...before, { text: word, lang: 'en', rate: 0.35 }], () => {
       clearInterval(lightTimer.current);
       setLitUpTo(null);
     }, index => {
@@ -119,7 +122,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
   }
 
   const handleBlendChoice = (choice: EnglishRoundItem) => {
-    if (phase !== 'blend' || blendHidden.includes(choice.id)) return;
+    if (locked || phase !== 'blend' || blendHidden.includes(choice.id)) return;
     if (choice.id !== current.id) {
       playSound('error');
       const level = nextHelp(blendHelp);
@@ -144,7 +147,7 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
   const letterName = (letter: string) => getLetter(letter)?.name || letter;
 
   const handleTileClick = (tile: Tile) => {
-    if (phase !== 'spell' || tile.used || isDone || hiddenTiles.includes(tile.id)) return;
+    if (locked || phase !== 'spell' || tile.used || isDone || hiddenTiles.includes(tile.id)) return;
 
     if (tile.letter !== expected) {
       playSound('error');
@@ -264,7 +267,8 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
         </div>
 
         {phase === 'blend' ? (
-          <div className={`grid gap-3 w-full max-w-md ${blendChoices.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <div className={`relative grid gap-3 w-full max-w-md transition-opacity ${locked ? 'opacity-50' : ''} ${blendChoices.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <ListenChip show={locked} />
             {blendChoices.map(choice => (
               <div key={choice.id} className="relative">
                 <button
@@ -293,7 +297,8 @@ export const EnglishSpellGameView: React.FC<EnglishSpellGameViewProps> = ({
             <CheckCircle2 size={32} /> <span className="font-english">{current.text}</span>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-3 max-w-md">
+          <div className={`relative flex flex-wrap justify-center gap-3 max-w-md transition-opacity ${locked ? 'opacity-50' : ''}`}>
+            <ListenChip show={locked} />
             {tiles.map(tile => (
               <button
                 key={tile.id}

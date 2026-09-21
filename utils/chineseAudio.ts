@@ -198,7 +198,39 @@ const loadClip = (url: string, text: string): Promise<AudioBuffer | null> => {
   return clipCache.get(key)!;
 };
 
+/**
+ * 聽完才能按: while the game is saying the question or the help, answers are locked, so a child who taps fast
+ * hears it to the end first. Only the calls that ask something count; praise and free listening don't.
+ */
+let guidance = false;
+let guidanceGuard: ReturnType<typeof setTimeout> | undefined;
+const guidanceListeners = new Set<(playing: boolean) => void>();
+const GUIDANCE_MAX_MS = 8000; // Never leave the answers locked if audio never reports its end
+
+const setGuidance = (playing: boolean) => {
+  clearTimeout(guidanceGuard);
+  if (playing) guidanceGuard = setTimeout(() => setGuidance(false), GUIDANCE_MAX_MS);
+  if (playing === guidance) return;
+  guidance = playing;
+  guidanceListeners.forEach(listener => listener(playing));
+};
+
+export const guidancePlaying = () => guidance;
+
+/** Returns the unsubscribe function. */
+export const onGuidance = (listener: (playing: boolean) => void) => {
+  guidanceListeners.add(listener);
+  return () => { guidanceListeners.delete(listener); };
+};
+
+/** Plays a question or a hint: answers stay locked until it has been heard. */
+export const playGuidance = (steps: AudioStep[], onEnd?: () => void, onStep?: (index: number) => void) => {
+  playChineseAudio(steps, () => { setGuidance(false); onEnd?.(); }, onStep);
+  setGuidance(true); // After playChineseAudio, which stops whatever was playing
+};
+
 export const stopChineseAudio = () => {
+  setGuidance(false);
   playToken++;
   currentSteps = null;
   try {

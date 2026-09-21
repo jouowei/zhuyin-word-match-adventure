@@ -19,6 +19,7 @@ interface ChineseRoundViewProps {
   familyQuestions: FamilyQuestion[];
   radicalQuestions: RadicalQuestion[];
   onMatch: (id: string, helpLevel: number) => void;
+  onAskAgain: (id: string) => boolean;
   onMistake: (id: string, confusion?: Confusion) => void;
   onHome: () => void;
   onRefresh: () => void;
@@ -26,10 +27,10 @@ interface ChineseRoundViewProps {
 
 /** The game for a Chinese level, with support that fades as the child's skills grow. */
 export const ChineseRoundView: React.FC<ChineseRoundViewProps> = ({
-  currentUser, level, gameMode, words, familyQuestions, radicalQuestions, onMatch, onMistake, onHome, onRefresh,
+  currentUser, level, gameMode, words, familyQuestions, radicalQuestions, onMatch, onAskAgain, onMistake, onHome, onRefresh,
 }) => {
   const stats = currentUser.wordStats;
-  const common = { currentUser, currentWords: words, onMatch, onHome, onRefresh };
+  const common = { currentUser, currentWords: words, onMatch, onAskAgain, onHome, onRefresh };
 
   if (level === 5 || level === 6) {
     const Practice = level === 5 ? SyllableSpellGameView : ToneGameView;

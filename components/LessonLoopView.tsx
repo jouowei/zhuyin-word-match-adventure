@@ -4,10 +4,11 @@ import { Confusion, Lesson, UserProfile } from '../types';
 import { getWordReading } from '../services/moedict';
 import { occurrences, sentenceRange, splitLessonPages } from '../services/lessonText';
 import { HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
-import { AudioStep, playChineseAudio, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playGuidance, stopChineseAudio } from '../utils/chineseAudio';
 import { playSound } from '../utils/sound';
 import { readingsForSentence, ZhuyinText } from './ZhuyinText';
-import { speakHelp } from './VoiceGuide';
+import { ListenChip, speakHelp } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { GameScreen } from './GameScreen';
 
 interface LessonLoopViewProps {
@@ -38,6 +39,8 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
   const [foundAt, setFoundAt] = useState<number | null>(null); // Occurrence the child tapped
   const [shakeIndex, setShakeIndex] = useState<number | null>(null);
   const results = useRef<{ word: string; helpLevel: number }[]>([]);
+  // 聽完才能按: the text waits while the word to find or the help is being said
+  const locked = useAnswerLock(currentUser);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
 
@@ -68,7 +71,7 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
     setPage(Math.max(0, index));
     setHelp(0);
     setFoundAt(null);
-    const timer = setTimeout(() => playChineseAudio([
+    const timer = setTimeout(() => playGuidance([
       { text: targetIndex === 0 ? '回到課文，找找看，' : '再找找看，', rate: 0.95 },
       wordSound(target),
       { text: '在哪裡？' },
@@ -118,7 +121,7 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
       if (word) playChineseAudio([wordSound(word)]);
       return;
     }
-    if (!target || foundAt !== null) return;
+    if (locked || !target || foundAt !== null) return;
     if (targetChars.has(index)) {
       const start = occurrences(text, target).find(s => index >= s && index < s + [...target].length)!;
       setFoundAt(start);
@@ -160,7 +163,7 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
               找找看「
               {vocabReadings[target] ? <ZhuyinText text={target} readings={vocabReadings[target].split(' ')} className="text-[clamp(1.6rem,5vh,1.875rem)] text-orange-600" /> : <span className="font-kai text-[clamp(1.6rem,5vh,1.875rem)] text-orange-600">{target}</span>}
               」在哪裡？
-              <button onClick={() => playChineseAudio([wordSound(target)])} className="p-2 rounded-full bg-orange-100 text-orange-700 hover:bg-orange-200 active:scale-90" aria-label="再聽一次">
+              <button onClick={() => playGuidance([wordSound(target)])} className="p-2 rounded-full bg-orange-100 text-orange-700 hover:bg-orange-200 active:scale-90" aria-label="再聽一次">
                 <Volume2 size={20} />
               </button>
               <span className="text-sm text-gray-400">（{targetIndex + 1}/{targets.length}）</span>
@@ -170,7 +173,8 @@ export const LessonLoopView: React.FC<LessonLoopViewProps> = ({ currentUser, les
 
         {/* The lesson text; a long page scrolls inside its box so the buttons stay in view */}
         <div className="flex-1 min-h-0 overflow-y-auto bg-white rounded-3xl shadow-xl border-b-8 border-orange-200 p-4 md:p-8 flex">
-          <div className="m-auto flex flex-wrap justify-center gap-y-3">
+          <div className={`relative m-auto flex flex-wrap justify-center gap-y-3 transition-opacity ${locked ? 'opacity-50' : ''}`}>
+            <ListenChip show={locked} />
             {chars.map((ch, i) => {
               const punctuation = (c: string) => <span className="font-bpmf text-[clamp(1.9rem,min(9vw,6vh),3rem)] text-gray-500 self-end">{c}</span>;
               if (!isHan(ch)) {

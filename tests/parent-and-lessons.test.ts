@@ -23,6 +23,12 @@ check('counts', today.onOwn === 1 && today.helped === 1 && today.mistakes === 2 
 check('active seconds skip the long break', today.seconds === 30 + 30 + 10, today.seconds);
 check('confusions merge both directions', today.confusions['symbol:ㄣ|ㄥ'] === 2, today.confusions);
 check('review counts', today.reviewTried === 2 && today.reviewRemembered === 1);
+check('a wrong answer after a long think is not 亂按', today.fastWrong === 0, today.fastWrong);
+// 亂按: wrong answers tapped one after another, without listening
+a = logMistake(a, t + 401000, { review: false });
+a = logMistake(a, t + 402000, { review: false });
+check('quick wrong answers counted', a['2026-09-16'].fastWrong === 2, a['2026-09-16'].fastWrong);
+check('the week shares them out', (() => { const w = summarizeWeek(a, t); return w.mistakes === 4 && w.fastWrong === 2 && w.fastWrongRate === 0.5; })(), summarizeWeek(a, t).fastWrongRate);
 a = logAnswer(a, t - 8 * DAY, { independent: true, review: false, mastered: true });
 a = logAnswer(a, t - 70 * DAY, { independent: true, review: false, mastered: false });
 a = logAnswer(a, t, { independent: true, review: false, mastered: false }); check('old days trimmed', !Object.keys(a).some(d => d < '2026-07-18'), Object.keys(a));

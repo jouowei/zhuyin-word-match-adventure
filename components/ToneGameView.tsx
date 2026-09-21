@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { WordItem, UserProfile, Confusion } from '../types';
 import { Volume2 } from 'lucide-react';
 import { playSound } from '../utils/sound';
-import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio } from '../utils/chineseAudio';
+import { AudioStep, playChineseAudio, playChineseWord, stopChineseAudio, playGuidance, sayAfterAnswer } from '../utils/chineseAudio';
 import { hasPicture } from '../utils/wordPicture';
 import { getToneReferences, parseSyllable, Tone, TONE_OPTIONS, toneHelpSteps } from '../services/zhuyinPractice';
-import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp } from '../services/scaffolding';
+import { choicesToHide, HELP_NARROW, HELP_RETRY, HELP_SHOW, nextHelp, needsOneMoreTry, ONE_MORE_TRY } from '../services/scaffolding';
 import { praise } from './Praise';
 import { gameInstruction } from '../services/instructions';
-import { speakHelp, withInstruction } from './VoiceGuide';
+import { ListenChip, speakHelp, withInstruction } from './VoiceGuide';
+import { useAnswerLock } from '../hooks/useAnswerLock';
 import { GameScreen } from './GameScreen';
 import { ToneCurve } from './ToneCurve';
 import { ToneCompare } from './ToneCompare';
@@ -18,6 +19,7 @@ interface ToneGameViewProps {
   currentWords: WordItem[];
   gameMode: 'word' | 'zhuyin';
   onMatch: (id: string, helpLevel: number) => void;
+  onAskAgain?: (id: string) => boolean; // Asks this item once more instead of finishing it (亂猜不會比較快)
   onMistake: (id: string, confusion?: Confusion) => void;
   onHome: () => void;
   onRefresh: () => void;
@@ -25,7 +27,7 @@ interface ToneGameViewProps {
 }
 
 export const ToneGameView: React.FC<ToneGameViewProps> = ({
-  currentUser, currentWords, gameMode, onMatch, onMistake, onHome, onRefresh, toneSupport
+  currentUser, currentWords, gameMode, onMatch, onAskAgain, onMistake, onHome, onRefresh, toneSupport
 }) => {
   const current = currentWords.find(w => !w.matched);
   const instruction = gameInstruction(6, gameMode);
@@ -37,6 +39,8 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
   const [shakeTone, setShakeTone] = useState<Tone | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [toneReferences, setToneReferences] = useState<AudioStep[]>([]);
+  // 聽完才能按: the tones wait while the word or the help is being said
+  const locked = useAnswerLock(currentUser);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
 
@@ -56,7 +60,7 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
     setCompareOpen(toneSupport);
     setHiddenTones([]);
     setFeedback(null);
-    later(() => playChineseAudio(withInstruction('game-tone', instruction, [{ url: current.audioUrl, text: current.character }])), 500);
+    later(() => playGuidance(withInstruction('game-tone', instruction, [{ url: current.audioUrl, text: current.character }])), 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.id]);
 
@@ -73,8 +77,18 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
     setHelp(h => Math.max(h, HELP_RETRY)); // Asking for the comparison again is help once it has faded
   };
 
+  /** 亂猜不會比較快: an item that took two or more tries comes back at the end of the round before it counts. */
+  const finish = (helpLevel: number) => {
+    if (needsOneMoreTry(helpLevel) && onAskAgain?.(current.id)) {
+      sayAfterAnswer([{ text: ONE_MORE_TRY, rate: 0.95 }]);
+      setFeedback(ONE_MORE_TRY);
+      return;
+    }
+    onMatch(current.id, helpLevel);
+  };
+
   const handleChoice = (choice: Tone) => {
-    if (solved || hiddenTones.includes(choice) || wrongTones.includes(choice)) return;
+    if (locked || solved || hiddenTones.includes(choice) || wrongTones.includes(choice)) return;
     if (choice !== tone) {
       playSound('error');
       const level = nextHelp(help);
@@ -95,7 +109,7 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
     playSound('success');
     playChineseWord(current.character, current.audioUrl);
     setFeedback(`${TONE_OPTIONS[tone - 1].name}！ ${praise(help, 'listen')}`);
-    later(() => onMatch(current.id, help), 1800);
+    later(() => finish(help), 1800);
   };
 
   return (
@@ -117,7 +131,7 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
       <div className="fit-screen-main flex-1 min-h-0 bg-white rounded-3xl shadow-xl border-b-8 border-purple-200 p-4 flex flex-col items-center justify-center gap-[1.5vh]">
         <div className="flex flex-col items-center gap-[1.5vh]">
         <button
-          onClick={() => playChineseWord(current.character, current.audioUrl)}
+          onClick={() => playGuidance([{ url: current.audioUrl, text: current.character }])}
           className="w-[clamp(4rem,13vh,7rem)] h-[clamp(4rem,13vh,7rem)] shrink-0 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 flex items-center justify-center shadow-inner transition active:scale-95"
           aria-label="再聽一次"
         >
@@ -144,7 +158,8 @@ export const ToneGameView: React.FC<ToneGameViewProps> = ({
           />
         )}
 
-        <div className={`grid gap-3 w-full ${options.length === 5 ? 'grid-cols-5' : 'grid-cols-4'}`}>
+        <div className={`relative grid gap-3 w-full transition-opacity ${locked ? 'opacity-50' : ''} ${options.length === 5 ? 'grid-cols-5' : 'grid-cols-4'}`}>
+          <ListenChip show={locked} />
           {options.map(option => {
             const isAnswer = solved && option.tone === tone;
             const isOut = wrongTones.includes(option.tone) || hiddenTones.includes(option.tone);
