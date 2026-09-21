@@ -40,10 +40,19 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, onLogin, onCreateUs
 
   return (
     <div className="relative min-h-[100dvh] overflow-hidden bg-[#f3f1e7] flex flex-col items-center">
-      <picture className="absolute inset-0 pointer-events-none">
-        <source media="(orientation: landscape)" srcSet="/journey/cover-wide.jpg" />
-        <img src="/journey/cover-tall.jpg" alt="" className="w-full h-full object-cover" />
-      </picture>
+      {/* The cover: one picture for upright phones, one for wide screens. On a screen whose shape is far from
+          either (a foldable open, a tablet) index.html shows all of the picture, over a blurred copy of itself,
+          so that nothing is cut off at the edges. */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <picture>
+          <source media="(orientation: landscape)" srcSet="/journey/cover-wide.jpg" />
+          <img src="/journey/cover-tall.jpg" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl" />
+        </picture>
+        <picture>
+          <source media="(orientation: landscape)" srcSet="/journey/cover-wide.jpg" />
+          <img src="/journey/cover-tall.jpg" alt="" className="cover-art absolute inset-0 w-full h-full object-cover" />
+        </picture>
+      </div>
 
       <div className="relative z-10 w-full max-w-md flex-1 flex flex-col items-center justify-between gap-4 px-4 pt-[max(5vh,1.25rem)] pb-3 landscape:sm:max-w-4xl landscape:sm:flex-row landscape:sm:justify-center landscape:sm:gap-8">
         {typeof window !== 'undefined' && window.localStorage.getItem('gemini_api_key') && (

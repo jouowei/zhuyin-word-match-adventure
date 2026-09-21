@@ -122,6 +122,12 @@
         .fit-screen-main { flex-direction: row !important; }
         .fit-screen-side { width: min(20rem, 38%) !important; justify-content: center !important; }
       }
+      /* The start screen's cover picture fills the screen on a phone. On a screen closer to a square
+         (a foldable opened, a tablet) that would cut off the sides or the top, so show all of it instead;
+         the blurred copy behind it fills what is left over. */
+      @media (min-aspect-ratio: 18/25) and (max-aspect-ratio: 29/20) {
+        .cover-art { object-fit: contain !important; }
+      }
       /* 環島 story page on phones held sideways: the picture beside the words */
       @media (orientation: landscape) and (max-height: 600px) {
         .story-card { max-width: 42rem !important; }
