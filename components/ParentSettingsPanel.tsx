@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DEFAULT_SPEECH_SPEED, playChineseAudio, setSpeechSpeed, SPEECH_SPEEDS } from '../utils/chineseAudio';
 import { BookOpen, Gift, Languages, Settings2 } from 'lucide-react';
 import { Lesson, StudyFocus, UserProfile } from '../types';
 import { COMPANIONS } from '../services/companions';
@@ -81,6 +82,23 @@ export const ParentSettingsPanel: React.FC<ParentSettingsPanelProps> = ({ curren
 
       <section>
         <h2 className="font-black text-slate-700 mb-1">玩的方式</h2>
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="font-bold text-slate-700">說話速度</span>
+          {SPEECH_SPEEDS.map(speed => (
+            <button
+              key={speed.value}
+              onClick={() => {
+                onUpdateUser(currentUser.id, { speechSpeed: speed.value });
+                setSpeechSpeed(speed.value);
+                playChineseAudio([{ text: '我會用這個速度說話喔' }]);
+              }}
+              className={`rounded-2xl border-2 px-3 py-1.5 font-bold ${(currentUser.speechSpeed ?? DEFAULT_SPEECH_SPEED) === speed.value ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-gray-100 text-slate-600'}`}
+            >
+              {speed.label}
+            </button>
+          ))}
+          <span className="text-sm text-gray-500 w-full">按按看，會用那個速度唸一句給您聽。</span>
+        </div>
         <label className="flex items-start gap-3 bg-gray-50 rounded-2xl p-3 cursor-pointer">
           <input
             type="checkbox"

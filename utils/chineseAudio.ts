@@ -23,6 +23,21 @@ let playToken = 0;
 
 const clipCache = new Map<string, Promise<AudioBuffer | null>>();
 
+/**
+ * How fast the game talks, set by a parent (家長專區). 1 is the recordings' own speed; the computer voice is a
+ * little slower than that by default. Recordings are stretched at the same pitch, so a faster setting still
+ * sounds like the same person.
+ */
+export const SPEECH_SPEEDS = [
+  { value: 0.9, label: '慢一點' },
+  { value: 1.05, label: '普通' },
+  { value: 1.2, label: '快一點' },
+];
+export const DEFAULT_SPEECH_SPEED = 1.05;
+let speechSpeed = DEFAULT_SPEECH_SPEED;
+export const speechSpeedNow = () => speechSpeed;
+export const setSpeechSpeed = (speed: number) => { speechSpeed = Math.min(1.4, Math.max(0.7, speed || DEFAULT_SPEECH_SPEED)); };
+
 const getContext = () => {
   if (!audioContext) {
     // On iPhone the silent switch mutes web audio unless the page says it plays media (Safari 17+)
@@ -181,12 +196,18 @@ export const wordOnlyRecording = async (data: ArrayBuffer, text: string): Promis
 
 const loadClip = (url: string, text: string): Promise<AudioBuffer | null> => {
   const syllables = countSyllables(text);
-  const key = `${url}#${syllables}`;
+  const stretch = 1 / speechSpeed;
+  const key = `${url}#${syllables}@${stretch.toFixed(2)}`;
   if (!clipCache.has(key)) {
     const task = (async () => {
       try {
         const ctx = getContext();
-        return trimToFirstUtterance(ctx, await fetchBuffer(url), syllables);
+        const clip = trimToFirstUtterance(ctx, await fetchBuffer(url), syllables);
+        if (stretch === 1) return clip;
+        const samples = stretchSamples(clip.getChannelData(0), clip.sampleRate, stretch);
+        const changed = ctx.createBuffer(1, samples.length, clip.sampleRate);
+        changed.copyToChannel(samples, 0);
+        return changed;
       } catch (e) {
         console.warn('錄音載入失敗，改用電腦語音', url, e);
         clipCache.delete(key); // Retry next time (e.g. network was down)
@@ -247,10 +268,11 @@ const speakText = (step: AudioStep, onEnd: () => void) => {
     return;
   }
   const utterance = new SpeechSynthesisUtterance(step.text);
+  const rate = (step.rate ?? (step.lang === 'en' ? 0.75 : 0.9)) * speechSpeed;
   const voice = step.lang === 'en' ? pickEnglishVoice() : pickTaiwanVoice();
   if (voice) utterance.voice = voice;
   utterance.lang = step.lang === 'en' ? 'en-US' : 'zh-TW';
-  utterance.rate = step.rate ?? (step.lang === 'en' ? 0.75 : 0.8);
+  utterance.rate = Math.min(2, Math.max(0.4, rate));
   utterance.onend = onEnd;
   utterance.onerror = onEnd;
   window.speechSynthesis.speak(utterance);
@@ -291,12 +313,12 @@ export const playChineseAudio = (inputSteps: AudioStep[], onEnd?: () => void, on
     const next = () => {
       if (advanced || token !== playToken) return;
       advanced = true;
-      setTimeout(() => playStep(index + 1), step.pause ?? 200);
+      setTimeout(() => playStep(index + 1), (step.pause ?? 160) / speechSpeed);
     };
 
     const englishUrls = !step.url && !step.buffer && step.lang === 'en' ? englishClipUrls(step.text) : null;
     const clips = step.buffer ? [step.buffer] : englishUrls
-      ? await Promise.all(englishUrls.map(url => loadEnglishClip(url, clipStretch(step.rate))))
+      ? await Promise.all(englishUrls.map(url => loadEnglishClip(url, clipStretch(step.rate) / speechSpeed)))
       : [step.url ? await loadClip(step.url, step.text) : null];
     if (token !== playToken) return;
     onStep?.(index);
@@ -347,7 +369,7 @@ export const sayAfterAnswer = (steps: AudioStep[]) => {
 export const preloadChineseAudio = (steps: AudioStep[]) => {
   steps.forEach(step => {
     if (step.url) loadClip(step.url, step.text);
-    else if (step.lang === 'en') englishClipUrls(step.text)?.forEach(url => loadEnglishClip(url, clipStretch(step.rate)));
+    else if (step.lang === 'en') englishClipUrls(step.text)?.forEach(url => loadEnglishClip(url, clipStretch(step.rate) / speechSpeed));
   });
 };
 

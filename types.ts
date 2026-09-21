@@ -89,6 +89,7 @@ export interface UserProfile {
   journeyLegs?: number;                       // 環島冒險: legs travelled (the day's first finished adventure per language)
   journeySeen?: number;                       // Last place (step) whose arrival story was shown; unset: not started
   listenFirst?: boolean;                      // 聽完才能按 (default on): answers are locked while a question or hint is spoken
+  speechSpeed?: number;                       // How fast the game talks (utils/chineseAudio SPEECH_SPEEDS), 1 by default
 }
 
 /** What happened on one day, for the parent report. */

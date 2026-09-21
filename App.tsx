@@ -6,6 +6,7 @@ import { englishSentenceWords } from './services/englishPath';
 import { buyCard, claimMilestoneCard, milestonesAvailable } from './services/rewards';
 import { focusName, studyFor } from './services/wordSources';
 import { playSound } from './utils/sound';
+import { DEFAULT_SPEECH_SPEED, setSpeechSpeed } from './utils/chineseAudio';
 import { useScreen } from './hooks/useScreen';
 import { useFamilyData } from './hooks/useFamilyData';
 import { useRewardImages } from './hooks/useRewardImages';
@@ -106,6 +107,9 @@ export default function App() {
     screen.goTo(currentUser?.companion ? GameState.MENU : GameState.COMPANION_PICK);
   };
   const practising = !!chinese.practiceLesson;
+
+  // How fast the game talks, as the parent set it for this player
+  useEffect(() => setSpeechSpeed(currentUser?.speechSpeed ?? DEFAULT_SPEECH_SPEED), [currentUser?.speechSpeed]);
 
   // Check for API Key in URL
   useEffect(() => {
